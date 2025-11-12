@@ -15,12 +15,12 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 
 ## Essential Features
 
-### 1. User Authentication
-- **Functionality**: Secure registration and login system with FIN code validation
-- **Purpose**: Identify and authenticate Azerbaijani customers using national ID
+### 1. Unified Authentication System
+- **Functionality**: Single login form for both users (FIN code) and admin (username/password)
+- **Purpose**: Streamlined access for customers and administrators through one interface
 - **Trigger**: App launch or logout
-- **Progression**: Enter credentials → Validate FIN format → Check existing user → Create/authenticate → Navigate to main screen
-- **Success criteria**: Users can register with name, surname, FIN code, password; existing users can login; FIN validation prevents invalid entries
+- **Progression**: Enter credentials → Check admin credentials first → If not admin, validate FIN format → Authenticate user → Navigate to appropriate interface
+- **Success criteria**: Users can register/login with FIN code; admin can login with secure credentials (CRG_ADMIN_PL2024 / Crg0!Plnd#Az2024$SecureAdmin!); seamless switching between user and admin interfaces
 
 ### 2. Order List Dashboard
 - **Functionality**: Scrollable list of user's cargo orders with status indicators
@@ -53,9 +53,9 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 ### 6. Admin Panel
 - **Functionality**: Comprehensive order management dashboard with user search
 - **Purpose**: Enable logistics team to track, update, and manage all cargo shipments
-- **Trigger**: Admin login with secure credentials
-- **Progression**: Admin login → View all orders table → Search by FIN → Select order → Update status → Send notification → Customer sees update
-- **Success criteria**: Admin can view all orders, filter by FIN code, change statuses, add/remove orders, notifications reach customers
+- **Trigger**: Admin login through main login form with secure credentials
+- **Progression**: Enter admin username/password → Access admin dashboard → View all orders table → Search by FIN → Select order → Update status → Send notification → Customer sees update
+- **Success criteria**: Admin can login through unified form, view all orders, filter by FIN code, change statuses, add/remove orders, send notifications to customers
 
 ### 7. Push Notifications
 - **Functionality**: In-app alerts for order status changes
@@ -66,9 +66,10 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 
 ## Edge Case Handling
 - **Invalid FIN Code**: Real-time validation with format checking (7 characters Azerbaijani FIN format), error messages guide correction
+- **Admin vs User Login**: System automatically detects admin credentials and routes to admin panel, otherwise validates as FIN code
 - **Empty States**: Friendly messages when no orders exist, support history is empty, or notifications are cleared
 - **Network Simulation**: Loading states during data operations, error recovery if persistence fails
-- **Admin Security**: Complex hardcoded credentials, no password recovery to maintain security
+- **Admin Security**: Complex hardcoded credentials (CRG_ADMIN_PL2024 / Crg0!Plnd#Az2024$SecureAdmin!), unified login prevents exposure
 - **Duplicate Orders**: Validation prevents creating orders with identical tracking numbers
 - **Concurrent Edits**: Last-write-wins for admin updates, reload triggers for data consistency
 

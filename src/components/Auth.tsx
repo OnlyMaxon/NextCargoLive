@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { validateFINCode, validatePassword, validateName } from '@/lib/validation'
+import { ADMIN_CREDENTIALS } from '@/lib/constants'
 import { User } from '@/lib/types'
 import { Package } from '@phosphor-icons/react'
 
@@ -13,9 +14,10 @@ interface AuthProps {
   onLogin: (user: User) => void
   users: User[]
   onRegister: (user: User) => void
+  onAdminLogin: () => void
 }
 
-export function Auth({ onLogin, users, onRegister }: AuthProps) {
+export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
   const [loginFin, setLoginFin] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [registerFirstName, setRegisterFirstName] = useState('')
@@ -28,6 +30,11 @@ export function Auth({ onLogin, users, onRegister }: AuthProps) {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (loginFin === ADMIN_CREDENTIALS.username && loginPassword === ADMIN_CREDENTIALS.password) {
+      onAdminLogin()
+      return
+    }
 
     if (!validateFINCode(loginFin)) {
       setError('Invalid FIN code format (7 characters required)')
@@ -118,13 +125,12 @@ export function Auth({ onLogin, users, onRegister }: AuthProps) {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-fin">FIN Code</Label>
+                  <Label htmlFor="login-fin">FIN Code / Username</Label>
                   <Input
                     id="login-fin"
-                    placeholder="7 characters"
+                    placeholder="Enter FIN code or admin username"
                     value={loginFin}
-                    onChange={(e) => setLoginFin(e.target.value.toUpperCase())}
-                    maxLength={7}
+                    onChange={(e) => setLoginFin(e.target.value)}
                     required
                   />
                 </div>

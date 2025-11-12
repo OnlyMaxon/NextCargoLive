@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { User, Order, SupportMessage, Notification } from '@/lib/types'
 import { Auth } from '@/components/Auth'
-import { AdminLogin } from '@/components/AdminLogin'
 import { AdminPanel } from '@/components/AdminPanel'
 import { OrderList } from '@/components/OrderList'
 import { Support } from '@/components/Support'
@@ -14,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Package, ChatCircle, User as UserIcon, AppWindow } from '@phosphor-icons/react'
 
 type Tab = 'orders' | 'support' | 'profile' | 'apps'
-type ViewMode = 'user' | 'admin' | 'admin-login'
+type ViewMode = 'user' | 'admin'
 
 function App() {
   const [users, setUsers] = useKV<User[]>('users', [])
@@ -66,30 +65,9 @@ function App() {
     setNotifications((current) => [...(current || []), notification])
   }
 
-  const switchToAdmin = () => {
-    setViewMode('admin-login')
-  }
-
-  const switchToUser = () => {
-    setViewMode('user')
-  }
-
   const unreadNotifications = currentUser
     ? (notifications || []).filter(n => n.userId === currentUser.id && !n.read).length
     : 0
-
-  if (viewMode === 'admin-login') {
-    return (
-      <>
-        <div className="fixed bottom-4 left-4 z-50">
-          <Button variant="outline" onClick={switchToUser}>
-            ← Back to User Login
-          </Button>
-        </div>
-        <AdminLogin onAdminLogin={handleAdminLogin} />
-      </>
-    )
-  }
 
   if (viewMode === 'admin') {
     return (
@@ -113,12 +91,12 @@ function App() {
   if (!currentUser) {
     return (
       <>
-        <div className="fixed bottom-4 right-4 z-50">
-          <Button variant="secondary" onClick={switchToAdmin}>
-            Admin Panel →
-          </Button>
-        </div>
-        <Auth onLogin={handleLogin} users={users || []} onRegister={handleRegister} />
+        <Auth 
+          onLogin={handleLogin} 
+          users={users || []} 
+          onRegister={handleRegister}
+          onAdminLogin={handleAdminLogin}
+        />
         <Toaster />
       </>
     )

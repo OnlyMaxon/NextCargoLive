@@ -1,8 +1,8 @@
 import { Marketplace } from './types'
 
 export const ADMIN_CREDENTIALS = {
-  username: 'cargo_admin_2024',
-  password: 'Crg0!Adm#Pl2024$Secure'
+  username: 'CRG_ADMIN_PL2024',
+  password: 'Crg0!Plnd#Az2024$SecureAdmin!'
 }
 
 export const MARKETPLACES: Marketplace[] = [
