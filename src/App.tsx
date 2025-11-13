@@ -111,7 +111,7 @@ function App() {
               <Package size={24} weight="bold" className="text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">Cargo Tracker</h1>
+              <h1 className="text-xl font-bold tracking-tight">NextCargo</h1>
               <p className="text-xs text-muted-foreground">Welcome, {currentUser.firstName}</p>
             </div>
           </div>

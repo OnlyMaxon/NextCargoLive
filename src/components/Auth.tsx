@@ -109,7 +109,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
             </div>
           </div>
           <div className="text-center">
-            <CardTitle className="text-3xl font-bold tracking-tight">Cargo Tracker</CardTitle>
+            <CardTitle className="text-3xl font-bold tracking-tight">NextCargo</CardTitle>
             <CardDescription className="text-base mt-2">
               Track your shipments from Poland to Azerbaijan
             </CardDescription>

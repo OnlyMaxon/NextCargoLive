@@ -1,4 +1,4 @@
-# Cargo Tracking Application - Product Requirements Document
+# NextCargo - Product Requirements Document
 
 A comprehensive cargo logistics platform connecting Azerbaijani customers with Polish market vendors (Allegro.pl, Amazon.pl, IKEA.pl, Maktrans.pl), enabling order placement to warehouse and delivery tracking.
 
