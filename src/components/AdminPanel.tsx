@@ -12,9 +12,12 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
-import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, ChatCircle, Package, PaperPlaneRight } from '@phosphor-icons/react'
+import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, ChatCircle, Package, PaperPlaneRight, CaretUpDown, Check } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 interface AdminPanelProps {
   orders: Order[]
@@ -44,6 +47,7 @@ export function AdminPanel({
   const [isAddingOrder, setIsAddingOrder] = useState(false)
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
   const [replyText, setReplyText] = useState('')
+  const [customerSearchOpen, setCustomerSearchOpen] = useState(false)
 
   const [newOrder, setNewOrder] = useState({
     userId: '',
@@ -129,6 +133,7 @@ export function AdminPanel({
 
     toast.success('Order added and user notified')
     setIsAddingOrder(false)
+    setCustomerSearchOpen(false)
     setNewOrder({
       userId: '',
       trackingNumber: '',
@@ -145,6 +150,11 @@ export function AdminPanel({
       onDeleteOrder(orderId)
       toast.success('Order deleted')
     }
+  }
+
+  const handleCloseAddDialog = () => {
+    setIsAddingOrder(false)
+    setCustomerSearchOpen(false)
   }
 
   const handleSendReply = () => {
@@ -181,6 +191,10 @@ export function AdminPanel({
   const getUserName = (userId: string) => {
     const user = users.find(u => u.id === userId)
     return user ? `${user.firstName} ${user.lastName}` : 'Unknown'
+  }
+
+  const getSelectedCustomer = () => {
+    return users.find(u => u.id === newOrder.userId)
   }
 
   return (
@@ -412,7 +426,7 @@ export function AdminPanel({
         </Tabs>
       </div>
 
-      <Dialog open={isAddingOrder} onOpenChange={setIsAddingOrder}>
+      <Dialog open={isAddingOrder} onOpenChange={handleCloseAddDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Order</DialogTitle>
@@ -420,18 +434,56 @@ export function AdminPanel({
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Customer</Label>
-              <Select value={newOrder.userId} onValueChange={(value) => setNewOrder({ ...newOrder, userId: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select customer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {users.filter(u => !u.isAdmin).map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.firstName} {user.lastName} ({user.finCode})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={customerSearchOpen} onOpenChange={setCustomerSearchOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={customerSearchOpen}
+                    className="w-full justify-between"
+                  >
+                    {newOrder.userId ? (
+                      <span>
+                        {getSelectedCustomer()?.firstName} {getSelectedCustomer()?.lastName} ({getSelectedCustomer()?.finCode})
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">Search customer...</span>
+                    )}
+                    <CaretUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search by name or FIN..." />
+                    <CommandList>
+                      <CommandEmpty>No customer found.</CommandEmpty>
+                      <CommandGroup>
+                        {users.filter(u => !u.isAdmin).map((user) => (
+                          <CommandItem
+                            key={user.id}
+                            value={`${user.firstName} ${user.lastName} ${user.finCode}`}
+                            onSelect={() => {
+                              setNewOrder({ ...newOrder, userId: user.id })
+                              setCustomerSearchOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                newOrder.userId === user.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <div className="flex flex-col">
+                              <span>{user.firstName} {user.lastName}</span>
+                              <span className="text-xs text-muted-foreground font-mono">{user.finCode}</span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="space-y-2">
@@ -496,7 +548,7 @@ export function AdminPanel({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddingOrder(false)}>Cancel</Button>
+            <Button variant="outline" onClick={handleCloseAddDialog}>Cancel</Button>
             <Button onClick={handleAddOrder}>Add Order</Button>
           </DialogFooter>
         </DialogContent>
