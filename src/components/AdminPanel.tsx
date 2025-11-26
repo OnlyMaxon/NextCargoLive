@@ -199,48 +199,48 @@ export function AdminPanel({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+      <header className="border-b bg-card sticky top-0 z-10 shadow-sm">
+        <div className="px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
               <Package size={24} weight="bold" className="text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight">Admin Panel</h1>
-              <p className="text-sm text-muted-foreground">Cargo Management System</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">Admin Panel</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Cargo Management System</p>
             </div>
           </div>
-          <Button variant="destructive" onClick={onLogout}>
-            <SignOut size={20} weight="bold" className="mr-2" />
-            Logout
+          <Button variant="destructive" size="sm" onClick={onLogout} className="flex-shrink-0">
+            <SignOut size={18} weight="bold" className="sm:mr-2" />
+            <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
       </header>
 
-      <div className="container mx-auto p-6">
+      <div className="px-4 sm:px-6 lg:container lg:mx-auto py-4 sm:py-6">
         <Tabs defaultValue="orders">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
-            <TabsTrigger value="orders">Orders Management</TabsTrigger>
-            <TabsTrigger value="support">Support Messages</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 h-11">
+            <TabsTrigger value="orders" className="text-sm sm:text-base">Orders</TabsTrigger>
+            <TabsTrigger value="support" className="text-sm sm:text-base">Support</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="orders" className="space-y-6">
+          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle>Search & Filter</CardTitle>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg sm:text-xl">Search & Filter</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <div className="flex-1 relative">
                     <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                     <Input
                       placeholder="Search by FIN code..."
                       value={searchFin}
                       onChange={(e) => setSearchFin(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 h-11"
                     />
                   </div>
-                  <Button onClick={() => setIsAddingOrder(true)}>
+                  <Button onClick={() => setIsAddingOrder(true)} className="h-11 w-full sm:w-auto">
                     <Plus size={20} weight="bold" className="mr-2" />
                     Add Order
                   </Button>
@@ -249,85 +249,143 @@ export function AdminPanel({
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>All Orders ({sortedOrders.length})</CardTitle>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg sm:text-xl">All Orders ({sortedOrders.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="h-[600px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tracking</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>FIN</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {sortedOrders.length === 0 ? (
+                <div className="hidden lg:block">
+                  <ScrollArea className="h-[600px]">
+                    <Table>
+                      <TableHeader>
                         <TableRow>
-                          <TableCell colSpan={7} className="text-center text-muted-foreground">
-                            No orders found
-                          </TableCell>
+                          <TableHead>Tracking</TableHead>
+                          <TableHead>Customer</TableHead>
+                          <TableHead>FIN</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Created</TableHead>
+                          <TableHead>Actions</TableHead>
                         </TableRow>
-                      ) : (
-                        sortedOrders.map((order) => {
-                          const user = users.find(u => u.id === order.userId)
-                          return (
-                            <TableRow key={order.id}>
-                              <TableCell className="font-mono font-semibold">{order.trackingNumber}</TableCell>
-                              <TableCell>{getUserName(order.userId)}</TableCell>
-                              <TableCell className="font-mono">{user?.finCode}</TableCell>
-                              <TableCell className="max-w-xs truncate">{order.description}</TableCell>
-                              <TableCell>
-                                <Badge className={STATUS_COLORS[order.status]}>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedOrders.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                              No orders found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          sortedOrders.map((order) => {
+                            const user = users.find(u => u.id === order.userId)
+                            return (
+                              <TableRow key={order.id}>
+                                <TableCell className="font-mono font-semibold">{order.trackingNumber}</TableCell>
+                                <TableCell>{getUserName(order.userId)}</TableCell>
+                                <TableCell className="font-mono">{user?.finCode}</TableCell>
+                                <TableCell className="max-w-xs truncate">{order.description}</TableCell>
+                                <TableCell>
+                                  <Badge className={STATUS_COLORS[order.status]}>
+                                    {STATUS_LABELS[order.status]}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-sm">{formatDate(order.createdAt)}</TableCell>
+                                <TableCell>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => setEditingOrder(order)}
+                                    >
+                                      <PencilSimple size={16} />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => handleDeleteOrder(order.id)}
+                                    >
+                                      <Trash size={16} />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })
+                        )}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
+                </div>
+
+                <ScrollArea className="h-[calc(100vh-320px)] lg:hidden">
+                  {sortedOrders.length === 0 ? (
+                    <div className="py-12 text-center text-muted-foreground">
+                      No orders found
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {sortedOrders.map((order) => {
+                        const user = users.find(u => u.id === order.userId)
+                        return (
+                          <Card key={order.id} className="overflow-hidden">
+                            <CardContent className="p-4 space-y-4">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-mono font-bold text-base mb-1 break-all">{order.trackingNumber}</p>
+                                  <p className="font-medium text-sm mb-1">{getUserName(order.userId)}</p>
+                                  <p className="text-xs text-muted-foreground font-mono">FIN: {user?.finCode}</p>
+                                </div>
+                                <Badge className={`${STATUS_COLORS[order.status]} flex-shrink-0`}>
                                   {STATUS_LABELS[order.status]}
                                 </Badge>
-                              </TableCell>
-                              <TableCell className="text-sm">{formatDate(order.createdAt)}</TableCell>
-                              <TableCell>
-                                <div className="flex gap-2">
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => setEditingOrder(order)}
-                                  >
-                                    <PencilSimple size={16} />
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => handleDeleteOrder(order.id)}
-                                  >
-                                    <Trash size={16} />
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        })
-                      )}
-                    </TableBody>
-                  </Table>
+                              </div>
+
+                              <div className="space-y-2">
+                                <p className="text-sm line-clamp-2">{order.description}</p>
+                                <p className="text-xs text-muted-foreground">{formatDate(order.createdAt)}</p>
+                              </div>
+
+                              <div className="flex gap-2 pt-2 border-t">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setEditingOrder(order)}
+                                  className="flex-1"
+                                >
+                                  <PencilSimple size={18} className="mr-2" />
+                                  Edit
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => handleDeleteOrder(order.id)}
+                                  className="flex-1"
+                                >
+                                  <Trash size={18} className="mr-2" />
+                                  Delete
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )
+                      })}
+                    </div>
+                  )}
                 </ScrollArea>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="support" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <TabsContent value="support" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <Card className="lg:col-span-1">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Conversations</CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                  <CardTitle className="text-base sm:text-lg">Conversations</CardTitle>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {conversations.length} {conversations.length === 1 ? 'conversation' : 'conversations'}
                   </p>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <ScrollArea className="h-[500px] lg:h-[600px]">
+                  <ScrollArea className="h-[300px] sm:h-[400px] lg:h-[600px]">
                     {conversations.length === 0 ? (
                       <div className="p-4">
                         <Alert>
@@ -350,14 +408,14 @@ export function AdminPanel({
                             <button
                               key={conv.conversationId}
                               className={cn(
-                                "w-full text-left p-3 transition-all hover:bg-accent/50",
+                                "w-full text-left p-3 sm:p-4 transition-all hover:bg-accent/50 active:bg-accent",
                                 isSelected && "bg-primary/5 border-l-4 border-l-primary"
                               )}
                               onClick={() => setSelectedConversation(conv.conversationId)}
                             >
                               <div className="flex items-start gap-3">
-                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 border-2 border-primary/20">
-                                  <span className="text-base font-bold text-primary">
+                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 border-2 border-primary/20">
+                                  <span className="text-sm sm:text-base font-bold text-primary">
                                     {conv.user?.firstName?.[0]}{conv.user?.lastName?.[0]}
                                   </span>
                                 </div>
@@ -365,22 +423,22 @@ export function AdminPanel({
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-start justify-between gap-2 mb-1">
                                     <div className="min-w-0 flex-1">
-                                      <p className="font-semibold text-[15px] truncate">
+                                      <p className="font-semibold text-sm sm:text-[15px] truncate">
                                         {conv.user ? `${conv.user.firstName} ${conv.user.lastName}` : 'Unknown'}
                                       </p>
-                                      <p className="text-[11px] text-muted-foreground font-mono">
+                                      <p className="text-[10px] sm:text-[11px] text-muted-foreground font-mono">
                                         FIN: {conv.user?.finCode || 'N/A'}
                                       </p>
                                     </div>
                                     {conv.lastMessage && (
-                                      <span className="text-[11px] text-muted-foreground flex-shrink-0 mt-0.5">
+                                      <span className="text-[10px] sm:text-[11px] text-muted-foreground flex-shrink-0 mt-0.5">
                                         {lastMessageTime}
                                       </span>
                                     )}
                                   </div>
                                   
                                   <div className="flex items-center gap-2 mt-2">
-                                    <p className="text-sm text-muted-foreground line-clamp-2 flex-1 min-w-0">
+                                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1 min-w-0">
                                       {conv.lastMessage?.isAdmin && (
                                         <span className="text-primary font-medium">You: </span>
                                       )}
@@ -404,8 +462,8 @@ export function AdminPanel({
               </Card>
 
               <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Messages</CardTitle>
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-base sm:text-lg">Messages</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {!selectedConversation ? (
@@ -415,7 +473,7 @@ export function AdminPanel({
                     </Alert>
                   ) : (
                     <div className="space-y-4">
-                      <ScrollArea className="h-[380px] lg:h-[480px]">
+                      <ScrollArea className="h-[300px] sm:h-[380px] lg:h-[480px]">
                         <div className="space-y-3 pr-4">
                           {messages
                             .filter(m => m.conversationId === selectedConversation)
@@ -425,7 +483,7 @@ export function AdminPanel({
                                 key={msg.id}
                                 className={`flex ${msg.isAdmin ? 'justify-end' : 'justify-start'}`}
                               >
-                                <Card className={`max-w-[85%] lg:max-w-[80%] ${msg.isAdmin ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                                <Card className={`max-w-[90%] sm:max-w-[85%] lg:max-w-[80%] ${msg.isAdmin ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                                   <CardContent className="p-3 space-y-1">
                                     {!msg.isAdmin && (
                                       <p className="text-xs font-semibold text-primary">{msg.userName}</p>
@@ -448,7 +506,7 @@ export function AdminPanel({
                           onChange={(e) => setReplyText(e.target.value)}
                           className="flex-1 min-h-[60px] max-h-[120px] resize-none"
                         />
-                        <Button onClick={handleSendReply} disabled={!replyText.trim()} className="self-end">
+                        <Button onClick={handleSendReply} disabled={!replyText.trim()} className="self-end h-11 w-11 sm:h-auto sm:w-auto sm:px-4">
                           <PaperPlaneRight size={20} weight="bold" />
                         </Button>
                       </div>
@@ -462,23 +520,23 @@ export function AdminPanel({
       </div>
 
       <Dialog open={isAddingOrder} onOpenChange={handleCloseAddDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Order</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Add New Order</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Customer</Label>
+              <Label className="text-sm sm:text-base">Customer</Label>
               <Popover open={customerSearchOpen} onOpenChange={setCustomerSearchOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={customerSearchOpen}
-                    className="w-full justify-between"
+                    className="w-full justify-between h-11"
                   >
                     {newOrder.userId ? (
-                      <span>
+                      <span className="truncate">
                         {getSelectedCustomer()?.firstName} {getSelectedCustomer()?.lastName} ({getSelectedCustomer()?.finCode})
                       </span>
                     ) : (
@@ -487,7 +545,7 @@ export function AdminPanel({
                     <CaretUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0" align="start">
+                <PopoverContent className="w-[calc(95vw-2rem)] sm:w-full p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Search by name or FIN..." />
                     <CommandList>
@@ -522,27 +580,29 @@ export function AdminPanel({
             </div>
 
             <div className="space-y-2">
-              <Label>Tracking Number</Label>
+              <Label className="text-sm sm:text-base">Tracking Number</Label>
               <Input
                 placeholder="e.g., PL123456789"
                 value={newOrder.trackingNumber}
                 onChange={(e) => setNewOrder({ ...newOrder, trackingNumber: e.target.value })}
+                className="h-11"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label className="text-sm sm:text-base">Description</Label>
               <Textarea
                 placeholder="Order description"
                 value={newOrder.description}
                 onChange={(e) => setNewOrder({ ...newOrder, description: e.target.value })}
+                className="min-h-[80px]"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label className="text-sm sm:text-base">Status</Label>
               <Select value={newOrder.status} onValueChange={(value: OrderStatus) => setNewOrder({ ...newOrder, status: value })}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -553,52 +613,55 @@ export function AdminPanel({
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Origin</Label>
+                <Label className="text-sm sm:text-base">Origin</Label>
                 <Input
                   placeholder="Poland"
                   value={newOrder.origin}
                   onChange={(e) => setNewOrder({ ...newOrder, origin: e.target.value })}
+                  className="h-11"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Destination</Label>
+                <Label className="text-sm sm:text-base">Destination</Label>
                 <Input
                   placeholder="Azerbaijan"
                   value={newOrder.destination}
                   onChange={(e) => setNewOrder({ ...newOrder, destination: e.target.value })}
+                  className="h-11"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Weight</Label>
+              <Label className="text-sm sm:text-base">Weight</Label>
               <Input
                 placeholder="e.g., 5.2 kg"
                 value={newOrder.weight}
                 onChange={(e) => setNewOrder({ ...newOrder, weight: e.target.value })}
+                className="h-11"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCloseAddDialog}>Cancel</Button>
-            <Button onClick={handleAddOrder}>Add Order</Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={handleCloseAddDialog} className="w-full sm:w-auto h-11">Cancel</Button>
+            <Button onClick={handleAddOrder} className="w-full sm:w-auto h-11">Add Order</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={!!editingOrder} onOpenChange={() => setEditingOrder(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-[95vw] sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Update Order Status</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Update Order Status</DialogTitle>
           </DialogHeader>
           {editingOrder && (
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">Tracking Number</p>
-                <p className="font-mono font-semibold text-lg">{editingOrder.trackingNumber}</p>
+                <p className="font-mono font-semibold text-base sm:text-lg break-all">{editingOrder.trackingNumber}</p>
               </div>
 
               <div className="space-y-2">
@@ -606,26 +669,26 @@ export function AdminPanel({
                 <p className="font-medium">{getUserName(editingOrder.userId)}</p>
               </div>
 
-              <div className="space-y-2">
-                <Label>New Status</Label>
-                <div className="flex gap-2">
+              <div className="space-y-3">
+                <Label className="text-sm sm:text-base">New Status</Label>
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     variant={editingOrder.status === 'in_transit' ? 'default' : 'outline'}
-                    className="flex-1"
+                    className="flex-1 h-11"
                     onClick={() => handleUpdateStatus(editingOrder, 'in_transit')}
                   >
                     In Transit
                   </Button>
                   <Button
                     variant={editingOrder.status === 'at_warehouse' ? 'default' : 'outline'}
-                    className="flex-1"
+                    className="flex-1 h-11"
                     onClick={() => handleUpdateStatus(editingOrder, 'at_warehouse')}
                   >
                     At Warehouse
                   </Button>
                   <Button
                     variant={editingOrder.status === 'delivered' ? 'default' : 'outline'}
-                    className="flex-1"
+                    className="flex-1 h-11"
                     onClick={() => handleUpdateStatus(editingOrder, 'delivered')}
                   >
                     Delivered

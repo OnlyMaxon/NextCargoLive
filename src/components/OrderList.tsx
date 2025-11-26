@@ -43,9 +43,9 @@ export function OrderList({ orders, user }: OrderListProps) {
 
   return (
     <>
-      <ScrollArea className="h-[calc(100vh-160px)]">
+      <ScrollArea className="h-[calc(100vh-180px)] sm:h-[calc(100vh-160px)]">
         <div className="p-4 space-y-5">
-          <h2 className="text-2xl font-semibold tracking-tight">My Orders</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">My Orders</h2>
           
           <div className="space-y-4">
             {userOrders.map((order) => (
@@ -54,17 +54,17 @@ export function OrderList({ orders, user }: OrderListProps) {
                 className="cursor-pointer transition-all hover:shadow-md active:scale-[0.98]"
                 onClick={() => setSelectedOrder(order)}
               >
-                <CardContent className="p-5">
+                <CardContent className="p-4 sm:p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 space-y-3 min-w-0">
+                    <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
                       <div className="flex items-center gap-2.5">
-                        <Package size={22} weight="bold" className="text-primary flex-shrink-0" />
-                        <span className="font-semibold text-base truncate">{order.trackingNumber}</span>
+                        <Package size={20} weight="bold" className="text-primary flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <span className="font-semibold text-sm sm:text-base truncate">{order.trackingNumber}</span>
                       </div>
                       <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                         {order.description}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {formatDate(order.createdAt)}
                       </p>
                     </div>
@@ -80,17 +80,17 @@ export function OrderList({ orders, user }: OrderListProps) {
       </ScrollArea>
 
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <DialogContent className="max-w-[90vw] sm:max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2.5 text-xl">
-              <Package size={26} weight="bold" />
+            <DialogTitle className="flex items-center gap-2.5 text-lg sm:text-xl">
+              <Package size={24} weight="bold" className="sm:w-[26px] sm:h-[26px]" />
               Order Details
             </DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-5 py-4">
               <div className="flex items-center justify-between">
-                <span className="text-base text-muted-foreground">Status</span>
+                <span className="text-sm sm:text-base text-muted-foreground">Status</span>
                 <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm`}>
                   {STATUS_LABELS[selectedOrder.status]}
                 </Badge>
@@ -98,64 +98,64 @@ export function OrderList({ orders, user }: OrderListProps) {
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <Barcode size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+                  <Barcode size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground mb-1">Tracking Number</p>
-                    <p className="font-semibold text-base break-all">{selectedOrder.trackingNumber}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Tracking Number</p>
+                    <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.trackingNumber}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Package size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+                  <Package size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground mb-1">Description</p>
-                    <p className="font-medium text-base">{selectedOrder.description}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Description</p>
+                    <p className="font-medium text-sm sm:text-base">{selectedOrder.description}</p>
                   </div>
                 </div>
 
                 {selectedOrder.origin && (
                   <div className="flex items-start gap-3">
-                    <MapPin size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+                    <MapPin size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-muted-foreground mb-1">Origin</p>
-                      <p className="font-medium text-base">{selectedOrder.origin}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">Origin</p>
+                      <p className="font-medium text-sm sm:text-base">{selectedOrder.origin}</p>
                     </div>
                   </div>
                 )}
 
                 {selectedOrder.destination && (
                   <div className="flex items-start gap-3">
-                    <MapPin size={22} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0" />
+                    <MapPin size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-muted-foreground mb-1">Destination</p>
-                      <p className="font-medium text-base">{selectedOrder.destination}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">Destination</p>
+                      <p className="font-medium text-sm sm:text-base">{selectedOrder.destination}</p>
                     </div>
                   </div>
                 )}
 
                 {selectedOrder.weight && (
                   <div className="flex items-start gap-3">
-                    <ArrowsClockwise size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+                    <ArrowsClockwise size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-muted-foreground mb-1">Weight</p>
-                      <p className="font-medium text-base">{selectedOrder.weight}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">Weight</p>
+                      <p className="font-medium text-sm sm:text-base">{selectedOrder.weight}</p>
                     </div>
                   </div>
                 )}
 
                 <div className="flex items-start gap-3">
-                  <Calendar size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+                  <Calendar size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground mb-1">Created</p>
-                    <p className="font-medium text-base">{formatDate(selectedOrder.createdAt)}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Created</p>
+                    <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.createdAt)}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Calendar size={22} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0" />
+                  <Calendar size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground mb-1">Last Updated</p>
-                    <p className="font-medium text-base">{formatDate(selectedOrder.updatedAt)}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Last Updated</p>
+                    <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.updatedAt)}</p>
                   </div>
                 </div>
               </div>
