@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Order, User, SupportMessage, Notification, OrderStatus } from '@/lib/types'
+import { Order, User, SupportMessage, Notification, OrderStatus, TrackingEvent } from '@/lib/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -83,14 +83,33 @@ export function AdminPanel({
     .sort((a, b) => (b.lastMessage?.timestamp || 0) - (a.lastMessage?.timestamp || 0))
 
   const handleUpdateStatus = (order: Order, newStatus: OrderStatus) => {
-    const updatedOrder = { ...order, status: newStatus, updatedAt: Date.now() }
+    const now = Date.now()
+    
+    const newTrackingEvent: TrackingEvent = {
+      id: `event_${now}`,
+      timestamp: now,
+      status: newStatus,
+      location: newStatus === 'in_transit' ? 'Poland - In Transit' : 
+                newStatus === 'at_warehouse' ? 'Azerbaijan Warehouse' : 
+                'Delivered to Customer',
+      description: `Order status updated to ${STATUS_LABELS[newStatus]}`,
+      updatedBy: 'Admin'
+    }
+
+    const updatedOrder = { 
+      ...order, 
+      status: newStatus, 
+      updatedAt: now,
+      trackingHistory: [...(order.trackingHistory || []), newTrackingEvent]
+    }
+    
     onUpdateOrder(updatedOrder)
 
     const notification: Notification = {
-      id: `notif_${Date.now()}`,
+      id: `notif_${now}`,
       userId: order.userId,
       message: `Your order ${order.trackingNumber} status changed to ${STATUS_LABELS[newStatus]}`,
-      timestamp: Date.now(),
+      timestamp: now,
       read: false,
       orderId: order.id
     }
@@ -106,26 +125,40 @@ export function AdminPanel({
       return
     }
 
+    const now = Date.now()
+
+    const initialTrackingEvent: TrackingEvent = {
+      id: `event_${now}`,
+      timestamp: now,
+      status: newOrder.status,
+      location: newOrder.status === 'in_transit' ? 'Poland - In Transit' : 
+                newOrder.status === 'at_warehouse' ? 'Azerbaijan Warehouse' : 
+                'Delivered to Customer',
+      description: `Order created with status: ${STATUS_LABELS[newOrder.status]}`,
+      updatedBy: 'Admin'
+    }
+
     const order: Order = {
-      id: `order_${Date.now()}`,
+      id: `order_${now}`,
       userId: newOrder.userId,
       trackingNumber: newOrder.trackingNumber,
       description: newOrder.description,
       status: newOrder.status,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      createdAt: now,
+      updatedAt: now,
       origin: newOrder.origin || undefined,
       destination: newOrder.destination || undefined,
-      weight: newOrder.weight || undefined
+      weight: newOrder.weight || undefined,
+      trackingHistory: [initialTrackingEvent]
     }
 
     onAddOrder(order)
     
     const notification: Notification = {
-      id: `notif_${Date.now()}`,
+      id: `notif_${now}`,
       userId: newOrder.userId,
       message: `New order ${newOrder.trackingNumber} has been added to your account`,
-      timestamp: Date.now(),
+      timestamp: now,
       read: false,
       orderId: order.id
     }

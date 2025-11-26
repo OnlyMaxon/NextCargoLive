@@ -4,9 +4,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
-import { Package, MapPin, Barcode, Calendar, ArrowsClockwise } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ArrowsClockwise, ClockClockwise } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { TrackingTimeline } from '@/components/TrackingTimeline'
+import { Separator } from '@/components/ui/separator'
 
 interface OrderListProps {
   orders: Order[]
@@ -80,7 +83,7 @@ export function OrderList({ orders, user }: OrderListProps) {
       </ScrollArea>
 
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2.5 text-lg sm:text-xl">
               <Package size={24} weight="bold" className="sm:w-[26px] sm:h-[26px]" />
@@ -88,78 +91,100 @@ export function OrderList({ orders, user }: OrderListProps) {
             </DialogTitle>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-5 py-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm sm:text-base text-muted-foreground">Status</span>
-                <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm`}>
-                  {STATUS_LABELS[selectedOrder.status]}
-                </Badge>
-              </div>
+            <Tabs defaultValue="details" className="flex-1 flex flex-col min-h-0">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="details" className="text-xs sm:text-sm">
+                  Details
+                </TabsTrigger>
+                <TabsTrigger value="tracking" className="text-xs sm:text-sm">
+                  <ClockClockwise size={16} className="mr-1.5" />
+                  Tracking History
+                </TabsTrigger>
+              </TabsList>
 
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Barcode size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Tracking Number</p>
-                    <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.trackingNumber}</p>
+              <ScrollArea className="flex-1 mt-4">
+                <TabsContent value="details" className="mt-0 space-y-5 pr-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm sm:text-base text-muted-foreground">Status</span>
+                    <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm`}>
+                      {STATUS_LABELS[selectedOrder.status]}
+                    </Badge>
                   </div>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <Package size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Description</p>
-                    <p className="font-medium text-sm sm:text-base">{selectedOrder.description}</p>
-                  </div>
-                </div>
+                  <Separator />
 
-                {selectedOrder.origin && (
-                  <div className="flex items-start gap-3">
-                    <MapPin size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">Origin</p>
-                      <p className="font-medium text-sm sm:text-base">{selectedOrder.origin}</p>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <Barcode size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Tracking Number</p>
+                        <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.trackingNumber}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Package size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Description</p>
+                        <p className="font-medium text-sm sm:text-base">{selectedOrder.description}</p>
+                      </div>
+                    </div>
+
+                    {selectedOrder.origin && (
+                      <div className="flex items-start gap-3">
+                        <MapPin size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Origin</p>
+                          <p className="font-medium text-sm sm:text-base">{selectedOrder.origin}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedOrder.destination && (
+                      <div className="flex items-start gap-3">
+                        <MapPin size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Destination</p>
+                          <p className="font-medium text-sm sm:text-base">{selectedOrder.destination}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedOrder.weight && (
+                      <div className="flex items-start gap-3">
+                        <ArrowsClockwise size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Weight</p>
+                          <p className="font-medium text-sm sm:text-base">{selectedOrder.weight}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <Separator />
+
+                    <div className="flex items-start gap-3">
+                      <Calendar size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Created</p>
+                        <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.createdAt)}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Calendar size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Last Updated</p>
+                        <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.updatedAt)}</p>
+                      </div>
                     </div>
                   </div>
-                )}
+                </TabsContent>
 
-                {selectedOrder.destination && (
-                  <div className="flex items-start gap-3">
-                    <MapPin size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">Destination</p>
-                      <p className="font-medium text-sm sm:text-base">{selectedOrder.destination}</p>
-                    </div>
-                  </div>
-                )}
-
-                {selectedOrder.weight && (
-                  <div className="flex items-start gap-3">
-                    <ArrowsClockwise size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-1">Weight</p>
-                      <p className="font-medium text-sm sm:text-base">{selectedOrder.weight}</p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-start gap-3">
-                  <Calendar size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Created</p>
-                    <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.createdAt)}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Calendar size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Last Updated</p>
-                    <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.updatedAt)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <TabsContent value="tracking" className="mt-0 pr-4">
+                  <TrackingTimeline events={selectedOrder.trackingHistory || []} />
+                </TabsContent>
+              </ScrollArea>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>

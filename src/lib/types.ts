@@ -9,6 +9,15 @@ export interface User {
   isAdmin: boolean
 }
 
+export interface TrackingEvent {
+  id: string
+  timestamp: number
+  status: OrderStatus
+  location: string
+  description: string
+  updatedBy?: string
+}
+
 export interface Order {
   id: string
   userId: string
@@ -20,6 +29,7 @@ export interface Order {
   origin?: string
   destination?: string
   weight?: string
+  trackingHistory?: TrackingEvent[]
 }
 
 export interface SupportMessage {

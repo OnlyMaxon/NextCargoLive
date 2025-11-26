@@ -23,12 +23,12 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 - **Progression**: Enter credentials → Check admin credentials first → If not admin, validate FIN format → Authenticate via Firebase → Load user data from Firestore → Navigate to appropriate interface
 - **Success criteria**: Users can register/login with FIN code; admin can login with secure credentials (CRG_ADMIN_PL2024 / Crg0!Plnd#Az2024$SecureAdmin!); seamless switching between user and admin interfaces; Firebase Authentication handles password encryption and security
 
-### 2. Order List Dashboard
-- **Functionality**: Scrollable list of user's cargo orders with status indicators
-- **Purpose**: Provide at-a-glance overview of all shipments
+### 2. Order List Dashboard with Tracking History
+- **Functionality**: Scrollable list of user's cargo orders with status indicators and detailed tracking timeline
+- **Purpose**: Provide at-a-glance overview of all shipments with complete historical tracking information
 - **Trigger**: Successful login, tab navigation
-- **Progression**: Load user orders → Display cards with tracking info → Tap order → Show detailed modal
-- **Success criteria**: Orders display with clear status (In Transit/At Warehouse/Delivered), sorted by date, detail view shows full tracking info
+- **Progression**: Load user orders → Display cards with tracking info → Tap order → Show detailed modal with tabs → View details or tracking history timeline → See chronological events with timestamps and locations
+- **Success criteria**: Orders display with clear status (In Transit/At Warehouse/Delivered), sorted by date, detail view shows full tracking info, tracking history tab displays timeline of all status changes with timestamps, locations, and admin notes; timeline animates smoothly and shows latest event prominently
 
 ### 3. Marketplace Links Hub
 - **Functionality**: Curated list of Polish e-commerce platforms
@@ -51,12 +51,12 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 - **Progression**: View profile → Display name, surname, FIN → Edit button → Modify fields → Save → Update stored data
 - **Success criteria**: Profile displays current user data, changes persist across sessions
 
-### 6. Admin Panel
-- **Functionality**: Comprehensive order management dashboard with user search
-- **Purpose**: Enable logistics team to track, update, and manage all cargo shipments
+### 6. Admin Panel with Tracking Event Management
+- **Functionality**: Comprehensive order management dashboard with user search and automatic tracking history creation
+- **Purpose**: Enable logistics team to track, update, and manage all cargo shipments with full audit trail
 - **Trigger**: Admin login through main login form with secure credentials
-- **Progression**: Enter admin username/password → Access admin dashboard → View all orders from Firestore → Search users by name/FIN → Select order → Update status in Firestore → Send notification → Customer sees real-time update
-- **Success criteria**: Admin can login through unified form, view all orders from database, search/filter users, change statuses with Firestore sync, add/remove orders, send push notifications to customers; admin user has isAdmin flag in Firestore
+- **Progression**: Enter admin username/password → Access admin dashboard → View all orders from Firestore → Search users by name/FIN → Select order → Update status in Firestore → Automatic tracking event created → Send notification → Customer sees real-time update with tracking history
+- **Success criteria**: Admin can login through unified form, view all orders from database, search/filter users, change statuses with Firestore sync, add/remove orders, send push notifications to customers; each status change automatically creates a tracking event with timestamp, location, description, and admin attribution; tracking history is fully auditable and visible to customers
 
 ### 7. Push Notifications
 - **Functionality**: In-app alerts for order status changes
