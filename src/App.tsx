@@ -9,7 +9,6 @@ import { Profile } from '@/components/Profile'
 import { Marketplaces } from '@/components/Marketplaces'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Package, ChatCircle, User as UserIcon, AppWindow } from '@phosphor-icons/react'
 
 type Tab = 'orders' | 'support' | 'profile' | 'apps'
@@ -65,10 +64,6 @@ function App() {
     setNotifications((current) => [...(current || []), notification])
   }
 
-  const unreadNotifications = currentUser
-    ? (notifications || []).filter(n => n.userId === currentUser.id && !n.read).length
-    : 0
-
   if (viewMode === 'admin') {
     return (
       <>
@@ -105,21 +100,14 @@ function App() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card sticky top-0 z-10 shadow-sm">
-        <div className="px-4 py-4 sm:py-5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-              <Package size={24} weight="bold" className="text-primary-foreground sm:w-7 sm:h-7" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">NextCargo</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">Welcome, {currentUser.firstName}</p>
-            </div>
+        <div className="px-4 py-4 sm:py-5 flex items-center gap-2 sm:gap-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+            <Package size={24} weight="bold" className="text-primary-foreground sm:w-7 sm:h-7" />
           </div>
-          {unreadNotifications > 0 && (
-            <Badge variant="destructive" className="h-6 sm:h-7 px-2 sm:px-3 text-xs sm:text-sm flex-shrink-0">
-              {unreadNotifications} new
-            </Badge>
-          )}
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">NextCargo</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">Welcome, {currentUser.firstName}</p>
+          </div>
         </div>
       </header>
 
