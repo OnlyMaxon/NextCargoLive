@@ -12,6 +12,7 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 - Order management with status tracking
 - Real-time support messaging system
 - External marketplace links for order placement
+- **Backend**: Firebase Authentication + Firestore Database for production-ready data persistence
 
 ## Essential Features
 
@@ -19,8 +20,8 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 - **Functionality**: Single login form for both users (FIN code) and admin (username/password)
 - **Purpose**: Streamlined access for customers and administrators through one interface
 - **Trigger**: App launch or logout
-- **Progression**: Enter credentials → Check admin credentials first → If not admin, validate FIN format → Authenticate user → Navigate to appropriate interface
-- **Success criteria**: Users can register/login with FIN code; admin can login with secure credentials (CRG_ADMIN_PL2024 / Crg0!Plnd#Az2024$SecureAdmin!); seamless switching between user and admin interfaces
+- **Progression**: Enter credentials → Check admin credentials first → If not admin, validate FIN format → Authenticate via Firebase → Load user data from Firestore → Navigate to appropriate interface
+- **Success criteria**: Users can register/login with FIN code; admin can login with secure credentials (CRG_ADMIN_PL2024 / Crg0!Plnd#Az2024$SecureAdmin!); seamless switching between user and admin interfaces; Firebase Authentication handles password encryption and security
 
 ### 2. Order List Dashboard
 - **Functionality**: Scrollable list of user's cargo orders with status indicators
@@ -54,8 +55,8 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 - **Functionality**: Comprehensive order management dashboard with user search
 - **Purpose**: Enable logistics team to track, update, and manage all cargo shipments
 - **Trigger**: Admin login through main login form with secure credentials
-- **Progression**: Enter admin username/password → Access admin dashboard → View all orders table → Search by FIN → Select order → Update status → Send notification → Customer sees update
-- **Success criteria**: Admin can login through unified form, view all orders, filter by FIN code, change statuses, add/remove orders, send notifications to customers
+- **Progression**: Enter admin username/password → Access admin dashboard → View all orders from Firestore → Search users by name/FIN → Select order → Update status in Firestore → Send notification → Customer sees real-time update
+- **Success criteria**: Admin can login through unified form, view all orders from database, search/filter users, change statuses with Firestore sync, add/remove orders, send push notifications to customers; admin user has isAdmin flag in Firestore
 
 ### 7. Push Notifications
 - **Functionality**: In-app alerts for order status changes
@@ -66,12 +67,14 @@ A comprehensive cargo logistics platform connecting Azerbaijani customers with P
 
 ## Edge Case Handling
 - **Invalid FIN Code**: Real-time validation with format checking (7 characters Azerbaijani FIN format), error messages guide correction
-- **Admin vs User Login**: System automatically detects admin credentials and routes to admin panel, otherwise validates as FIN code
+- **Admin vs User Login**: System automatically detects admin credentials and routes to admin panel, otherwise validates as FIN code via Firestore
 - **Empty States**: Friendly messages when no orders exist, support history is empty, or notifications are cleared
-- **Network Simulation**: Loading states during data operations, error recovery if persistence fails
-- **Admin Security**: Complex hardcoded credentials (CRG_ADMIN_PL2024 / Crg0!Plnd#Az2024$SecureAdmin!), unified login prevents exposure
+- **Network Operations**: Loading states during Firebase operations, proper error handling for network failures, automatic retry logic
+- **Admin Security**: Complex hardcoded credentials for initial admin check; Firebase Security Rules enforce admin-only operations; isAdmin flag in Firestore user document
 - **Duplicate Orders**: Validation prevents creating orders with identical tracking numbers
-- **Concurrent Edits**: Last-write-wins for admin updates, reload triggers for data consistency
+- **Concurrent Edits**: Firebase handles consistency with server-side timestamps; clients receive real-time updates via Firestore listeners
+- **Offline Support**: Firebase SDK provides offline persistence; changes sync when connection restored
+- **Authentication State**: Persistent login via Firebase Auth; automatic token refresh; auth state listeners maintain session
 
 ## Design Direction
 The design should feel professional and trustworthy like enterprise logistics software, while remaining approachable for everyday consumers. A clean, minimal interface emphasizes clarity and functionality over decoration, using organized card layouts and clear typography to communicate order status at a glance.
