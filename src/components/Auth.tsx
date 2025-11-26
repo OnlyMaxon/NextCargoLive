@@ -9,6 +9,8 @@ import { validateFINCode, validatePassword, validateName } from '@/lib/validatio
 import { ADMIN_CREDENTIALS } from '@/lib/constants'
 import { User } from '@/lib/types'
 import { Package } from '@phosphor-icons/react'
+import { authService } from '@/lib/firebase-services'
+import { toast } from 'sonner'
 
 interface AuthProps {
   onLogin: (user: User) => void
@@ -26,77 +28,134 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
   const [registerPassword, setRegisterPassword] = useState('')
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState('login')
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
-    if (loginFin === ADMIN_CREDENTIALS.username && loginPassword === ADMIN_CREDENTIALS.password) {
-      onAdminLogin()
-      return
+    try {
+      if (loginFin === ADMIN_CREDENTIALS.username && loginPassword === ADMIN_CREDENTIALS.password) {
+        onAdminLogin()
+        setLoading(false)
+        return
+      }
+
+      if (!validateFINCode(loginFin)) {
+        setError('Invalid FIN code format (7 characters required)')
+        setLoading(false)
+        return
+      }
+
+      if (!validatePassword(loginPassword)) {
+        setError('Password must be at least 6 characters')
+        setLoading(false)
+        return
+      }
+
+      const userByFin = await authService.getUserByFinCode(loginFin)
+      
+      if (!userByFin) {
+        setError('Invalid FIN code or password')
+        setLoading(false)
+        return
+      }
+
+      const email = `${loginFin.toLowerCase()}@nextcargo.app`
+      const firebaseUser = await authService.login(email, loginPassword)
+      
+      const userData = await authService.getUserData(firebaseUser.uid)
+      
+      if (userData) {
+        onLogin(userData)
+        toast.success('Login successful')
+      } else {
+        setError('User data not found')
+      }
+    } catch (error: any) {
+      console.error('Login error:', error)
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+        setError('Invalid FIN code or password')
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Too many attempts. Please try again later')
+      } else {
+        setError('Login failed. Please try again')
+      }
+    } finally {
+      setLoading(false)
     }
-
-    if (!validateFINCode(loginFin)) {
-      setError('Invalid FIN code format (7 characters required)')
-      return
-    }
-
-    if (!validatePassword(loginPassword)) {
-      setError('Password must be at least 6 characters')
-      return
-    }
-
-    const user = users.find(u => u.finCode.toUpperCase() === loginFin.toUpperCase() && u.password === loginPassword)
-    
-    if (!user) {
-      setError('Invalid FIN code or password')
-      return
-    }
-
-    onLogin(user)
   }
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
-    if (!validateName(registerFirstName)) {
-      setError('First name must be at least 2 characters')
-      return
+    try {
+      if (!validateName(registerFirstName)) {
+        setError('First name must be at least 2 characters')
+        setLoading(false)
+        return
+      }
+
+      if (!validateName(registerLastName)) {
+        setError('Last name must be at least 2 characters')
+        setLoading(false)
+        return
+      }
+
+      if (!validateFINCode(registerFin)) {
+        setError('Invalid FIN code format (7 characters required)')
+        setLoading(false)
+        return
+      }
+
+      if (!validatePassword(registerPassword)) {
+        setError('Password must be at least 6 characters')
+        setLoading(false)
+        return
+      }
+
+      const existingUser = await authService.getUserByFinCode(registerFin)
+      if (existingUser) {
+        setError('This FIN code is already registered')
+        setLoading(false)
+        return
+      }
+
+      const email = `${registerFin.toLowerCase()}@nextcargo.app`
+      
+      const userData: Omit<User, 'id'> = {
+        firstName: registerFirstName.trim(),
+        lastName: registerLastName.trim(),
+        finCode: registerFin.toUpperCase(),
+        password: '',
+        isAdmin: false
+      }
+
+      const userId = await authService.register(email, registerPassword, userData)
+
+      const newUser: User = {
+        id: userId,
+        ...userData
+      }
+
+      onRegister(newUser)
+      onLogin(newUser)
+      toast.success('Registration successful')
+    } catch (error: any) {
+      console.error('Registration error:', error)
+      if (error.code === 'auth/email-already-in-use') {
+        setError('This FIN code is already registered')
+      } else if (error.code === 'auth/weak-password') {
+        setError('Password is too weak')
+      } else {
+        setError('Registration failed. Please try again')
+      }
+    } finally {
+      setLoading(false)
     }
-
-    if (!validateName(registerLastName)) {
-      setError('Last name must be at least 2 characters')
-      return
-    }
-
-    if (!validateFINCode(registerFin)) {
-      setError('Invalid FIN code format (7 characters required)')
-      return
-    }
-
-    if (!validatePassword(registerPassword)) {
-      setError('Password must be at least 6 characters')
-      return
-    }
-
-    const existingUser = users.find(u => u.finCode.toUpperCase() === registerFin.toUpperCase())
-    if (existingUser) {
-      setError('This FIN code is already registered')
-      return
-    }
-
-    const newUser: User = {
-      id: `user_${Date.now()}`,
-      firstName: registerFirstName.trim(),
-      lastName: registerLastName.trim(),
-      finCode: registerFin.toUpperCase(),
-      password: registerPassword,
-      isAdmin: false
-    }
-
-    onRegister(newUser)
-    onLogin(newUser)
   }
 
   return (
@@ -132,6 +191,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     value={loginFin}
                     onChange={(e) => setLoginFin(e.target.value)}
                     required
+                    disabled={loading}
                     className="h-12 text-base"
                   />
                 </div>
@@ -145,6 +205,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     required
+                    disabled={loading}
                     className="h-12 text-base"
                   />
                 </div>
@@ -155,8 +216,8 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full h-12 text-base">
-                  Login
+                <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
+                  {loading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
             </TabsContent>
@@ -171,6 +232,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     value={registerFirstName}
                     onChange={(e) => setRegisterFirstName(e.target.value)}
                     required
+                    disabled={loading}
                     className="h-12 text-base"
                   />
                 </div>
@@ -183,6 +245,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     value={registerLastName}
                     onChange={(e) => setRegisterLastName(e.target.value)}
                     required
+                    disabled={loading}
                     className="h-12 text-base"
                   />
                 </div>
@@ -196,6 +259,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     onChange={(e) => setRegisterFin(e.target.value.toUpperCase())}
                     maxLength={7}
                     required
+                    disabled={loading}
                     className="h-12 text-base"
                   />
                 </div>
@@ -209,6 +273,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     required
+                    disabled={loading}
                     className="h-12 text-base"
                   />
                 </div>
@@ -219,8 +284,8 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full h-12 text-base">
-                  Register
+                <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
+                  {loading ? 'Registering...' : 'Register'}
                 </Button>
               </form>
             </TabsContent>

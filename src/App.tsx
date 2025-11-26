@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useState, useEffect } from 'react'
 import { User, Order, SupportMessage, Notification } from '@/lib/types'
 import { Auth } from '@/components/Auth'
 import { AdminPanel } from '@/components/AdminPanel'
@@ -10,30 +9,111 @@ import { Marketplaces } from '@/components/Marketplaces'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
 import { Package, ChatCircle, User as UserIcon, AppWindow } from '@phosphor-icons/react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import { 
+  authService, 
+  ordersService, 
+  supportService, 
+  notificationsService, 
+  usersService 
+} from '@/lib/firebase-services'
+import { toast } from 'sonner'
 
 type Tab = 'orders' | 'support' | 'profile' | 'apps'
 type ViewMode = 'user' | 'admin'
 
 function App() {
-  const [users, setUsers] = useKV<User[]>('users', [])
-  const [orders, setOrders] = useKV<Order[]>('orders', [])
-  const [messages, setMessages] = useKV<SupportMessage[]>('support_messages', [])
-  const [notifications, setNotifications] = useKV<Notification[]>('notifications', [])
+  const [users, setUsers] = useState<User[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
+  const [messages, setMessages] = useState<SupportMessage[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('user')
   const [activeTab, setActiveTab] = useState<Tab>('orders')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+        if (firebaseUser) {
+          const userData = await authService.getUserData(firebaseUser.uid)
+          if (userData) {
+            setCurrentUser(userData)
+            await loadUserData(userData)
+          }
+        } else {
+          setCurrentUser(null)
+          setOrders([])
+          setMessages([])
+          setNotifications([])
+        }
+      } catch (error) {
+        console.error('Auth state change error:', error)
+        toast.error('Failed to load user data')
+      } finally {
+        setLoading(false)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  const loadUserData = async (user: User) => {
+    try {
+      if (user.isAdmin) {
+        const [allOrders, allMessages, allUsers] = await Promise.all([
+          ordersService.getAllOrders(),
+          supportService.getAllMessages(),
+          usersService.getAllUsers()
+        ])
+        setOrders(allOrders)
+        setMessages(allMessages)
+        setUsers(allUsers)
+      } else {
+        const [userOrders, userMessages, userNotifications] = await Promise.all([
+          ordersService.getUserOrders(user.id),
+          supportService.getUserMessages(user.id),
+          notificationsService.getUserNotifications(user.id)
+        ])
+        setOrders(userOrders)
+        setMessages(userMessages)
+        setNotifications(userNotifications)
+      }
+    } catch (error) {
+      console.error('Failed to load user data:', error)
+      toast.error('Failed to load data')
+    }
+  }
 
   const handleLogin = (user: User) => {
     setCurrentUser(user)
+    loadUserData(user)
   }
 
-  const handleRegister = (user: User) => {
-    setUsers((current) => [...(current || []), user])
+  const handleRegister = async (user: User) => {
+    try {
+      await loadUserData(user)
+    } catch (error) {
+      console.error('Failed to load registered user data:', error)
+    }
   }
 
-  const handleLogout = () => {
-    setCurrentUser(null)
-    setActiveTab('orders')
+  const handleLogout = async () => {
+    try {
+      await authService.logout()
+      setCurrentUser(null)
+      setOrders([])
+      setMessages([])
+      setNotifications([])
+      setUsers([])
+      setActiveTab('orders')
+      setViewMode('user')
+      toast.success('Logged out successfully')
+    } catch (error) {
+      console.error('Logout error:', error)
+      toast.error('Failed to logout')
+    }
   }
 
   const handleAdminLogin = () => {
@@ -44,33 +124,82 @@ function App() {
     setViewMode('user')
   }
 
-  const handleUpdateOrder = (updatedOrder: Order) => {
-    setOrders((current) => (current || []).map(o => o.id === updatedOrder.id ? updatedOrder : o))
+  const handleUpdateOrder = async (updatedOrder: Order) => {
+    try {
+      await ordersService.updateOrder(updatedOrder.id, updatedOrder)
+      setOrders((current) => current.map(o => o.id === updatedOrder.id ? updatedOrder : o))
+      toast.success('Order updated successfully')
+    } catch (error) {
+      console.error('Failed to update order:', error)
+      toast.error('Failed to update order')
+    }
   }
 
-  const handleAddOrder = (newOrder: Order) => {
-    setOrders((current) => [...(current || []), newOrder])
+  const handleAddOrder = async (newOrder: Order) => {
+    try {
+      const orderId = await ordersService.createOrder(newOrder)
+      const orderWithId = { ...newOrder, id: orderId }
+      setOrders((current) => [...current, orderWithId])
+      toast.success('Order added successfully')
+    } catch (error) {
+      console.error('Failed to add order:', error)
+      toast.error('Failed to add order')
+    }
   }
 
-  const handleDeleteOrder = (orderId: string) => {
-    setOrders((current) => (current || []).filter(o => o.id !== orderId))
+  const handleDeleteOrder = async (orderId: string) => {
+    try {
+      await ordersService.deleteOrder(orderId)
+      setOrders((current) => current.filter(o => o.id !== orderId))
+      toast.success('Order deleted successfully')
+    } catch (error) {
+      console.error('Failed to delete order:', error)
+      toast.error('Failed to delete order')
+    }
   }
 
-  const handleSendMessage = (message: SupportMessage) => {
-    setMessages((current) => [...(current || []), message])
+  const handleSendMessage = async (message: SupportMessage) => {
+    try {
+      const messageId = await supportService.sendMessage(message)
+      const messageWithId = { ...message, id: messageId }
+      setMessages((current) => [...current, messageWithId])
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      toast.error('Failed to send message')
+    }
   }
 
-  const handleSendNotification = (notification: Notification) => {
-    setNotifications((current) => [...(current || []), notification])
+  const handleSendNotification = async (notification: Notification) => {
+    try {
+      const notificationId = await notificationsService.createNotification(notification)
+      const notificationWithId = { ...notification, id: notificationId }
+      setNotifications((current) => [...current, notificationWithId])
+    } catch (error) {
+      console.error('Failed to send notification:', error)
+      toast.error('Failed to send notification')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
+            <Package size={32} weight="bold" className="text-primary-foreground" />
+          </div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   if (viewMode === 'admin') {
     return (
       <>
         <AdminPanel
-          orders={orders || []}
-          users={users || []}
-          messages={messages || []}
+          orders={orders}
+          users={users}
+          messages={messages}
           onUpdateOrder={handleUpdateOrder}
           onAddOrder={handleAddOrder}
           onDeleteOrder={handleDeleteOrder}
@@ -88,7 +217,7 @@ function App() {
       <>
         <Auth 
           onLogin={handleLogin} 
-          users={users || []} 
+          users={users} 
           onRegister={handleRegister}
           onAdminLogin={handleAdminLogin}
         />
@@ -112,9 +241,9 @@ function App() {
       </header>
 
       <main className={activeTab === 'support' ? '' : 'pb-20 sm:pb-24'}>
-        {activeTab === 'orders' && <OrderList orders={orders || []} user={currentUser} />}
+        {activeTab === 'orders' && <OrderList orders={orders} user={currentUser} />}
         {activeTab === 'support' && (
-          <Support messages={messages || []} user={currentUser} onSendMessage={handleSendMessage} />
+          <Support messages={messages} user={currentUser} onSendMessage={handleSendMessage} />
         )}
         {activeTab === 'profile' && <Profile user={currentUser} onLogout={handleLogout} />}
         {activeTab === 'apps' && <Marketplaces />}

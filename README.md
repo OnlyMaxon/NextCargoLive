@@ -27,7 +27,7 @@ npm install
 
 ### 2. Set Up Firebase
 
-Follow the comprehensive guide in [FIREBASE_INTEGRATION_GUIDE.md](./FIREBASE_INTEGRATION_GUIDE.md)
+Follow the comprehensive guide in [FIREBASE_INTEGRATION_COMPLETE.md](./FIREBASE_INTEGRATION_COMPLETE.md)
 
 Quick summary:
 1. Create a Firebase project
@@ -45,7 +45,7 @@ The application will open at `http://localhost:5173`
 
 ## 🔥 Firebase Setup
 
-**Important**: This application requires Firebase to work in production. See [FIREBASE_INTEGRATION_GUIDE.md](./FIREBASE_INTEGRATION_GUIDE.md) for detailed setup instructions.
+**Important**: This application requires Firebase to work in production. See [FIREBASE_INTEGRATION_COMPLETE.md](./FIREBASE_INTEGRATION_COMPLETE.md) for detailed setup instructions.
 
 Required Firebase services:
 - **Authentication** (Email/Password)
@@ -105,7 +105,7 @@ src/
 
 ## 🚀 Deployment
 
-1. Set up Firebase (see [FIREBASE_INTEGRATION_GUIDE.md](./FIREBASE_INTEGRATION_GUIDE.md))
+1. Set up Firebase (see [FIREBASE_INTEGRATION_COMPLETE.md](./FIREBASE_INTEGRATION_COMPLETE.md))
 2. Add environment variables to your hosting platform
 3. Build the application: `npm run build`
 4. Deploy the `dist` folder to your hosting service
@@ -117,7 +117,8 @@ Recommended platforms:
 
 ## 📄 Documentation
 
-- [Firebase Integration Guide](./FIREBASE_INTEGRATION_GUIDE.md) - Complete Firebase setup
+- [Firebase Integration Complete Guide](./FIREBASE_INTEGRATION_COMPLETE.md) - **NEW: Complete Firebase setup with detailed steps**
+- [Firebase Integration Guide](./FIREBASE_INTEGRATION_GUIDE.md) - Original integration reference
 - [Firebase Setup](./FIREBASE_SETUP.md) - Quick Firebase reference
 - [Security Guide](./SECURITY.md) - Security best practices
 
