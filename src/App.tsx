@@ -103,7 +103,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background">
       <header className="border-b bg-card sticky top-0 z-10 shadow-sm">
         <div className="px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -123,7 +123,7 @@ function App() {
         </div>
       </header>
 
-      <main>
+      <main className={activeTab === 'support' ? '' : 'pb-24'}>
         {activeTab === 'orders' && <OrderList orders={orders || []} user={currentUser} />}
         {activeTab === 'support' && (
           <Support messages={messages || []} user={currentUser} onSendMessage={handleSendMessage} />

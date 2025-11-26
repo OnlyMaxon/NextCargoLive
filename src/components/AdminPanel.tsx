@@ -318,8 +318,8 @@ export function AdminPanel({
           </TabsContent>
 
           <TabsContent value="support" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="md:col-span-1">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="lg:col-span-1">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg">Conversations</CardTitle>
                   <p className="text-sm text-muted-foreground">
@@ -327,7 +327,7 @@ export function AdminPanel({
                   </p>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <ScrollArea className="h-[600px]">
+                  <ScrollArea className="h-[500px] lg:h-[600px]">
                     {conversations.length === 0 ? (
                       <div className="p-4">
                         <Alert>
@@ -350,43 +350,44 @@ export function AdminPanel({
                             <button
                               key={conv.conversationId}
                               className={cn(
-                                "w-full text-left p-4 transition-all hover:bg-accent/50",
+                                "w-full text-left p-3 transition-all hover:bg-accent/50",
                                 isSelected && "bg-primary/5 border-l-4 border-l-primary"
                               )}
                               onClick={() => setSelectedConversation(conv.conversationId)}
                             >
                               <div className="flex items-start gap-3">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 border-2 border-primary/20">
-                                  <span className="text-lg font-bold text-primary">
+                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 border-2 border-primary/20">
+                                  <span className="text-base font-bold text-primary">
                                     {conv.user?.firstName?.[0]}{conv.user?.lastName?.[0]}
                                   </span>
                                 </div>
                                 
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-baseline justify-between gap-2 mb-1">
-                                    <p className="font-semibold text-base truncate">
-                                      {conv.user ? `${conv.user.firstName} ${conv.user.lastName}` : 'Unknown'}
-                                    </p>
+                                  <div className="flex items-start justify-between gap-2 mb-1">
+                                    <div className="min-w-0 flex-1">
+                                      <p className="font-semibold text-[15px] truncate">
+                                        {conv.user ? `${conv.user.firstName} ${conv.user.lastName}` : 'Unknown'}
+                                      </p>
+                                      <p className="text-[11px] text-muted-foreground font-mono">
+                                        FIN: {conv.user?.finCode || 'N/A'}
+                                      </p>
+                                    </div>
                                     {conv.lastMessage && (
-                                      <span className="text-xs text-muted-foreground flex-shrink-0">
+                                      <span className="text-[11px] text-muted-foreground flex-shrink-0 mt-0.5">
                                         {lastMessageTime}
                                       </span>
                                     )}
                                   </div>
                                   
-                                  <p className="text-xs text-muted-foreground font-mono mb-2">
-                                    FIN: {conv.user?.finCode || 'N/A'}
-                                  </p>
-                                  
-                                  <div className="flex items-center justify-between gap-2">
-                                    <p className="text-sm text-muted-foreground truncate flex-1">
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <p className="text-sm text-muted-foreground line-clamp-2 flex-1 min-w-0">
                                       {conv.lastMessage?.isAdmin && (
                                         <span className="text-primary font-medium">You: </span>
                                       )}
                                       {conv.lastMessage?.message || 'No messages'}
                                     </p>
                                     {conv.unreadCount > 0 && (
-                                      <Badge variant="destructive" className="flex-shrink-0 h-5 min-w-[20px] px-1.5">
+                                      <Badge variant="destructive" className="flex-shrink-0 h-5 min-w-[20px] px-1.5 text-xs">
                                         {conv.unreadCount}
                                       </Badge>
                                     )}
@@ -402,7 +403,7 @@ export function AdminPanel({
                 </CardContent>
               </Card>
 
-              <Card className="md:col-span-2">
+              <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle>Messages</CardTitle>
                 </CardHeader>
@@ -414,8 +415,8 @@ export function AdminPanel({
                     </Alert>
                   ) : (
                     <div className="space-y-4">
-                      <ScrollArea className="h-[480px]">
-                        <div className="space-y-3">
+                      <ScrollArea className="h-[380px] lg:h-[480px]">
+                        <div className="space-y-3 pr-4">
                           {messages
                             .filter(m => m.conversationId === selectedConversation)
                             .sort((a, b) => a.timestamp - b.timestamp)
@@ -424,12 +425,12 @@ export function AdminPanel({
                                 key={msg.id}
                                 className={`flex ${msg.isAdmin ? 'justify-end' : 'justify-start'}`}
                               >
-                                <Card className={`max-w-[80%] ${msg.isAdmin ? 'bg-primary text-primary-foreground' : 'bg-card'}`}>
+                                <Card className={`max-w-[85%] lg:max-w-[80%] ${msg.isAdmin ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                                   <CardContent className="p-3 space-y-1">
                                     {!msg.isAdmin && (
-                                      <p className="text-xs font-semibold">{msg.userName}</p>
+                                      <p className="text-xs font-semibold text-primary">{msg.userName}</p>
                                     )}
-                                    <p className="text-sm leading-relaxed">{msg.message}</p>
+                                    <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{msg.message}</p>
                                     <p className={`text-xs ${msg.isAdmin ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                                       {formatDate(msg.timestamp)}
                                     </p>
@@ -445,9 +446,9 @@ export function AdminPanel({
                           placeholder="Type your reply..."
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
-                          className="flex-1 min-h-[60px]"
+                          className="flex-1 min-h-[60px] max-h-[120px] resize-none"
                         />
-                        <Button onClick={handleSendReply} disabled={!replyText.trim()}>
+                        <Button onClick={handleSendReply} disabled={!replyText.trim()} className="self-end">
                           <PaperPlaneRight size={20} weight="bold" />
                         </Button>
                       </div>
