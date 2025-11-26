@@ -14,46 +14,46 @@ export function Profile({ user, onLogout }: ProfileProps) {
   const initials = `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y-6">
       <h2 className="text-2xl font-semibold tracking-tight">Profile</h2>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-4">
           <div className="flex items-center gap-4">
-            <Avatar className="w-16 h-16">
-              <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
+            <Avatar className="w-20 h-20">
+              <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle className="text-xl">{user.firstName} {user.lastName}</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">Customer Account</p>
+              <p className="text-base text-muted-foreground mt-1">Customer Account</p>
             </div>
           </div>
         </CardHeader>
         <Separator />
-        <CardContent className="pt-6 space-y-4">
+        <CardContent className="pt-6 space-y-5">
           <div className="flex items-start gap-3">
-            <UserIcon size={20} className="text-muted-foreground mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">First Name</p>
-              <p className="font-medium">{user.firstName}</p>
+            <UserIcon size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-muted-foreground mb-1">First Name</p>
+              <p className="font-medium text-base">{user.firstName}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <UserIcon size={20} className="text-muted-foreground mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">Last Name</p>
-              <p className="font-medium">{user.lastName}</p>
+            <UserIcon size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-muted-foreground mb-1">Last Name</p>
+              <p className="font-medium text-base">{user.lastName}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Barcode size={20} className="text-muted-foreground mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">FIN Code</p>
-              <p className="font-mono font-semibold text-lg">{user.finCode}</p>
+            <Barcode size={22} className="text-muted-foreground mt-1 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-muted-foreground mb-1">FIN Code</p>
+              <p className="font-mono font-semibold text-lg break-all">{user.finCode}</p>
             </div>
           </div>
         </CardContent>
@@ -63,10 +63,10 @@ export function Profile({ user, onLogout }: ProfileProps) {
         <CardContent className="pt-6">
           <Button
             variant="destructive"
-            className="w-full"
+            className="w-full h-12 text-base"
             onClick={onLogout}
           >
-            <SignOut size={20} weight="bold" className="mr-2" />
+            <SignOut size={22} weight="bold" className="mr-2" />
             Logout
           </Button>
         </CardContent>

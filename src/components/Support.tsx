@@ -72,24 +72,24 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)]">
-      <div className="p-6 border-b bg-card">
+    <div className="flex flex-col h-[calc(100vh-160px)]">
+      <div className="p-5 border-b bg-card">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-            <ChatCircle size={24} weight="fill" className="text-primary-foreground" />
+          <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+            <ChatCircle size={26} weight="fill" className="text-primary-foreground" />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h2 className="text-xl font-semibold tracking-tight">Support Chat</h2>
             <p className="text-sm text-muted-foreground">We're here to help you</p>
           </div>
         </div>
       </div>
 
-      <ScrollArea className="flex-1 p-6">
+      <ScrollArea className="flex-1 p-4">
         {conversation.length === 0 ? (
-          <Alert>
-            <ChatCircle className="h-4 w-4" />
-            <AlertDescription>
+          <Alert className="text-base">
+            <ChatCircle className="h-5 w-5" />
+            <AlertDescription className="text-base leading-relaxed">
               No messages yet. Start a conversation with our support team!
             </AlertDescription>
           </Alert>
@@ -103,19 +103,19 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
                 <div key={msg.id}>
                   {showDate && (
                     <div className="flex justify-center my-4">
-                      <span className="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full">
+                      <span className="text-sm text-muted-foreground bg-muted px-4 py-1.5 rounded-full">
                         {formatDate(msg.timestamp)}
                       </span>
                     </div>
                   )}
                   <div className={`flex ${msg.isAdmin ? 'justify-start' : 'justify-end'}`}>
-                    <Card className={`max-w-[80%] ${msg.isAdmin ? 'bg-card' : 'bg-primary text-primary-foreground'}`}>
-                      <div className="p-3 space-y-1">
+                    <Card className={`max-w-[85%] ${msg.isAdmin ? 'bg-card' : 'bg-primary text-primary-foreground'}`}>
+                      <div className="p-4 space-y-1.5">
                         {msg.isAdmin && (
-                          <p className="text-xs font-semibold text-primary">Support Team</p>
+                          <p className="text-sm font-semibold text-primary">Support Team</p>
                         )}
-                        <p className="text-sm leading-relaxed">{msg.message}</p>
-                        <p className={`text-xs ${msg.isAdmin ? 'text-muted-foreground' : 'text-primary-foreground/70'}`}>
+                        <p className="text-base leading-relaxed break-words">{msg.message}</p>
+                        <p className={`text-sm ${msg.isAdmin ? 'text-muted-foreground' : 'text-primary-foreground/70'}`}>
                           {formatTime(msg.timestamp)}
                         </p>
                       </div>
@@ -128,17 +128,17 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
         )}
       </ScrollArea>
 
-      <div className="p-6 border-t bg-card">
+      <div className="p-4 border-t bg-card">
         <div className="flex gap-2">
           <Input
             placeholder="Type your message..."
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="flex-1"
+            className="flex-1 h-12 text-base"
           />
-          <Button onClick={handleSend} disabled={!messageText.trim()}>
-            <PaperPlaneRight size={20} weight="bold" />
+          <Button onClick={handleSend} disabled={!messageText.trim()} className="h-12 px-4">
+            <PaperPlaneRight size={22} weight="bold" />
           </Button>
         </div>
       </div>
