@@ -320,48 +320,82 @@ export function AdminPanel({
           <TabsContent value="support" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="md:col-span-1">
-                <CardHeader>
-                  <CardTitle>Conversations</CardTitle>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Conversations</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {conversations.length} {conversations.length === 1 ? 'conversation' : 'conversations'}
+                  </p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                   <ScrollArea className="h-[600px]">
                     {conversations.length === 0 ? (
-                      <Alert>
-                        <ChatCircle className="h-4 w-4" />
-                        <AlertDescription>No support messages yet</AlertDescription>
-                      </Alert>
+                      <div className="p-4">
+                        <Alert>
+                          <ChatCircle className="h-4 w-4" />
+                          <AlertDescription>No support messages yet</AlertDescription>
+                        </Alert>
+                      </div>
                     ) : (
-                      <div className="space-y-2">
-                        {conversations.map((conv) => (
-                          <Card
-                            key={conv.conversationId}
-                            className={`cursor-pointer transition-all ${
-                              selectedConversation === conv.conversationId
-                                ? 'border-primary shadow-md'
-                                : 'hover:shadow-sm'
-                            }`}
-                            onClick={() => setSelectedConversation(conv.conversationId)}
-                          >
-                            <CardContent className="p-4">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <p className="font-semibold truncate">
-                                    {conv.user ? `${conv.user.firstName} ${conv.user.lastName}` : 'Unknown'}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground font-mono">
-                                    {conv.user?.finCode}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground truncate mt-1">
-                                    {conv.lastMessage?.message}
-                                  </p>
+                      <div className="divide-y">
+                        {conversations.map((conv) => {
+                          const isSelected = selectedConversation === conv.conversationId
+                          const lastMessageTime = conv.lastMessage?.timestamp 
+                            ? new Date(conv.lastMessage.timestamp).toLocaleTimeString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })
+                            : ''
+                          
+                          return (
+                            <button
+                              key={conv.conversationId}
+                              className={cn(
+                                "w-full text-left p-4 transition-all hover:bg-accent/50",
+                                isSelected && "bg-primary/5 border-l-4 border-l-primary"
+                              )}
+                              onClick={() => setSelectedConversation(conv.conversationId)}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 border-2 border-primary/20">
+                                  <span className="text-lg font-bold text-primary">
+                                    {conv.user?.firstName?.[0]}{conv.user?.lastName?.[0]}
+                                  </span>
                                 </div>
-                                {conv.unreadCount > 0 && (
-                                  <Badge variant="destructive">{conv.unreadCount}</Badge>
-                                )}
+                                
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                                    <p className="font-semibold text-base truncate">
+                                      {conv.user ? `${conv.user.firstName} ${conv.user.lastName}` : 'Unknown'}
+                                    </p>
+                                    {conv.lastMessage && (
+                                      <span className="text-xs text-muted-foreground flex-shrink-0">
+                                        {lastMessageTime}
+                                      </span>
+                                    )}
+                                  </div>
+                                  
+                                  <p className="text-xs text-muted-foreground font-mono mb-2">
+                                    FIN: {conv.user?.finCode || 'N/A'}
+                                  </p>
+                                  
+                                  <div className="flex items-center justify-between gap-2">
+                                    <p className="text-sm text-muted-foreground truncate flex-1">
+                                      {conv.lastMessage?.isAdmin && (
+                                        <span className="text-primary font-medium">You: </span>
+                                      )}
+                                      {conv.lastMessage?.message || 'No messages'}
+                                    </p>
+                                    {conv.unreadCount > 0 && (
+                                      <Badge variant="destructive" className="flex-shrink-0 h-5 min-w-[20px] px-1.5">
+                                        {conv.unreadCount}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        ))}
+                            </button>
+                          )
+                        })}
                       </div>
                     )}
                   </ScrollArea>
