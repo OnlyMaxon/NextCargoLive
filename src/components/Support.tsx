@@ -78,19 +78,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
   }
 
   return (
-    <div className="fixed inset-0 top-[73px] bottom-0 flex flex-col bg-background">
-      <div className="px-4 py-3 sm:py-4 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-            <ChatCircle size={22} weight="fill" className="text-primary-foreground sm:w-6 sm:h-6" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Support Chat</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">We usually reply within 1 hour</p>
-          </div>
-        </div>
-      </div>
-
+    <div className="h-[calc(100vh-73px-80px)] sm:h-[calc(100vh-85px-96px)] flex flex-col bg-background">
       <div 
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto overscroll-contain px-4"
@@ -196,7 +184,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
         )}
       </div>
 
-      <div className="border-t bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 p-3 sm:p-4 pb-safe safe-area-inset-bottom">
+      <div className="border-t bg-card p-3 sm:p-4">
         <div className="flex gap-2 sm:gap-3 items-end">
           <Textarea
             placeholder="Type your message..."
