@@ -40,6 +40,10 @@ function App() {
           const userData = await authService.getUserData(firebaseUser.uid)
           if (userData) {
             setCurrentUser(userData)
+            // Auto-switch to admin mode if user is admin
+            if (userData.isAdmin) {
+              setViewMode('admin')
+            }
             await loadUserData(userData)
           }
         } else {
@@ -47,6 +51,7 @@ function App() {
           setOrders([])
           setMessages([])
           setNotifications([])
+          setViewMode('user')
         }
       } catch (error) {
         console.error('Auth state change error:', error)
@@ -120,8 +125,21 @@ function App() {
     setViewMode('admin')
   }
 
-  const handleAdminLogout = () => {
-    setViewMode('user')
+  const handleAdminLogout = async () => {
+    try {
+      await authService.logout()
+      setCurrentUser(null)
+      setOrders([])
+      setMessages([])
+      setNotifications([])
+      setUsers([])
+      setActiveTab('orders')
+      setViewMode('user')
+      toast.success('Logged out successfully')
+    } catch (error) {
+      console.error('Logout error:', error)
+      toast.error('Failed to logout')
+    }
   }
 
   const handleUpdateOrder = async (updatedOrder: Order) => {

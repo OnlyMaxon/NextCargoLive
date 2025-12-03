@@ -24,11 +24,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment
 .env
-**/agent-eval-report*
-packages
-pids
-.file-manifest
-.devcontainer/
+.env.local
+.env.production
 
-.spark-workbench-id
+# Firebase
+.firebase
+firebase-debug.log

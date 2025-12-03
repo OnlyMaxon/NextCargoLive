@@ -15,7 +15,7 @@ A modern cargo tracking and management application built with React, TypeScript,
 
 - Node.js (v18 or higher)
 - npm or yarn
-- Firebase account (for production deployment)
+- Firebase account
 
 ## 🛠️ Quick Start
 
@@ -27,10 +27,7 @@ npm install
 
 ### 2. Set Up Firebase
 
-Follow the comprehensive guide in [FIREBASE_INTEGRATION_COMPLETE.md](./FIREBASE_INTEGRATION_COMPLETE.md)
-
-Quick summary:
-1. Create a Firebase project
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
 2. Enable Email/Password authentication
 3. Create a Firestore database
 4. Copy `.env.example` to `.env` and add your Firebase config
@@ -45,11 +42,21 @@ The application will open at `http://localhost:5173`
 
 ## 🔥 Firebase Setup
 
-**Important**: This application requires Firebase to work in production. See [FIREBASE_INTEGRATION_COMPLETE.md](./FIREBASE_INTEGRATION_COMPLETE.md) for detailed setup instructions.
-
 Required Firebase services:
 - **Authentication** (Email/Password)
 - **Firestore Database**
+
+### Environment Variables
+
+Create `.env` file with:
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
 
 ## 📱 User Features
 
@@ -105,7 +112,7 @@ src/
 
 ## 🚀 Deployment
 
-1. Set up Firebase (see [FIREBASE_INTEGRATION_COMPLETE.md](./FIREBASE_INTEGRATION_COMPLETE.md))
+1. Set up Firebase project
 2. Add environment variables to your hosting platform
 3. Build the application: `npm run build`
 4. Deploy the `dist` folder to your hosting service
@@ -115,21 +122,13 @@ Recommended platforms:
 - Netlify
 - Firebase Hosting
 
-## 📄 Documentation
-
-- [Firebase Integration Complete Guide](./FIREBASE_INTEGRATION_COMPLETE.md) - **NEW: Complete Firebase setup with detailed steps**
-- [Firebase Integration Guide](./FIREBASE_INTEGRATION_GUIDE.md) - Original integration reference
-- [Firebase Setup](./FIREBASE_SETUP.md) - Quick Firebase reference
-- [Security Guide](./SECURITY.md) - Security best practices
-
 ## 🆘 Support
 
 For issues or questions:
-1. Check the Firebase Integration Guide
-2. Review browser console for errors
-3. Verify Firebase configuration
-4. Check Firestore security rules
+1. Review browser console for errors
+2. Verify Firebase configuration
+3. Check Firestore security rules
 
 ## 📄 License
 
-The Spark Template files and resources from GitHub are licensed under the terms of the MIT license, Copyright GitHub, Inc.
+MIT License

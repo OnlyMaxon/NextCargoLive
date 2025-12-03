@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { validateFINCode, validatePassword, validateName } from '@/lib/validation'
-import { ADMIN_CREDENTIALS } from '@/lib/constants'
 import { User } from '@/lib/types'
 import { Package } from '@phosphor-icons/react'
 import { authService } from '@/lib/firebase-services'
@@ -36,12 +35,6 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
     setLoading(true)
 
     try {
-      if (loginFin === ADMIN_CREDENTIALS.username && loginPassword === ADMIN_CREDENTIALS.password) {
-        onAdminLogin()
-        setLoading(false)
-        return
-      }
-
       if (!validateFINCode(loginFin)) {
         setError('Invalid FIN code format (7 characters required)')
         setLoading(false)
@@ -54,21 +47,19 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
         return
       }
 
-      const userByFin = await authService.getUserByFinCode(loginFin)
-      
-      if (!userByFin) {
-        setError('Invalid FIN code or password')
-        setLoading(false)
-        return
-      }
-
       const email = `${loginFin.toLowerCase()}@nextcargo.app`
       const firebaseUser = await authService.login(email, loginPassword)
       
       const userData = await authService.getUserData(firebaseUser.uid)
       
       if (userData) {
-        onLogin(userData)
+        // Check if user is admin and redirect accordingly
+        if (userData.isAdmin) {
+          onLogin(userData)
+          onAdminLogin()
+        } else {
+          onLogin(userData)
+        }
         toast.success('Login successful')
       } else {
         setError('User data not found')
@@ -184,12 +175,13 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-5">
                 <div className="space-y-2.5">
-                  <Label htmlFor="login-fin" className="text-base">FIN Code / Username</Label>
+                  <Label htmlFor="login-fin" className="text-base">FIN Code</Label>
                   <Input
                     id="login-fin"
-                    placeholder="Enter FIN code or admin username"
+                    placeholder="Enter your FIN code (7 characters)"
                     value={loginFin}
-                    onChange={(e) => setLoginFin(e.target.value)}
+                    onChange={(e) => setLoginFin(e.target.value.toUpperCase())}
+                    maxLength={7}
                     required
                     disabled={loading}
                     className="h-12 text-base"
