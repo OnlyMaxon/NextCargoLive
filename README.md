@@ -127,6 +127,15 @@ Recommended platforms:
 For issues or questions:
 1. Review browser console for errors
 2. Verify Firebase configuration
+
+
+
+
+
+
+Все работает через cloudFlare с Файлами Index.js wrangler.jsonc
+База и регистрация работает через Firebase Console (CargoRealTime)
+Domain будет куплен через GoDaddy
 3. Check Firestore security rules
 
 ## 📄 License
