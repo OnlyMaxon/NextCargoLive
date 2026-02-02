@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { validateFINCode, validatePassword, validateName } from '@/lib/validation'
+import { validateFINCode, validateEmail, validatePassword, validateName } from '@/lib/validation'
 import { User } from '@/lib/types'
 import { Package } from '@phosphor-icons/react'
 import { authService } from '@/lib/firebase-services'
@@ -19,10 +19,11 @@ interface AuthProps {
 }
 
 export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
-  const [loginFin, setLoginFin] = useState('')
+  const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [registerFirstName, setRegisterFirstName] = useState('')
   const [registerLastName, setRegisterLastName] = useState('')
+  const [registerEmail, setRegisterEmail] = useState('')
   const [registerFin, setRegisterFin] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [error, setError] = useState('')
@@ -35,8 +36,8 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
     setLoading(true)
 
     try {
-      if (!validateFINCode(loginFin)) {
-        setError('Invalid FIN code format (7 characters required)')
+      if (!validateEmail(loginEmail)) {
+        setError('Please enter a valid email address')
         setLoading(false)
         return
       }
@@ -47,8 +48,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
         return
       }
 
-      const email = `${loginFin.toLowerCase()}@nextcargo.app`
-      const firebaseUser = await authService.login(email, loginPassword)
+      const firebaseUser = await authService.login(loginEmail.trim().toLowerCase(), loginPassword)
       
       const userData = await authService.getUserData(firebaseUser.uid)
       
@@ -67,7 +67,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
     } catch (error: any) {
       console.error('Login error:', error)
       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
-        setError('Invalid FIN code or password')
+        setError('Invalid email or password')
       } else if (error.code === 'auth/too-many-requests') {
         setError('Too many attempts. Please try again later')
       } else {
@@ -96,6 +96,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
         return
       }
 
+      if (!validateEmail(registerEmail)) {
+        setError('Please enter a valid email address')
+        setLoading(false)
+        return
+      }
+
       if (!validateFINCode(registerFin)) {
         setError('Invalid FIN code format (7 characters required)')
         setLoading(false)
@@ -115,11 +121,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
         return
       }
 
-      const email = `${registerFin.toLowerCase()}@nextcargo.app`
+      const email = registerEmail.trim().toLowerCase()
       
       const userData: Omit<User, 'id'> = {
         firstName: registerFirstName.trim(),
         lastName: registerLastName.trim(),
+        email: email,
         finCode: registerFin.toUpperCase(),
         password: '',
         isAdmin: false
@@ -175,13 +182,13 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-5">
                 <div className="space-y-2.5">
-                  <Label htmlFor="login-fin" className="text-base">FIN Code</Label>
+                  <Label htmlFor="login-email" className="text-base">Email</Label>
                   <Input
-                    id="login-fin"
-                    placeholder="Enter your FIN code (7 characters)"
-                    value={loginFin}
-                    onChange={(e) => setLoginFin(e.target.value.toUpperCase())}
-                    maxLength={7}
+                    id="login-email"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     required
                     disabled={loading}
                     className="h-12 text-base"
@@ -236,6 +243,20 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
                     placeholder="Your last name"
                     value={registerLastName}
                     onChange={(e) => setRegisterLastName(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="h-12 text-base"
+                  />
+                </div>
+
+                <div className="space-y-2.5">
+                  <Label htmlFor="register-email" className="text-base">Email</Label>
+                  <Input
+                    id="register-email"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={registerEmail}
+                    onChange={(e) => setRegisterEmail(e.target.value)}
                     required
                     disabled={loading}
                     className="h-12 text-base"

@@ -65,6 +65,7 @@ export const authService = {
         id: userDoc.id,
         firstName: data.firstName,
         lastName: data.lastName,
+        email: data.email || '',
         finCode: data.finCode,
         password: '',
         isAdmin: data.isAdmin || false
@@ -87,6 +88,7 @@ export const authService = {
         id: usersSnapshot.docs[0].id,
         firstName: data.firstName,
         lastName: data.lastName,
+        email: data.email || '',
         finCode: data.finCode,
         password: '',
         isAdmin: data.isAdmin || false
@@ -298,6 +300,7 @@ export const usersService = {
           id: doc.id,
           firstName: data.firstName,
           lastName: data.lastName,
+          email: data.email || '',
           finCode: data.finCode,
           password: '',
           isAdmin: data.isAdmin || false
@@ -319,6 +322,7 @@ export const usersService = {
           id: doc.id,
           firstName: data.firstName,
           lastName: data.lastName,
+          email: data.email || '',
           finCode: data.finCode,
           password: '',
           isAdmin: data.isAdmin || false
@@ -329,7 +333,8 @@ export const usersService = {
       return allUsers.filter(user => 
         user.firstName.toLowerCase().includes(term) ||
         user.lastName.toLowerCase().includes(term) ||
-        user.finCode.toLowerCase().includes(term)
+        user.finCode.toLowerCase().includes(term) ||
+        user.email.toLowerCase().includes(term)
       )
     } catch (error) {
       console.error('Error searching users:', error)

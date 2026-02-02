@@ -5,6 +5,11 @@ export const validateFINCode = (fin: string): boolean => {
   return pattern.test(fin)
 }
 
+export const validateEmail = (email: string): boolean => {
+  const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return pattern.test(email)
+}
+
 export const validatePassword = (password: string): boolean => {
   return password.length >= 6
 }
