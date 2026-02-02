@@ -1,9 +1,15 @@
-name = "my-app"
-main = "index.js" # Путь к файлу из пункта 1
-compatibility_date = "2024-01-01"
+name = "nextcargo"
+main = "index.js"
+compatibility_date = "2026-02-02"
 
 [assets]
-directory = "./public" # Укажите здесь имя вашей папки с HTML/CSS (напр. dist или public)
+directory = "./public" # Или ваш путь к папке со статикой, например "./dist"
 
 [vars]
-API_KEY = "ваш_ключ_здесь" # Теперь переменные заработают
+# Переменные Firebase, которые будут доступны через env.* в вашем Worker
+VITE_FIREBASE_API_KEY = "AIzaSyAmjgWxjGBu8gw3NeZgcs30tJUY1Yi_o5o"
+VITE_FIREBASE_AUTH_DOMAIN = "cargorealtime-39e63.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID = "cargorealtime-39e63"
+VITE_FIREBASE_STORAGE_BUCKET = "cargorealtime-39e63.firebasestorage.app"
+VITE_FIREBASE_MESSAGING_SENDER_ID = "59171620744"
+VITE_FIREBASE_APP_ID = "1:59171620744:web:a77c8f5f40f3e16d119c3d"
