@@ -1,0 +1,9 @@
+name = "my-app"
+main = "index.js" # Путь к файлу из пункта 1
+compatibility_date = "2024-01-01"
+
+[assets]
+directory = "./public" # Укажите здесь имя вашей папки с HTML/CSS (напр. dist или public)
+
+[vars]
+API_KEY = "ваш_ключ_здесь" # Теперь переменные заработают
