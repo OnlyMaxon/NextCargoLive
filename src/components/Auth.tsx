@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { validateFINCode, validateEmail, validatePassword, validateName } from '@/lib/validation'
-import { User } from '@/lib/types'
-import { Package } from '@phosphor-icons/react'
+import { User, AuthTab } from '@/lib/types'
+import { Package, ArrowLeft } from '@phosphor-icons/react'
 import { authService } from '@/lib/firebase-services'
 import { toast } from 'sonner'
 
@@ -16,9 +16,11 @@ interface AuthProps {
   users: User[]
   onRegister: (user: User) => void
   onAdminLogin: () => void
+  defaultTab?: AuthTab
+  onBackClick?: () => void
 }
 
-export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
+export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'login', onBackClick }: AuthProps) {
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [registerFirstName, setRegisterFirstName] = useState('')
@@ -27,8 +29,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
   const [registerFin, setRegisterFin] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState('login')
+  const [activeTab, setActiveTab] = useState(defaultTab)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setActiveTab(defaultTab)
+  }, [defaultTab])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -160,6 +166,17 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin }: AuthProps) {
     <div className="min-h-screen bg-background flex items-center justify-center p-5">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4 pb-4">
+          {onBackClick && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onBackClick}
+              className="w-fit -ml-2 gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft size={18} />
+              Back to Home
+            </Button>
+          )}
           <div className="flex justify-center">
             <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center">
               <Package size={40} weight="bold" className="text-primary-foreground" />

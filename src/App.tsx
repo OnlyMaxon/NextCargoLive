@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { User, Order, SupportMessage, Notification } from '@/lib/types'
+import { User, Order, SupportMessage, Notification, ViewMode, AuthTab } from '@/lib/types'
+import { LandingPage } from '@/components/LandingPage'
 import { Auth } from '@/components/Auth'
 import { AdminPanel } from '@/components/AdminPanel'
 import { OrderList } from '@/components/OrderList'
@@ -21,7 +22,6 @@ import {
 import { toast } from 'sonner'
 
 type Tab = 'orders' | 'support' | 'profile' | 'apps'
-type ViewMode = 'user' | 'admin'
 
 function App() {
   const [users, setUsers] = useState<User[]>([])
@@ -29,7 +29,8 @@ function App() {
   const [messages, setMessages] = useState<SupportMessage[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [viewMode, setViewMode] = useState<ViewMode>('user')
+  const [viewMode, setViewMode] = useState<ViewMode>('landing')
+  const [authTab, setAuthTab] = useState<AuthTab>('login')
   const [activeTab, setActiveTab] = useState<Tab>('orders')
   const [loading, setLoading] = useState(true)
 
@@ -43,6 +44,8 @@ function App() {
             // Auto-switch to admin mode if user is admin
             if (userData.isAdmin) {
               setViewMode('admin')
+            } else {
+              setViewMode('user')
             }
             await loadUserData(userData)
           }
@@ -51,7 +54,7 @@ function App() {
           setOrders([])
           setMessages([])
           setNotifications([])
-          setViewMode('user')
+          setViewMode('landing')
         }
       } catch (error) {
         console.error('Auth state change error:', error)
@@ -113,7 +116,7 @@ function App() {
       setNotifications([])
       setUsers([])
       setActiveTab('orders')
-      setViewMode('user')
+      setViewMode('landing')
       toast.success('Logged out successfully')
     } catch (error) {
       console.error('Logout error:', error)
@@ -134,7 +137,7 @@ function App() {
       setNotifications([])
       setUsers([])
       setActiveTab('orders')
-      setViewMode('user')
+      setViewMode('landing')
       toast.success('Logged out successfully')
     } catch (error) {
       console.error('Logout error:', error)
@@ -198,6 +201,20 @@ function App() {
     }
   }
 
+  const handleLoginClick = () => {
+    setAuthTab('login')
+    setViewMode('auth')
+  }
+
+  const handleRegisterClick = () => {
+    setAuthTab('register')
+    setViewMode('auth')
+  }
+
+  const handleBackToLanding = () => {
+    setViewMode('landing')
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -208,6 +225,18 @@ function App() {
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
+    )
+  }
+
+  if (viewMode === 'landing') {
+    return (
+      <>
+        <LandingPage 
+          onLoginClick={handleLoginClick}
+          onRegisterClick={handleRegisterClick}
+        />
+        <Toaster />
+      </>
     )
   }
 
@@ -230,7 +259,7 @@ function App() {
     )
   }
 
-  if (!currentUser) {
+  if (viewMode === 'auth') {
     return (
       <>
         <Auth 
@@ -238,6 +267,8 @@ function App() {
           users={users} 
           onRegister={handleRegister}
           onAdminLogin={handleAdminLogin}
+          defaultTab={authTab}
+          onBackClick={handleBackToLanding}
         />
         <Toaster />
       </>

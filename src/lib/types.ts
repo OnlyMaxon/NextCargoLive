@@ -1,5 +1,9 @@
 export type OrderStatus = 'in_transit' | 'at_warehouse' | 'delivered'
 
+export type ViewMode = 'landing' | 'auth' | 'user' | 'admin'
+
+export type AuthTab = 'login' | 'register'
+
 export interface User {
   id: string
   firstName: string
