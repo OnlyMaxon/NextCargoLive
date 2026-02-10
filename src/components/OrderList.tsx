@@ -61,47 +61,47 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
   // Warehouse Address Card Component
   const WarehouseAddressCard = () => (
     <Card className="border shadow-sm">
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-                <Warehouse size={18} weight="bold" className="text-primary-foreground" />
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                <Warehouse size={16} weight="bold" className="text-primary-foreground" />
               </div>
-              <div>
-                <span className="font-semibold text-sm sm:text-base">Your Warehouse Address</span>
-                <p className="text-xs text-muted-foreground">Use this for Polish online stores</p>
+              <div className="min-w-0">
+                <span className="font-semibold text-sm">Your Warehouse Address</span>
+                <p className="text-[10px] text-muted-foreground">Use this for Polish online stores</p>
               </div>
             </div>
-            <div className="space-y-1 text-sm font-mono bg-muted/50 rounded-lg p-3 border">
+            <div className="space-y-0.5 text-xs font-mono bg-muted/50 rounded-lg p-2.5 border">
               <p className="font-semibold text-foreground">{WAREHOUSE_ADDRESS.name}</p>
               <p className="text-primary font-semibold">{user.firstName} {user.lastName} - {user.finCode}</p>
               <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.street}</p>
               <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
               <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.country}</p>
-              <p className="text-muted-foreground pt-1">Tel: {WAREHOUSE_ADDRESS.phone}</p>
+              <p className="text-muted-foreground pt-0.5">Tel: {WAREHOUSE_ADDRESS.phone}</p>
             </div>
           </div>
           <Button 
             variant={copied ? "default" : "outline"}
             size="sm" 
             onClick={copyWarehouseAddress}
-            className={`flex-shrink-0 gap-1.5 ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+            className={`flex-shrink-0 gap-1 h-8 text-xs ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
           >
             {copied ? (
               <>
-                <CheckCircle size={14} weight="bold" />
+                <CheckCircle size={12} weight="bold" />
                 Copied
               </>
             ) : (
               <>
-                <Copy size={14} />
+                <Copy size={12} />
                 Copy
               </>
             )}
           </Button>
         </div>
-        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 border p-2.5 rounded-lg">
+        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-muted-foreground bg-muted/50 border p-2 rounded-lg">
           <span>💡</span>
           <span>Your <span className="font-medium">FIN code ({user.finCode})</span> helps us identify your packages</span>
         </div>
@@ -111,11 +111,11 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
   if (userOrders.length === 0) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="p-3 space-y-3">
         <WarehouseAddressCard />
-        <Alert className="text-base">
-          <Package className="h-5 w-5" />
-          <AlertDescription className="text-base leading-relaxed">
+        <Alert className="text-sm">
+          <Package className="h-4 w-4" />
+          <AlertDescription className="text-sm leading-relaxed">
             You don't have any orders yet. Visit the Apps tab to shop from Polish marketplaces and ship to our warehouse!
           </AlertDescription>
         </Alert>
@@ -125,8 +125,8 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
   return (
     <>
-      <ScrollArea className="h-[calc(100vh-140px)]">
-        <div className="p-4 space-y-4">
+      <ScrollArea className="h-[calc(100vh-120px)]">
+        <div className="p-3 space-y-3">
           <WarehouseAddressCard />
           
           <div className="flex items-center gap-3">
@@ -135,28 +135,28 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
             <div className="h-px flex-1 bg-border" />
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-2">
             {userOrders.map((order) => (
               <Card
                 key={order.id}
                 className="cursor-pointer hover:bg-muted/30 border shadow-sm"
                 onClick={() => setSelectedOrder(order)}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 space-y-2 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <Package size={16} className="text-muted-foreground" />
+                <CardContent className="p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 space-y-1.5 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <Package size={14} className="text-muted-foreground flex-shrink-0" />
                         <span className="font-medium text-sm truncate">{order.trackingNumber}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
+                      <p className="text-xs text-muted-foreground line-clamp-2">
                         {order.description}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-[10px] text-muted-foreground">
                         {formatDate(order.createdAt)}
                       </p>
                     </div>
-                    <Badge className={`${STATUS_COLORS[order.status]} text-xs flex-shrink-0`}>
+                    <Badge className={`${STATUS_COLORS[order.status]} text-[10px] flex-shrink-0`}>
                       {STATUS_LABELS[order.status]}
                     </Badge>
                   </div>

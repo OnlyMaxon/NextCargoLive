@@ -276,20 +276,20 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full overflow-x-hidden">
       <header className="border-b bg-white sticky top-0 z-10">
-        <div className="px-4 py-3 sm:py-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-            <Package size={22} weight="bold" className="text-primary-foreground" />
+        <div className="px-4 py-3 flex items-center gap-3">
+          <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+            <Package size={20} weight="bold" className="text-primary-foreground" />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-lg sm:text-xl font-semibold tracking-tight truncate">NextCargo</h1>
+            <h1 className="text-base font-semibold tracking-tight truncate">NextCargo</h1>
             <p className="text-xs text-muted-foreground truncate">Welcome, {currentUser.firstName}</p>
           </div>
         </div>
       </header>
 
-      <main className={activeTab === 'support' ? '' : 'pb-16'}>
+      <main className={activeTab === 'support' ? '' : 'pb-14'}>
         {activeTab === 'orders' && <OrderList orders={orders} user={currentUser} />}
         {activeTab === 'support' && (
           <Support messages={messages} user={currentUser} onSendMessage={handleSendMessage} />
@@ -299,7 +299,7 @@ function App() {
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t z-20 safe-area-inset-bottom">
-        <div className="flex items-center justify-around px-1 py-1.5">
+        <div className="flex items-center justify-around px-2 py-1">
           {[
             { id: 'orders' as Tab, icon: Package, label: 'Orders' },
             { id: 'support' as Tab, icon: ChatCircle, label: 'Support' },
@@ -309,7 +309,7 @@ function App() {
             <Button
               key={item.id}
               variant="ghost"
-              className={`flex-col h-auto py-2 px-4 gap-1 min-w-[60px] rounded-lg ${
+              className={`flex-col h-auto py-1.5 px-3 gap-0.5 min-w-[56px] rounded-lg ${
                 activeTab === item.id 
                   ? 'text-primary' 
                   : 'text-muted-foreground'
@@ -317,7 +317,7 @@ function App() {
               onClick={() => setActiveTab(item.id)}
             >
               <item.icon 
-                size={20} 
+                size={18} 
                 weight={activeTab === item.id ? 'fill' : 'regular'} 
               />
               <span className="text-[10px] font-medium">

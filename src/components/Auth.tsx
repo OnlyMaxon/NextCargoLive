@@ -163,35 +163,35 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-5">
-      <Card className="w-full max-w-md border shadow-sm">
-        <CardHeader className="space-y-4 pb-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 w-full overflow-x-hidden">
+      <Card className="w-full max-w-sm border shadow-sm">
+        <CardHeader className="space-y-3 pb-4">
           {onBackClick && (
             <Button
               variant="ghost"
               size="sm"
               onClick={onBackClick}
-              className="w-fit -ml-2 gap-2 text-muted-foreground hover:text-foreground"
+              className="w-fit -ml-2 gap-1.5 text-muted-foreground hover:text-foreground text-sm"
             >
-              <ArrowLeft size={18} />
-              Back to Home
+              <ArrowLeft size={16} />
+              Back
             </Button>
           )}
           <div className="flex justify-center">
-            <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
-              <Package size={32} weight="bold" className="text-primary-foreground" />
+            <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center">
+              <Package size={28} weight="bold" className="text-primary-foreground" />
             </div>
           </div>
           <div className="text-center">
-            <CardTitle className="text-2xl font-semibold tracking-tight">NextCargo</CardTitle>
-            <CardDescription className="text-sm mt-2">
+            <CardTitle className="text-xl font-semibold tracking-tight">NextCargo</CardTitle>
+            <CardDescription className="text-xs mt-1.5">
               Track your shipments from Poland to Azerbaijan
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-6 h-10">
+            <TabsList className="grid w-full grid-cols-2 mb-5 h-9">
               <TabsTrigger value="login" className="text-sm">Login</TabsTrigger>
               <TabsTrigger value="register" className="text-sm">Register</TabsTrigger>
             </TabsList>

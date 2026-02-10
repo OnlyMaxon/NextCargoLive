@@ -78,10 +78,10 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
   }
 
   return (
-    <div className="h-[calc(100vh-57px-56px)] flex flex-col bg-background">
+    <div className="h-[calc(100vh-52px-48px)] flex flex-col bg-background">
       <div 
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto overscroll-contain px-4"
+        className="flex-1 overflow-y-auto overscroll-contain px-3"
         style={{ 
           WebkitOverflowScrolling: 'touch',
           minHeight: 0

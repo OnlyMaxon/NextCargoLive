@@ -4,12 +4,19 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
   
   html {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+  }
+
+  html, body, #root {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
   }
 }
 

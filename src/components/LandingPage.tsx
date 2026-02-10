@@ -19,22 +19,22 @@ interface LandingPageProps {
 
 export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full overflow-x-hidden">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Package size={22} weight="bold" className="text-primary-foreground" />
+        <div className="w-full max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <Package size={20} weight="bold" className="text-primary-foreground" />
             </div>
-            <span className="text-xl font-semibold">NextCargo</span>
+            <span className="text-lg font-semibold">NextCargo</span>
           </div>
           
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={onLoginClick}>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={onLoginClick}>
               Login
             </Button>
-            <Button onClick={onRegisterClick}>
+            <Button size="sm" onClick={onRegisterClick}>
               Register
             </Button>
           </div>
@@ -42,34 +42,32 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 sm:py-28">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <p className="text-sm font-medium text-muted-foreground">
+      <section className="w-full max-w-7xl mx-auto px-4 py-12 sm:py-20">
+        <div className="max-w-2xl mx-auto text-center space-y-5">
+          <p className="text-xs sm:text-sm font-medium text-muted-foreground">
             Poland → Azerbaijan Delivery
           </p>
           
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight leading-tight">
             Fast & Reliable Cargo Delivery Service
           </h1>
           
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Shop from your favorite Polish online stores — Allegro, Amazon.pl, IKEA and more. 
             We'll deliver your packages safely to Azerbaijan with real-time tracking.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Button 
-              size="lg" 
-              className="w-full sm:w-auto h-12 px-6" 
+              className="w-full sm:w-auto h-11 px-6" 
               onClick={onRegisterClick}
             >
               Get Started
-              <ArrowRight size={18} className="ml-2" />
+              <ArrowRight size={16} className="ml-2" />
             </Button>
             <Button 
-              size="lg" 
               variant="outline" 
-              className="w-full sm:w-auto h-12 px-6" 
+              className="w-full sm:w-auto h-11 px-6" 
               onClick={onLoginClick}
             >
               Sign In
@@ -79,18 +77,18 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
       </section>
 
       {/* How It Works */}
-      <section className="py-16 sm:py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-3">
+      <section className="py-12 sm:py-16 bg-muted/30">
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-2">
               How It Works
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Simple 3-step process to get your packages from Poland to Azerbaijan
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
             {[
               {
                 step: 1,
@@ -112,15 +110,15 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
               }
             ].map((item) => (
               <Card key={item.step} className="border shadow-sm">
-                <CardContent className="pt-6 pb-6 px-5">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                      <item.icon size={22} className="text-muted-foreground" />
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                      <item.icon size={18} className="text-muted-foreground" />
                     </div>
-                    <span className="text-sm font-medium text-muted-foreground">Step {item.step}</span>
+                    <span className="text-xs font-medium text-muted-foreground">Step {item.step}</span>
                   </div>
-                  <h3 className="text-lg font-medium mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="text-base font-medium mb-1">{item.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {item.description}
                   </p>
                 </CardContent>
@@ -131,46 +129,46 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
       </section>
 
       {/* Features */}
-      <section className="py-16 sm:py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-3">
+      <section className="py-12 sm:py-16">
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-2">
               Why Choose NextCargo?
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               We provide the best cargo delivery experience
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
             {[
               {
                 icon: Clock,
                 title: 'Fast Delivery',
-                description: '7-14 days delivery time'
+                description: '7-14 days'
               },
               {
                 icon: ShieldCheck,
                 title: 'Safe & Secure',
-                description: 'Insured packages'
+                description: 'Insured'
               },
               {
                 icon: MapPin,
-                title: 'Real-time Tracking',
-                description: 'Track every step'
+                title: 'Tracking',
+                description: 'Real-time'
               },
               {
                 icon: Phone,
-                title: '24/7 Support',
-                description: 'Always ready to help'
+                title: 'Support',
+                description: '24/7'
               }
             ].map((feature) => (
-              <Card key={feature.title} className="border shadow-sm text-center p-5">
-                <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <feature.icon size={24} className="text-muted-foreground" />
+              <Card key={feature.title} className="border shadow-sm text-center p-4">
+                <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <feature.icon size={20} className="text-muted-foreground" />
                 </div>
-                <h3 className="font-medium mb-1">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <h3 className="text-sm font-medium mb-0.5">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground">{feature.description}</p>
               </Card>
             ))}
           </div>
@@ -178,31 +176,29 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
       </section>
 
       {/* CTA */}
-      <section className="py-16 sm:py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-2xl mx-auto border shadow-sm">
-            <CardContent className="p-8 sm:p-10 text-center space-y-5">
-              <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mx-auto">
-                <Package size={28} weight="bold" className="text-primary-foreground" />
+      <section className="py-12 sm:py-16 bg-muted/30">
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <Card className="max-w-lg mx-auto border shadow-sm">
+            <CardContent className="p-6 sm:p-8 text-center space-y-4">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto">
+                <Package size={24} weight="bold" className="text-primary-foreground" />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-semibold">
+              <h2 className="text-xl sm:text-2xl font-semibold">
                 Ready to Start Shipping?
               </h2>
-              <p className="text-muted-foreground">
-                Join thousands of customers who trust NextCargo for their Poland to Azerbaijan deliveries.
-                Registration is free and takes less than a minute.
+              <p className="text-sm text-muted-foreground">
+                Join thousands of customers who trust NextCargo. Registration is free.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
                 <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto h-12 px-8" 
+                  className="w-full sm:w-auto h-10 px-6" 
                   onClick={onRegisterClick}
                 >
                   Create Free Account
                 </Button>
                 <Button 
-                  size="lg" 
                   variant="ghost" 
+                  className="w-full sm:w-auto"
                   onClick={onLoginClick}
                 >
                   Sign In →
@@ -214,38 +210,38 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-10">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Package size={22} weight="bold" className="text-primary-foreground" />
+      <footer className="border-t py-8">
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Package size={18} weight="bold" className="text-primary-foreground" />
               </div>
               <div>
-                <span className="font-semibold">NextCargo</span>
-                <p className="text-sm text-muted-foreground">Poland → Azerbaijan</p>
+                <span className="font-semibold text-sm">NextCargo</span>
+                <p className="text-xs text-muted-foreground">Poland → Azerbaijan</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 text-xs">
               <a 
                 href="mailto:support@nextcargo.eu" 
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
               >
-                <Envelope size={16} />
+                <Envelope size={14} />
                 support@nextcargo.eu
               </a>
               <a 
                 href="tel:+48576925110" 
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
               >
-                <Phone size={16} />
+                <Phone size={14} />
                 +48 576 925 110
               </a>
             </div>
           </div>
           
-          <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
+          <div className="mt-6 pt-4 border-t text-center text-xs text-muted-foreground">
             © 2026 NextCargo. All rights reserved.
           </div>
         </div>
