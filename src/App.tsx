@@ -277,14 +277,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card sticky top-0 z-10 shadow-sm">
-        <div className="px-4 py-4 sm:py-5 flex items-center gap-2 sm:gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-            <Package size={24} weight="bold" className="text-primary-foreground sm:w-7 sm:h-7" />
+      <header className="border-b bg-white/80 backdrop-blur-xl sticky top-0 z-10 shadow-sm">
+        <div className="px-4 py-4 sm:py-5 flex items-center gap-3 sm:gap-4">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">
+            <Package size={24} weight="bold" className="text-white sm:w-7 sm:h-7" />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">NextCargo</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground truncate">Welcome, {currentUser.firstName}</p>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate gradient-text">NextCargo</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">Welcome, {currentUser.firstName} 👋</p>
           </div>
         </div>
       </header>
@@ -298,43 +298,34 @@ function App() {
         {activeTab === 'apps' && <Marketplaces />}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t z-20 shadow-lg safe-area-inset-bottom">
-        <div className="flex items-center justify-around px-1 sm:px-2 py-3 sm:py-4">
-          <Button
-            variant={activeTab === 'orders' ? 'default' : 'ghost'}
-            className="flex-col h-auto py-2 sm:py-3 px-2 sm:px-4 gap-1 sm:gap-1.5 min-w-[60px] sm:min-w-[70px]"
-            onClick={() => setActiveTab('orders')}
-          >
-            <Package size={22} weight={activeTab === 'orders' ? 'fill' : 'regular'} className="sm:w-[26px] sm:h-[26px]" />
-            <span className="text-[11px] sm:text-xs font-medium">Orders</span>
-          </Button>
-
-          <Button
-            variant={activeTab === 'support' ? 'default' : 'ghost'}
-            className="flex-col h-auto py-2 sm:py-3 px-2 sm:px-4 gap-1 sm:gap-1.5 min-w-[60px] sm:min-w-[70px]"
-            onClick={() => setActiveTab('support')}
-          >
-            <ChatCircle size={22} weight={activeTab === 'support' ? 'fill' : 'regular'} className="sm:w-[26px] sm:h-[26px]" />
-            <span className="text-[11px] sm:text-xs font-medium">Support</span>
-          </Button>
-
-          <Button
-            variant={activeTab === 'profile' ? 'default' : 'ghost'}
-            className="flex-col h-auto py-2 sm:py-3 px-2 sm:px-4 gap-1 sm:gap-1.5 min-w-[60px] sm:min-w-[70px]"
-            onClick={() => setActiveTab('profile')}
-          >
-            <UserIcon size={22} weight={activeTab === 'profile' ? 'fill' : 'regular'} className="sm:w-[26px] sm:h-[26px]" />
-            <span className="text-[11px] sm:text-xs font-medium">Profile</span>
-          </Button>
-
-          <Button
-            variant={activeTab === 'apps' ? 'default' : 'ghost'}
-            className="flex-col h-auto py-2 sm:py-3 px-2 sm:px-4 gap-1 sm:gap-1.5 min-w-[60px] sm:min-w-[70px]"
-            onClick={() => setActiveTab('apps')}
-          >
-            <AppWindow size={22} weight={activeTab === 'apps' ? 'fill' : 'regular'} className="sm:w-[26px] sm:h-[26px]" />
-            <span className="text-[11px] sm:text-xs font-medium">Apps</span>
-          </Button>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-white/50 z-20 shadow-2xl shadow-primary/10 safe-area-inset-bottom">
+        <div className="flex items-center justify-around px-1 sm:px-2 py-2 sm:py-3">
+          {[
+            { id: 'orders' as Tab, icon: Package, label: 'Orders' },
+            { id: 'support' as Tab, icon: ChatCircle, label: 'Support' },
+            { id: 'profile' as Tab, icon: UserIcon, label: 'Profile' },
+            { id: 'apps' as Tab, icon: AppWindow, label: 'Apps' }
+          ].map((item) => (
+            <Button
+              key={item.id}
+              variant="ghost"
+              className={`flex-col h-auto py-2.5 sm:py-3 px-3 sm:px-5 gap-1 sm:gap-1.5 min-w-[60px] sm:min-w-[70px] rounded-xl transition-all duration-300 ${
+                activeTab === item.id 
+                  ? 'bg-primary/10 text-primary shadow-md' 
+                  : 'text-muted-foreground hover:bg-primary/5 hover:text-primary'
+              }`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <item.icon 
+                size={22} 
+                weight={activeTab === item.id ? 'fill' : 'regular'} 
+                className={`sm:w-[26px] sm:h-[26px] transition-transform duration-300 ${activeTab === item.id ? 'scale-110' : ''}`} 
+              />
+              <span className={`text-[11px] sm:text-xs font-medium transition-all ${activeTab === item.id ? 'font-semibold' : ''}`}>
+                {item.label}
+              </span>
+            </Button>
+          ))}
         </div>
       </nav>
 

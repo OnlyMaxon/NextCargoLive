@@ -163,27 +163,33 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-5">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-5">
+      {/* Decorative background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-primary/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+      </div>
+      
+      <Card className="relative w-full max-w-md bg-white/80 backdrop-blur-xl border-white/50 shadow-2xl shadow-primary/10">
         <CardHeader className="space-y-4 pb-4">
           {onBackClick && (
             <Button
               variant="ghost"
               size="sm"
               onClick={onBackClick}
-              className="w-fit -ml-2 gap-2 text-muted-foreground hover:text-foreground"
+              className="w-fit -ml-2 gap-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <ArrowLeft size={18} />
               Back to Home
             </Button>
           )}
           <div className="flex justify-center">
-            <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center">
-              <Package size={40} weight="bold" className="text-primary-foreground" />
+            <div className="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30 pulse-glow">
+              <Package size={40} weight="bold" className="text-white" />
             </div>
           </div>
           <div className="text-center">
-            <CardTitle className="text-3xl font-bold tracking-tight">NextCargo</CardTitle>
+            <CardTitle className="text-3xl font-bold tracking-tight gradient-text">NextCargo</CardTitle>
             <CardDescription className="text-base mt-3 leading-relaxed">
               Track your shipments from Poland to Azerbaijan
             </CardDescription>
@@ -191,9 +197,9 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-6 h-11">
-              <TabsTrigger value="login" className="text-base">Login</TabsTrigger>
-              <TabsTrigger value="register" className="text-base">Register</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-muted/50 p-1">
+              <TabsTrigger value="login" className="text-base data-[state=active]:bg-white data-[state=active]:shadow-md transition-all">Login</TabsTrigger>
+              <TabsTrigger value="register" className="text-base data-[state=active]:bg-white data-[state=active]:shadow-md transition-all">Register</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -227,12 +233,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                 </div>
 
                 {error && (
-                  <Alert variant="destructive">
+                  <Alert variant="destructive" className="border-red-200 bg-red-50">
                     <AlertDescription className="text-base">{error}</AlertDescription>
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
+                <Button type="submit" className="w-full h-12 text-base gradient-bg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5" disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
@@ -309,12 +315,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                 </div>
 
                 {error && (
-                  <Alert variant="destructive">
+                  <Alert variant="destructive" className="border-red-200 bg-red-50">
                     <AlertDescription className="text-base">{error}</AlertDescription>
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
+                <Button type="submit" className="w-full h-12 text-base gradient-bg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5" disabled={loading}>
                   {loading ? 'Registering...' : 'Register'}
                 </Button>
               </form>
