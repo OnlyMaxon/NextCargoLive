@@ -15,7 +15,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
-import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, ChatCircle, Package, PaperPlaneRight, CaretUpDown, Check } from '@phosphor-icons/react'
+import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, ChatCircle, Package, PaperPlaneRight, CaretUpDown, Check, Envelope, Copy } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
@@ -313,7 +313,17 @@ export function AdminPanel({
                             return (
                               <TableRow key={order.id}>
                                 <TableCell className="font-mono font-semibold">{order.trackingNumber}</TableCell>
-                                <TableCell>{getUserName(order.userId)}</TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span>{getUserName(order.userId)}</span>
+                                    <span className="text-xs text-blue-500 cursor-pointer hover:underline" onClick={() => {
+                                      navigator.clipboard.writeText(user?.email || '')
+                                      toast.success('Email copied!')
+                                    }}>
+                                      {user?.email}
+                                    </span>
+                                  </div>
+                                </TableCell>
                                 <TableCell className="font-mono">{user?.finCode}</TableCell>
                                 <TableCell className="max-w-xs truncate">{order.description}</TableCell>
                                 <TableCell>
@@ -366,6 +376,15 @@ export function AdminPanel({
                                   <p className="font-mono font-bold text-base mb-1 break-all">{order.trackingNumber}</p>
                                   <p className="font-medium text-sm mb-1">{getUserName(order.userId)}</p>
                                   <p className="text-xs text-muted-foreground font-mono">FIN: {user?.finCode}</p>
+                                  <p 
+                                    className="text-xs text-blue-500 cursor-pointer hover:underline mt-1"
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(user?.email || '')
+                                      toast.success('Email copied!')
+                                    }}
+                                  >
+                                    📧 {user?.email}
+                                  </p>
                                 </div>
                                 <Badge className={`${STATUS_COLORS[order.status]} flex-shrink-0`}>
                                   {STATUS_LABELS[order.status]}
@@ -587,7 +606,7 @@ export function AdminPanel({
                         {users.filter(u => !u.isAdmin).map((user) => (
                           <CommandItem
                             key={user.id}
-                            value={`${user.firstName} ${user.lastName} ${user.finCode}`}
+                            value={`${user.firstName} ${user.lastName} ${user.finCode} ${user.email}`}
                             onSelect={() => {
                               setNewOrder({ ...newOrder, userId: user.id })
                               setCustomerSearchOpen(false)
@@ -602,6 +621,7 @@ export function AdminPanel({
                             <div className="flex flex-col">
                               <span>{user.firstName} {user.lastName}</span>
                               <span className="text-xs text-muted-foreground font-mono">{user.finCode}</span>
+                              <span className="text-xs text-blue-500">{user.email}</span>
                             </div>
                           </CommandItem>
                         ))}
@@ -610,6 +630,35 @@ export function AdminPanel({
                   </Command>
                 </PopoverContent>
               </Popover>
+              
+              {/* Show selected customer email */}
+              {newOrder.userId && getSelectedCustomer() && (
+                <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Envelope size={18} className="text-blue-500 flex-shrink-0" />
+                      <span className="text-sm text-blue-700 dark:text-blue-300 truncate">
+                        {getSelectedCustomer()?.email}
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
+                      onClick={() => {
+                        navigator.clipboard.writeText(getSelectedCustomer()?.email || '')
+                        toast.success('Email copied!')
+                      }}
+                    >
+                      <Copy size={16} />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    📧 Copy email to notify customer via Outlook
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

@@ -178,33 +178,6 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
         </div>
       </section>
 
-      {/* Warehouse Address */}
-      <section className="bg-primary text-primary-foreground py-16 sm:py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Our Warehouse in Poland</h2>
-            <p className="text-lg opacity-90 mb-8">
-              Use this address when shopping from Polish online stores
-            </p>
-            
-            <Card className="bg-white/10 border-white/20 backdrop-blur">
-              <CardContent className="p-6 sm:p-8">
-                <div className="text-left space-y-2 font-mono text-base sm:text-lg">
-                  <p className="font-semibold">NextCargo Logistics</p>
-                  <p>ul. Składowa 12</p>
-                  <p>01-142 Warszawa, Poland</p>
-                  <p className="pt-2">Tel: +48 22 123 4567</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <p className="mt-6 text-sm opacity-75">
-              Add your FIN code to the address (e.g., "NextCargo - ABC1234") so we can identify your packages
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="py-16 sm:py-24">
         <div className="container mx-auto px-4">
@@ -248,9 +221,9 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
                 <Envelope size={18} />
                 support@nextcargo.eu
               </a>
-              <a href="tel:+48221234567" className="flex items-center gap-2 hover:text-primary transition-colors">
+              <a href="tel:+48576925110" className="flex items-center gap-2 hover:text-primary transition-colors">
                 <Phone size={18} />
-                +48 22 123 4567
+                +48 576 925 110
               </a>
             </div>
           </div>

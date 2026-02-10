@@ -5,11 +5,23 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
 import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
-import { Package, MapPin, Barcode, Calendar, ArrowsClockwise, ClockClockwise } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ArrowsClockwise, ClockClockwise, Copy, CheckCircle, Warehouse } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
+import { toast } from 'sonner'
+
+// Warehouse address constant
+const WAREHOUSE_ADDRESS = {
+  name: 'NextCargo Logistics',
+  street: 'Wierchow 25',
+  postalCode: '04-653',
+  city: 'Warsaw',
+  country: 'Poland',
+  phone: '+48 576 925 110'
+}
 
 interface OrderListProps {
   orders: Order[]
@@ -18,6 +30,7 @@ interface OrderListProps {
 
 export function OrderList({ orders, user }: OrderListProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const userOrders = orders
     .filter(order => order.userId === user.id)
@@ -31,9 +44,69 @@ export function OrderList({ orders, user }: OrderListProps) {
     })
   }
 
+  const copyWarehouseAddress = () => {
+    const addressText = `${WAREHOUSE_ADDRESS.name}
+${user.firstName} ${user.lastName} - ${user.finCode}
+${WAREHOUSE_ADDRESS.street}
+${WAREHOUSE_ADDRESS.postalCode} ${WAREHOUSE_ADDRESS.city}
+${WAREHOUSE_ADDRESS.country}
+Tel: ${WAREHOUSE_ADDRESS.phone}`
+    
+    navigator.clipboard.writeText(addressText)
+    setCopied(true)
+    toast.success('Address copied to clipboard!')
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  // Warehouse Address Card Component
+  const WarehouseAddressCard = () => (
+    <Card className="bg-primary/5 border-primary/20">
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-3">
+              <Warehouse size={20} weight="bold" className="text-primary" />
+              <span className="font-semibold text-sm sm:text-base">Your Warehouse Address</span>
+            </div>
+            <div className="space-y-1 text-sm text-muted-foreground font-mono">
+              <p className="font-semibold text-foreground">{WAREHOUSE_ADDRESS.name}</p>
+              <p className="text-primary font-semibold">{user.firstName} {user.lastName} - {user.finCode}</p>
+              <p>{WAREHOUSE_ADDRESS.street}</p>
+              <p>{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
+              <p>{WAREHOUSE_ADDRESS.country}</p>
+              <p className="pt-1">Tel: {WAREHOUSE_ADDRESS.phone}</p>
+            </div>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={copyWarehouseAddress}
+            className="flex-shrink-0 gap-2"
+          >
+            {copied ? (
+              <>
+                <CheckCircle size={16} weight="bold" className="text-green-500" />
+                Copied
+              </>
+            ) : (
+              <>
+                <Copy size={16} />
+                Copy
+              </>
+            )}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-3 bg-muted/50 p-2 rounded">
+          💡 Use this address when shopping from Polish online stores. Your FIN code helps us identify your packages.
+        </p>
+      </CardContent>
+    </Card>
+  )
+
   if (userOrders.length === 0) {
     return (
-      <div className="p-4">
+      <div className="p-4 space-y-4">
+        <WarehouseAddressCard />
         <Alert className="text-base">
           <Package className="h-5 w-5" />
           <AlertDescription className="text-base leading-relaxed">
@@ -48,6 +121,8 @@ export function OrderList({ orders, user }: OrderListProps) {
     <>
       <ScrollArea className="h-[calc(100vh-180px)] sm:h-[calc(100vh-160px)]">
         <div className="p-4 space-y-5">
+          <WarehouseAddressCard />
+          
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">My Orders</h2>
           
           <div className="space-y-4">
