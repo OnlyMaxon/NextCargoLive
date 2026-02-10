@@ -25,7 +25,7 @@ export function Profile({ user, onLogout }: ProfileProps) {
         <CardHeader className="pb-4">
           <div className="flex items-center gap-4">
             <Avatar className="w-16 h-16 border">
-              <AvatarFallback className="bg-primary text-white text-lg font-semibold">
+              <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>

@@ -20,7 +20,7 @@ export function Marketplaces() {
         <CardContent className="py-4 px-4">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-              <ShoppingCart size={20} weight="bold" className="text-white" />
+              <ShoppingCart size={20} weight="bold" className="text-primary-foreground" />
             </div>
             <div>
               <h3 className="font-semibold text-sm mb-1">Shop from Poland 🇵🇱</h3>

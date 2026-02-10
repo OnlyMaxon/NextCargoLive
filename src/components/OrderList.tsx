@@ -66,7 +66,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
           <div className="flex-1">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-                <Warehouse size={18} weight="bold" className="text-white" />
+                <Warehouse size={18} weight="bold" className="text-primary-foreground" />
               </div>
               <div>
                 <span className="font-semibold text-sm sm:text-base">Your Warehouse Address</span>

@@ -179,7 +179,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
           )}
           <div className="flex justify-center">
             <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
-              <Package size={32} weight="bold" className="text-white" />
+              <Package size={32} weight="bold" className="text-primary-foreground" />
             </div>
           </div>
           <div className="text-center">

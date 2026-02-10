@@ -90,7 +90,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
         {conversation.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-6 py-8">
             <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
-              <ChatCircle size={32} weight="duotone" className="text-white" />
+              <ChatCircle size={32} weight="duotone" className="text-primary-foreground" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
             <p className="text-sm text-muted-foreground max-w-sm mb-6">
@@ -131,7 +131,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
                   <div className={`flex gap-2 ${msg.isAdmin ? 'justify-start' : 'justify-end'} mb-2`}>
                     {msg.isAdmin && (
                       <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 mt-1">
-                        <ChatCircle size={16} weight="fill" className="text-white" />
+                        <ChatCircle size={16} weight="fill" className="text-primary-foreground" />
                       </div>
                     )}
                     
@@ -143,7 +143,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
                         className={`rounded-xl px-3 py-2 ${
                           msg.isAdmin 
                             ? 'bg-muted border rounded-tl-sm' 
-                            : 'bg-primary text-white rounded-tr-sm'
+                            : 'bg-primary text-primary-foreground rounded-tr-sm'
                         }`}
                       >
                         <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">
@@ -157,7 +157,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
 
                     {!msg.isAdmin && (
                       <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="text-xs font-medium text-white">
+                        <span className="text-xs font-medium text-primary-foreground">
                           {user.firstName[0]}{user.lastName[0]}
                         </span>
                       </div>
@@ -188,7 +188,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
             className="h-10 w-10 rounded-lg p-0 flex-shrink-0"
             size="icon"
           >
-            <PaperPlaneRight size={18} weight="fill" className="text-white" />
+            <PaperPlaneRight size={18} weight="fill" className="text-primary-foreground" />
           </Button>
         </div>
       </div>

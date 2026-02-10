@@ -280,7 +280,7 @@ function App() {
       <header className="border-b bg-white sticky top-0 z-10">
         <div className="px-4 py-3 sm:py-4 flex items-center gap-3">
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-            <Package size={22} weight="bold" className="text-white" />
+            <Package size={22} weight="bold" className="text-primary-foreground" />
           </div>
           <div className="min-w-0 flex-1">
             <h1 className="text-lg sm:text-xl font-semibold tracking-tight truncate">NextCargo</h1>
