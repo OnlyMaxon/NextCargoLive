@@ -60,23 +60,22 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
   // Warehouse Address Card Component
   const WarehouseAddressCard = () => (
-    <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 shadow-lg shadow-primary/10 overflow-hidden relative">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2" />
-      <CardContent className="relative p-5 sm:p-6">
+    <Card className="border shadow-sm">
+      <CardContent className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
-                <Warehouse size={20} weight="bold" className="text-white" />
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
+                <Warehouse size={18} weight="bold" className="text-white" />
               </div>
               <div>
-                <span className="font-bold text-base sm:text-lg">Your Warehouse Address</span>
+                <span className="font-semibold text-sm sm:text-base">Your Warehouse Address</span>
                 <p className="text-xs text-muted-foreground">Use this for Polish online stores</p>
               </div>
             </div>
-            <div className="space-y-1.5 text-sm font-mono bg-white/50 rounded-xl p-4 border border-white/50">
-              <p className="font-bold text-foreground">{WAREHOUSE_ADDRESS.name}</p>
-              <p className="text-primary font-bold text-base">{user.firstName} {user.lastName} - {user.finCode}</p>
+            <div className="space-y-1 text-sm font-mono bg-muted/50 rounded-lg p-3 border">
+              <p className="font-semibold text-foreground">{WAREHOUSE_ADDRESS.name}</p>
+              <p className="text-primary font-semibold">{user.firstName} {user.lastName} - {user.finCode}</p>
               <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.street}</p>
               <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
               <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.country}</p>
@@ -84,31 +83,27 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
             </div>
           </div>
           <Button 
-            variant="default"
+            variant={copied ? "default" : "outline"}
             size="sm" 
             onClick={copyWarehouseAddress}
-            className={`flex-shrink-0 gap-2 shadow-lg transition-all duration-300 ${
-              copied 
-                ? 'bg-green-500 hover:bg-green-600 shadow-green-500/25' 
-                : 'gradient-bg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5'
-            }`}
+            className={`flex-shrink-0 gap-1.5 ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
           >
             {copied ? (
               <>
-                <CheckCircle size={16} weight="bold" />
-                Copied!
+                <CheckCircle size={14} weight="bold" />
+                Copied
               </>
             ) : (
               <>
-                <Copy size={16} />
+                <Copy size={14} />
                 Copy
               </>
             )}
           </Button>
         </div>
-        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground bg-amber-50 border border-amber-200 p-3 rounded-lg">
-          <span className="text-lg">💡</span>
-          <span>Your <span className="font-semibold text-amber-700">FIN code ({user.finCode})</span> helps us identify your packages</span>
+        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 border p-2.5 rounded-lg">
+          <span>💡</span>
+          <span>Your <span className="font-medium">FIN code ({user.finCode})</span> helps us identify your packages</span>
         </div>
       </CardContent>
     </Card>
@@ -130,41 +125,38 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
   return (
     <>
-      <ScrollArea className="h-[calc(100vh-180px)] sm:h-[calc(100vh-160px)]">
-        <div className="p-4 space-y-5">
+      <ScrollArea className="h-[calc(100vh-140px)]">
+        <div className="p-4 space-y-4">
           <WarehouseAddressCard />
           
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-muted-foreground">My Orders</h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-border via-transparent to-transparent" />
+            <div className="h-px flex-1 bg-border" />
+            <h2 className="text-sm font-medium text-muted-foreground">My Orders</h2>
+            <div className="h-px flex-1 bg-border" />
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             {userOrders.map((order) => (
               <Card
                 key={order.id}
-                className="cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 active:scale-[0.98] bg-white/80 backdrop-blur border-white/50 overflow-hidden group"
+                className="cursor-pointer hover:bg-muted/30 border shadow-sm"
                 onClick={() => setSelectedOrder(order)}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <CardContent className="relative p-4 sm:p-5">
+                <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                          <Package size={18} weight="bold" className="text-primary" />
-                        </div>
-                        <span className="font-bold text-sm sm:text-base truncate">{order.trackingNumber}</span>
+                    <div className="flex-1 space-y-2 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Package size={16} className="text-muted-foreground" />
+                        <span className="font-medium text-sm truncate">{order.trackingNumber}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-muted-foreground line-clamp-2">
                         {order.description}
                       </p>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
-                        📅 {formatDate(order.createdAt)}
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(order.createdAt)}
                       </p>
                     </div>
-                    <Badge className={`${STATUS_COLORS[order.status]} text-xs whitespace-nowrap flex-shrink-0 shadow-sm`}>
+                    <Badge className={`${STATUS_COLORS[order.status]} text-xs flex-shrink-0`}>
                       {STATUS_LABELS[order.status]}
                     </Badge>
                   </div>
@@ -176,12 +168,10 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
       </ScrollArea>
 
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col bg-white/95 backdrop-blur-xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-3 text-lg sm:text-xl">
-              <div className="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
-                <Package size={20} weight="bold" className="text-white" />
-              </div>
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Package size={18} className="text-primary" />
               Order Details
             </DialogTitle>
           </DialogHeader>

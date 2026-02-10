@@ -78,7 +78,7 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
   }
 
   return (
-    <div className="h-[calc(100vh-73px-80px)] sm:h-[calc(100vh-85px-96px)] flex flex-col bg-gradient-to-b from-background to-primary/5">
+    <div className="h-[calc(100vh-57px-56px)] flex flex-col bg-background">
       <div 
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto overscroll-contain px-4"
@@ -89,26 +89,23 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
       >
         {conversation.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-6 py-8">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 gradient-bg rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-primary/30 pulse-glow">
-              <ChatCircle size={48} weight="duotone" className="text-white sm:w-14 sm:h-14" />
+            <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4">
+              <ChatCircle size={32} weight="duotone" className="text-white" />
             </div>
-            <h3 className="text-2xl sm:text-3xl font-bold mb-3 gradient-text">Need Help?</h3>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-md mb-2">
-              Have questions about your orders or need assistance?
+            <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
+            <p className="text-sm text-muted-foreground max-w-sm mb-6">
+              Our support team is here to help. Start a conversation below.
             </p>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-md mb-8">
-              Our support team is here to help! Start a conversation below.
-            </p>
-            <div className="bg-white/70 backdrop-blur rounded-2xl p-5 sm:p-6 space-y-4 max-w-md w-full border border-white/50 shadow-xl shadow-primary/5">
+            <div className="bg-muted/30 rounded-xl p-4 space-y-3 max-w-sm w-full border">
               {[
-                { icon: '📦', title: 'Track Your Orders', desc: 'Get real-time updates on your shipments' },
-                { icon: '🚚', title: 'Delivery Questions', desc: 'Ask about shipping times and locations' },
-                { icon: '🛟', title: 'Order Issues', desc: 'Report problems with your orders' }
+                { icon: '📦', title: 'Track Orders', desc: 'Get updates on shipments' },
+                { icon: '🚚', title: 'Delivery Questions', desc: 'Shipping times and locations' },
+                { icon: '🛟', title: 'Order Issues', desc: 'Report problems' }
               ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4 p-3 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors">
-                  <div className="text-2xl">{item.icon}</div>
+                <div key={i} className="flex items-start gap-3 p-2.5 bg-background rounded-lg">
+                  <div className="text-lg">{item.icon}</div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold mb-0.5">{item.title}</p>
+                    <p className="text-sm font-medium">{item.title}</p>
                     <p className="text-xs text-muted-foreground">{item.desc}</p>
                   </div>
                 </div>
@@ -124,43 +121,43 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
               return (
                 <div key={msg.id}>
                   {showDate && (
-                    <div className="flex justify-center my-6">
-                      <div className="text-xs font-semibold text-muted-foreground bg-white/70 backdrop-blur px-4 py-2 rounded-full shadow-sm">
+                    <div className="flex justify-center my-4">
+                      <div className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
                         {formatDate(msg.timestamp)}
                       </div>
                     </div>
                   )}
                   
-                  <div className={`flex gap-2 sm:gap-3 ${msg.isAdmin ? 'justify-start' : 'justify-end'} mb-2`}>
+                  <div className={`flex gap-2 ${msg.isAdmin ? 'justify-start' : 'justify-end'} mb-2`}>
                     {msg.isAdmin && (
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl gradient-bg flex items-center justify-center flex-shrink-0 mt-1 shadow-lg shadow-primary/25">
-                        <ChatCircle size={18} weight="fill" className="text-white sm:w-[20px] sm:h-[20px]" />
+                      <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 mt-1">
+                        <ChatCircle size={16} weight="fill" className="text-white" />
                       </div>
                     )}
                     
-                    <div className={`flex flex-col ${msg.isAdmin ? 'items-start' : 'items-end'} max-w-[75%] sm:max-w-[70%]`}>
+                    <div className={`flex flex-col ${msg.isAdmin ? 'items-start' : 'items-end'} max-w-[75%]`}>
                       {msg.isAdmin && (
-                        <span className="text-xs font-bold text-primary mb-1.5 px-1">Support Team</span>
+                        <span className="text-xs font-medium text-muted-foreground mb-1 px-1">Support</span>
                       )}
                       <div 
-                        className={`rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 shadow-sm ${
+                        className={`rounded-xl px-3 py-2 ${
                           msg.isAdmin 
-                            ? 'bg-white/80 backdrop-blur border border-white/50 rounded-tl-md' 
-                            : 'gradient-bg text-white rounded-tr-md shadow-lg shadow-primary/20'
+                            ? 'bg-muted border rounded-tl-sm' 
+                            : 'bg-primary text-white rounded-tr-sm'
                         }`}
                       >
-                        <p className="text-[15px] sm:text-base leading-relaxed break-words whitespace-pre-wrap">
+                        <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">
                           {msg.message}
                         </p>
                       </div>
-                      <span className="text-[11px] sm:text-xs mt-1.5 px-1 text-muted-foreground">
+                      <span className="text-[10px] mt-1 px-1 text-muted-foreground">
                         {formatTime(msg.timestamp)}
                       </span>
                     </div>
 
                     {!msg.isAdmin && (
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl gradient-bg flex items-center justify-center flex-shrink-0 mt-1 shadow-lg shadow-primary/25">
-                        <span className="text-xs font-bold text-white">
+                      <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 mt-1">
+                        <span className="text-xs font-medium text-white">
                           {user.firstName[0]}{user.lastName[0]}
                         </span>
                       </div>
@@ -174,24 +171,24 @@ export function Support({ messages, user, onSendMessage }: SupportProps) {
         )}
       </div>
 
-      <div className="border-t bg-white/80 backdrop-blur-xl p-3 sm:p-4 shadow-lg">
-        <div className="flex gap-2 sm:gap-3 items-end">
+      <div className="border-t bg-background p-3">
+        <div className="flex gap-2 items-end">
           <Textarea
             placeholder="Type your message..."
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             onKeyDown={handleKeyPress}
-            className="flex-1 min-h-[48px] max-h-[120px] resize-none text-[16px] rounded-2xl sm:rounded-3xl px-4 py-3 focus-visible:ring-2 focus-visible:ring-primary/50 border-primary/20 bg-white/70"
+            className="flex-1 min-h-[40px] max-h-[100px] resize-none text-[16px] rounded-xl px-3 py-2"
             rows={1}
             style={{ fontSize: '16px' }}
           />
           <Button 
             onClick={handleSend} 
             disabled={!messageText.trim()} 
-            className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl p-0 flex-shrink-0 gradient-bg shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+            className="h-10 w-10 rounded-lg p-0 flex-shrink-0"
             size="icon"
           >
-            <PaperPlaneRight size={22} weight="fill" className="text-white sm:w-[24px] sm:h-[24px]" />
+            <PaperPlaneRight size={18} weight="fill" className="text-white" />
           </Button>
         </div>
       </div>

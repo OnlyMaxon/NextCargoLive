@@ -231,113 +231,109 @@ export function AdminPanel({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-violet-50 dark:from-slate-950 dark:via-purple-950/30 dark:to-violet-950">
-      <header className="border-b border-white/20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-10 shadow-lg shadow-purple-500/5">
-        <div className="px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+    <div className="min-h-screen bg-background">
+      <header className="border-b bg-white sticky top-0 z-10">
+        <div className="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary via-purple-600 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30 ring-2 ring-white/30">
-              <Package size={24} weight="bold" className="text-white" />
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <Package size={22} weight="bold" className="text-white" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">Admin Panel</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">Cargo Management System</p>
+              <h1 className="text-lg font-semibold tracking-tight truncate">Admin Panel</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block">Cargo Management</p>
             </div>
           </div>
-          <Button variant="destructive" size="sm" onClick={onLogout} className="flex-shrink-0 shadow-lg shadow-red-500/20 hover:shadow-red-500/30 transition-all duration-300">
-            <SignOut size={18} weight="bold" className="sm:mr-2" />
+          <Button variant="destructive" size="sm" onClick={onLogout} className="flex-shrink-0">
+            <SignOut size={16} className="sm:mr-2" />
             <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
       </header>
 
-      <div className="px-4 sm:px-6 lg:container lg:mx-auto py-4 sm:py-6">
+      <div className="px-4 sm:px-6 lg:container lg:mx-auto py-4">
         <Tabs defaultValue="orders">
-          <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 h-11 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/20 shadow-lg">
-            <TabsTrigger value="orders" className="text-sm sm:text-base data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300">Orders</TabsTrigger>
-            <TabsTrigger value="support" className="text-sm sm:text-base data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300">Support</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-4 h-10">
+            <TabsTrigger value="orders" className="text-sm">Orders</TabsTrigger>
+            <TabsTrigger value="support" className="text-sm">Support</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
-            <Card className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-white/20 shadow-xl shadow-purple-500/5">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
-                  <MagnifyingGlass size={22} className="text-primary" />
+          <TabsContent value="orders" className="space-y-4">
+            <Card className="border shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <MagnifyingGlass size={18} className="text-muted-foreground" />
                   Search & Filter
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                  <div className="flex-1 relative group">
-                    <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={20} />
+              <CardContent className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1 relative">
+                    <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                     <Input
                       placeholder="Search by FIN code..."
                       value={searchFin}
                       onChange={(e) => setSearchFin(e.target.value)}
-                      className="pl-10 h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                      className="pl-9 h-10"
                     />
                   </div>
-                  <Button onClick={() => setIsAddingOrder(true)} className="h-11 w-full sm:w-auto bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300">
-                    <Plus size={20} weight="bold" className="mr-2" />
+                  <Button onClick={() => setIsAddingOrder(true)} className="h-10 w-full sm:w-auto">
+                    <Plus size={18} className="mr-2" />
                     Add Order
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-white/20 shadow-xl shadow-purple-500/5">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
-                  <Package size={22} className="text-primary" />
+            <Card className="border shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Package size={18} className="text-muted-foreground" />
                   All Orders
-                  <Badge variant="secondary" className="ml-auto bg-gradient-to-r from-primary/10 to-violet-500/10 text-primary border border-primary/20">
+                  <Badge variant="secondary" className="ml-auto">
                     {sortedOrders.length}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="hidden lg:block">
-                  <ScrollArea className="h-[600px]">
+                  <ScrollArea className="h-[500px]">
                     <Table>
                       <TableHeader>
-                        <TableRow className="border-white/10 hover:bg-transparent">
-                          <TableHead className="text-primary font-semibold">Tracking</TableHead>
-                          <TableHead className="text-primary font-semibold">Customer</TableHead>
-                          <TableHead className="text-primary font-semibold">FIN</TableHead>
-                          <TableHead className="text-primary font-semibold">Description</TableHead>
-                          <TableHead className="text-primary font-semibold">Status</TableHead>
-                          <TableHead className="text-primary font-semibold">Created</TableHead>
-                          <TableHead className="text-primary font-semibold">Actions</TableHead>
+                        <TableRow>
+                          <TableHead className="font-medium">Tracking</TableHead>
+                          <TableHead className="font-medium">Customer</TableHead>
+                          <TableHead className="font-medium">FIN</TableHead>
+                          <TableHead className="font-medium">Description</TableHead>
+                          <TableHead className="font-medium">Status</TableHead>
+                          <TableHead className="font-medium">Created</TableHead>
+                          <TableHead className="font-medium">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {sortedOrders.length === 0 ? (
                           <TableRow>
                             <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                              <div className="flex flex-col items-center gap-2">
-                                <Package size={40} className="text-muted-foreground/50" />
-                                <p>No orders found</p>
-                              </div>
+                              No orders found
                             </TableCell>
                           </TableRow>
                         ) : (
                           sortedOrders.map((order) => {
                             const user = users.find(u => u.id === order.userId)
                             return (
-                              <TableRow key={order.id} className="border-white/10 hover:bg-primary/5 transition-colors duration-200">
-                                <TableCell className="font-mono font-semibold text-primary">{order.trackingNumber}</TableCell>
+                              <TableRow key={order.id}>
+                                <TableCell className="font-mono text-sm">{order.trackingNumber}</TableCell>
                                 <TableCell>
                                   <div className="flex flex-col">
-                                    <span className="font-medium">{getUserName(order.userId)}</span>
-                                    <span className="text-xs text-primary/80 cursor-pointer hover:text-primary hover:underline transition-colors flex items-center gap-1" onClick={() => {
+                                    <span className="text-sm">{getUserName(order.userId)}</span>
+                                    <span className="text-xs text-muted-foreground cursor-pointer hover:text-primary" onClick={() => {
                                       navigator.clipboard.writeText(user?.email || '')
                                       toast.success('Email copied!')
                                     }}>
-                                      <Envelope size={12} />
                                       {user?.email}
                                     </span>
                                   </div>
                                 </TableCell>
-                                <TableCell className="font-mono text-muted-foreground">{user?.finCode}</TableCell>
+                                <TableCell className="font-mono text-sm text-muted-foreground">{user?.finCode}</TableCell>
                                 <TableCell className="max-w-xs truncate">{order.description}</TableCell>
                                 <TableCell>
                                   <Badge className={`${STATUS_COLORS[order.status]} shadow-sm`}>
@@ -351,7 +347,6 @@ export function AdminPanel({
                                       size="sm"
                                       variant="outline"
                                       onClick={() => setEditingOrder(order)}
-                                      className="hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200"
                                     >
                                       <PencilSimple size={16} />
                                     </Button>
@@ -359,7 +354,6 @@ export function AdminPanel({
                                       size="sm"
                                       variant="destructive"
                                       onClick={() => handleDeleteOrder(order.id)}
-                                      className="shadow-sm hover:shadow-red-500/20"
                                     >
                                       <Trash size={16} />
                                     </Button>
@@ -385,15 +379,15 @@ export function AdminPanel({
                       {sortedOrders.map((order) => {
                         const user = users.find(u => u.id === order.userId)
                         return (
-                          <Card key={order.id} className="overflow-hidden bg-white/50 dark:bg-slate-800/50 border-white/20 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/20 transition-all duration-300">
+                          <Card key={order.id} className="border shadow-sm">
                             <CardContent className="p-4 space-y-4">
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-mono font-bold text-base mb-1 break-all text-primary">{order.trackingNumber}</p>
+                                  <p className="font-mono font-medium text-base mb-1 break-all">{order.trackingNumber}</p>
                                   <p className="font-medium text-sm mb-1">{getUserName(order.userId)}</p>
                                   <p className="text-xs text-muted-foreground font-mono">FIN: {user?.finCode}</p>
                                   <p 
-                                    className="text-xs text-primary/80 cursor-pointer hover:text-primary hover:underline mt-1 flex items-center gap-1"
+                                    className="text-xs text-muted-foreground cursor-pointer hover:underline mt-1 flex items-center gap-1"
                                     onClick={() => {
                                       navigator.clipboard.writeText(user?.email || '')
                                       toast.success('Email copied!')
@@ -403,7 +397,7 @@ export function AdminPanel({
                                     {user?.email}
                                   </p>
                                 </div>
-                                <Badge className={`${STATUS_COLORS[order.status]} flex-shrink-0 shadow-sm`}>
+                                <Badge className={`${STATUS_COLORS[order.status]} flex-shrink-0`}>
                                   {STATUS_LABELS[order.status]}
                                 </Badge>
                               </div>
@@ -413,12 +407,12 @@ export function AdminPanel({
                                 <p className="text-xs text-muted-foreground">{formatDate(order.createdAt)}</p>
                               </div>
 
-                              <div className="flex gap-2 pt-2 border-t border-white/10">
+                              <div className="flex gap-2 pt-2 border-t">
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => setEditingOrder(order)}
-                                  className="flex-1 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200"
+                                  className="flex-1"
                                 >
                                   <PencilSimple size={18} className="mr-2" />
                                   Edit
@@ -427,7 +421,7 @@ export function AdminPanel({
                                   size="sm"
                                   variant="destructive"
                                   onClick={() => handleDeleteOrder(order.id)}
-                                  className="flex-1 shadow-sm hover:shadow-red-500/20"
+                                  className="flex-1"
                                 >
                                   <Trash size={18} className="mr-2" />
                                   Delete
@@ -446,7 +440,7 @@ export function AdminPanel({
 
           <TabsContent value="support" className="space-y-4 sm:space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-              <Card className="lg:col-span-1 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-white/20 shadow-xl shadow-purple-500/5">
+              <Card className="lg:col-span-1 border shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                     <ChatCircle size={20} className="text-primary" />
@@ -480,14 +474,14 @@ export function AdminPanel({
                             <button
                               key={conv.conversationId}
                               className={cn(
-                                "w-full text-left p-3 sm:p-4 transition-all duration-200 hover:bg-primary/5 active:bg-primary/10",
-                                isSelected && "bg-gradient-to-r from-primary/10 to-violet-500/5 border-l-4 border-l-primary"
+                                "w-full text-left p-3 sm:p-4 hover:bg-muted/50",
+                                isSelected && "bg-muted border-l-2 border-l-primary"
                               )}
                               onClick={() => setSelectedConversation(conv.conversationId)}
                             >
                               <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-primary/30 to-violet-500/20 flex items-center justify-center flex-shrink-0 border-2 border-primary/30 shadow-md shadow-primary/10">
-                                  <span className="text-sm sm:text-base font-bold text-primary">
+                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                                  <span className="text-sm sm:text-base font-medium text-foreground">
                                     {conv.user?.firstName?.[0]}{conv.user?.lastName?.[0]}
                                   </span>
                                 </div>
@@ -533,17 +527,17 @@ export function AdminPanel({
                 </CardContent>
               </Card>
 
-              <Card className="lg:col-span-2 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-white/20 shadow-xl shadow-purple-500/5">
+              <Card className="lg:col-span-2 border shadow-sm">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                    <PaperPlaneRight size={20} className="text-primary" />
+                    <PaperPlaneRight size={20} className="text-muted-foreground" />
                     Messages
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {!selectedConversation ? (
-                    <Alert className="bg-primary/5 border-primary/20">
-                      <ChatCircle className="h-4 w-4 text-primary" />
+                    <Alert>
+                      <ChatCircle className="h-4 w-4" />
                       <AlertDescription>Select a conversation to view messages</AlertDescription>
                     </Alert>
                   ) : (
@@ -558,13 +552,13 @@ export function AdminPanel({
                                 key={msg.id}
                                 className={`flex ${msg.isAdmin ? 'justify-end' : 'justify-start'}`}
                               >
-                                <Card className={`max-w-[90%] sm:max-w-[85%] lg:max-w-[80%] shadow-lg ${msg.isAdmin ? 'bg-gradient-to-br from-primary to-violet-600 text-white' : 'bg-white/80 dark:bg-slate-800/80 border-white/20'}`}>
+                                <Card className={`max-w-[90%] sm:max-w-[85%] lg:max-w-[80%] ${msg.isAdmin ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                                   <CardContent className="p-3 space-y-1">
                                     {!msg.isAdmin && (
-                                      <p className="text-xs font-semibold text-primary">{msg.userName}</p>
+                                      <p className="text-xs font-semibold">{msg.userName}</p>
                                     )}
                                     <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{msg.message}</p>
-                                    <p className={`text-xs ${msg.isAdmin ? 'text-white/70' : 'text-muted-foreground'}`}>
+                                    <p className={`text-xs ${msg.isAdmin ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                                       {formatDate(msg.timestamp)}
                                     </p>
                                   </CardContent>
@@ -574,14 +568,14 @@ export function AdminPanel({
                         </div>
                       </ScrollArea>
 
-                      <div className="flex gap-2 pt-4 border-t border-white/10">
+                      <div className="flex gap-2 pt-4 border-t">
                         <Textarea
                           placeholder="Type your reply..."
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
-                          className="flex-1 min-h-[60px] max-h-[120px] resize-none bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                          className="flex-1 min-h-[60px] max-h-[120px] resize-none"
                         />
-                        <Button onClick={handleSendReply} disabled={!replyText.trim()} className="self-end h-11 w-11 sm:h-auto sm:w-auto sm:px-4 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 shadow-lg shadow-primary/20 hover:shadow-primary/30 disabled:opacity-50 disabled:shadow-none transition-all duration-300">
+                        <Button onClick={handleSendReply} disabled={!replyText.trim()} className="self-end h-11 w-11 sm:h-auto sm:w-auto sm:px-4">
                           <PaperPlaneRight size={20} weight="bold" />
                         </Button>
                       </div>
@@ -595,11 +589,11 @@ export function AdminPanel({
       </div>
 
       <Dialog open={isAddingOrder} onOpenChange={handleCloseAddDialog}>
-        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-white/20">
+        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-lg sm:text-xl flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center">
-                <Plus size={18} weight="bold" className="text-white" />
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <Plus size={18} weight="bold" className="text-primary-foreground" />
               </div>
               Add New Order
             </DialogTitle>
@@ -613,7 +607,7 @@ export function AdminPanel({
                     variant="outline"
                     role="combobox"
                     aria-expanded={customerSearchOpen}
-                    className="w-full justify-between h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
+                    className="w-full justify-between h-10"
                   >
                     {newOrder.userId ? (
                       <span className="truncate">
@@ -625,9 +619,9 @@ export function AdminPanel({
                     <CaretUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[calc(95vw-2rem)] sm:w-full p-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-white/20" align="start">
+                <PopoverContent className="w-[calc(95vw-2rem)] sm:w-full p-0" align="start">
                   <Command>
-                    <CommandInput placeholder="Search by name or FIN..." className="border-white/20" />
+                    <CommandInput placeholder="Search by name or FIN..." />
                     <CommandList>
                       <CommandEmpty>No customer found.</CommandEmpty>
                       <CommandGroup>
@@ -639,18 +633,17 @@ export function AdminPanel({
                               setNewOrder({ ...newOrder, userId: user.id })
                               setCustomerSearchOpen(false)
                             }}
-                            className="hover:bg-primary/10 transition-colors"
                           >
                             <Check
                               className={cn(
-                                "mr-2 h-4 w-4 text-primary",
+                                "mr-2 h-4 w-4",
                                 newOrder.userId === user.id ? "opacity-100" : "opacity-0"
                               )}
                             />
                             <div className="flex flex-col">
                               <span className="font-medium">{user.firstName} {user.lastName}</span>
                               <span className="text-xs text-muted-foreground font-mono">{user.finCode}</span>
-                              <span className="text-xs text-primary/80">{user.email}</span>
+                              <span className="text-xs text-muted-foreground">{user.email}</span>
                             </div>
                           </CommandItem>
                         ))}
@@ -662,13 +655,13 @@ export function AdminPanel({
               
               {/* Show selected customer email */}
               {newOrder.userId && getSelectedCustomer() && (
-                <div className="mt-2 p-3 bg-gradient-to-r from-primary/10 to-violet-500/5 border border-primary/20 rounded-lg">
+                <div className="mt-2 p-3 bg-muted/50 border rounded-lg">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/10 flex items-center justify-center">
-                        <Envelope size={16} className="text-primary" />
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <Envelope size={16} className="text-muted-foreground" />
                       </div>
-                      <span className="text-sm text-primary font-medium truncate">
+                      <span className="text-sm font-medium truncate">
                         {getSelectedCustomer()?.email}
                       </span>
                     </div>
@@ -676,7 +669,7 @@ export function AdminPanel({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-8 px-2 text-primary hover:text-primary/80 hover:bg-primary/10"
+                      className="h-8 px-2"
                       onClick={() => {
                         navigator.clipboard.writeText(getSelectedCustomer()?.email || '')
                         toast.success('Email copied!')
@@ -685,8 +678,8 @@ export function AdminPanel({
                       <Copy size={16} />
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                    <span className="text-primary">💡</span> Copy email to notify customer via Outlook
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Copy email to notify customer via Outlook
                   </p>
                 </div>
               )}
@@ -698,7 +691,7 @@ export function AdminPanel({
                 placeholder="e.g., PL123456789"
                 value={newOrder.trackingNumber}
                 onChange={(e) => setNewOrder({ ...newOrder, trackingNumber: e.target.value })}
-                className="h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                className="h-10"
               />
             </div>
 
@@ -708,17 +701,17 @@ export function AdminPanel({
                 placeholder="Order description"
                 value={newOrder.description}
                 onChange={(e) => setNewOrder({ ...newOrder, description: e.target.value })}
-                className="min-h-[80px] bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                className="min-h-[80px]"
               />
             </div>
 
             <div className="space-y-2">
               <Label className="text-sm sm:text-base font-medium">Status</Label>
               <Select value={newOrder.status} onValueChange={(value: OrderStatus) => setNewOrder({ ...newOrder, status: value })}>
-                <SelectTrigger className="h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20">
+                <SelectTrigger className="h-10">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-white/20">
+                <SelectContent>
                   <SelectItem value="in_transit">In Transit</SelectItem>
                   <SelectItem value="at_warehouse">At Warehouse</SelectItem>
                   <SelectItem value="delivered">Delivered</SelectItem>
@@ -733,7 +726,7 @@ export function AdminPanel({
                   placeholder="Poland"
                   value={newOrder.origin}
                   onChange={(e) => setNewOrder({ ...newOrder, origin: e.target.value })}
-                  className="h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                  className="h-10"
                 />
               </div>
 
@@ -743,7 +736,7 @@ export function AdminPanel({
                   placeholder="Azerbaijan"
                   value={newOrder.destination}
                   onChange={(e) => setNewOrder({ ...newOrder, destination: e.target.value })}
-                  className="h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                  className="h-10"
                 />
               </div>
             </div>
@@ -754,32 +747,32 @@ export function AdminPanel({
                 placeholder="e.g., 5.2 kg"
                 value={newOrder.weight}
                 onChange={(e) => setNewOrder({ ...newOrder, weight: e.target.value })}
-                className="h-11 bg-white/50 dark:bg-slate-800/50 border-white/30 focus:border-primary/50 focus:ring-primary/20 transition-all duration-300"
+                className="h-10"
               />
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={handleCloseAddDialog} className="w-full sm:w-auto h-11 border-white/30 hover:bg-white/50 hover:border-primary/30 transition-all duration-200">Cancel</Button>
-            <Button onClick={handleAddOrder} className="w-full sm:w-auto h-11 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300">Add Order</Button>
+            <Button variant="outline" onClick={handleCloseAddDialog} className="w-full sm:w-auto h-10">Cancel</Button>
+            <Button onClick={handleAddOrder} className="w-full sm:w-auto h-10">Add Order</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={!!editingOrder} onOpenChange={() => setEditingOrder(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-white/20">
+        <DialogContent className="max-w-[95vw] sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-lg sm:text-xl flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center">
-                <PencilSimple size={18} weight="bold" className="text-white" />
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <PencilSimple size={18} weight="bold" className="text-primary-foreground" />
               </div>
               Update Order Status
             </DialogTitle>
           </DialogHeader>
           {editingOrder && (
             <div className="space-y-4 py-4">
-              <div className="p-4 rounded-xl bg-gradient-to-r from-primary/10 to-violet-500/5 border border-primary/20">
+              <div className="p-4 rounded-lg bg-muted/50 border">
                 <p className="text-xs text-muted-foreground mb-1">Tracking Number</p>
-                <p className="font-mono font-semibold text-base sm:text-lg break-all text-primary">{editingOrder.trackingNumber}</p>
+                <p className="font-mono font-semibold text-base sm:text-lg break-all">{editingOrder.trackingNumber}</p>
               </div>
 
               <div className="space-y-2">
@@ -793,10 +786,8 @@ export function AdminPanel({
                   <Button
                     variant={editingOrder.status === 'in_transit' ? 'default' : 'outline'}
                     className={cn(
-                      "flex-1 h-11 transition-all duration-300",
-                      editingOrder.status === 'in_transit' 
-                        ? "bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20" 
-                        : "border-white/30 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30"
+                      "flex-1 h-10",
+                      editingOrder.status === 'in_transit' && "bg-blue-600 hover:bg-blue-700"
                     )}
                     onClick={() => handleUpdateStatus(editingOrder, 'in_transit')}
                   >
@@ -805,10 +796,8 @@ export function AdminPanel({
                   <Button
                     variant={editingOrder.status === 'at_warehouse' ? 'default' : 'outline'}
                     className={cn(
-                      "flex-1 h-11 transition-all duration-300",
-                      editingOrder.status === 'at_warehouse' 
-                        ? "bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20" 
-                        : "border-white/30 hover:bg-amber-500/10 hover:text-amber-600 hover:border-amber-500/30"
+                      "flex-1 h-10",
+                      editingOrder.status === 'at_warehouse' && "bg-amber-600 hover:bg-amber-700"
                     )}
                     onClick={() => handleUpdateStatus(editingOrder, 'at_warehouse')}
                   >
@@ -817,10 +806,8 @@ export function AdminPanel({
                   <Button
                     variant={editingOrder.status === 'delivered' ? 'default' : 'outline'}
                     className={cn(
-                      "flex-1 h-11 transition-all duration-300",
-                      editingOrder.status === 'delivered' 
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/20" 
-                        : "border-white/30 hover:bg-green-500/10 hover:text-green-600 hover:border-green-500/30"
+                      "flex-1 h-10",
+                      editingOrder.status === 'delivered' && "bg-green-600 hover:bg-green-700"
                     )}
                     onClick={() => handleUpdateStatus(editingOrder, 'delivered')}
                   >

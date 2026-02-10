@@ -163,49 +163,43 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-5">
-      {/* Decorative background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-primary/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
-      </div>
-      
-      <Card className="relative w-full max-w-md bg-white/80 backdrop-blur-xl border-white/50 shadow-2xl shadow-primary/10">
+    <div className="min-h-screen bg-background flex items-center justify-center p-5">
+      <Card className="w-full max-w-md border shadow-sm">
         <CardHeader className="space-y-4 pb-4">
           {onBackClick && (
             <Button
               variant="ghost"
               size="sm"
               onClick={onBackClick}
-              className="w-fit -ml-2 gap-2 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+              className="w-fit -ml-2 gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft size={18} />
               Back to Home
             </Button>
           )}
           <div className="flex justify-center">
-            <div className="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30 pulse-glow">
-              <Package size={40} weight="bold" className="text-white" />
+            <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
+              <Package size={32} weight="bold" className="text-white" />
             </div>
           </div>
           <div className="text-center">
-            <CardTitle className="text-3xl font-bold tracking-tight gradient-text">NextCargo</CardTitle>
-            <CardDescription className="text-base mt-3 leading-relaxed">
+            <CardTitle className="text-2xl font-semibold tracking-tight">NextCargo</CardTitle>
+            <CardDescription className="text-sm mt-2">
               Track your shipments from Poland to Azerbaijan
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-muted/50 p-1">
-              <TabsTrigger value="login" className="text-base data-[state=active]:bg-white data-[state=active]:shadow-md transition-all">Login</TabsTrigger>
-              <TabsTrigger value="register" className="text-base data-[state=active]:bg-white data-[state=active]:shadow-md transition-all">Register</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 mb-6 h-10">
+              <TabsTrigger value="login" className="text-sm">Login</TabsTrigger>
+              <TabsTrigger value="register" className="text-sm">Register</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div className="space-y-2.5">
-                  <Label htmlFor="login-email" className="text-base">Email</Label>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email" className="text-sm">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -214,12 +208,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     onChange={(e) => setLoginEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="login-password" className="text-base">Password</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password" className="text-sm">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -228,26 +222,26 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     onChange={(e) => setLoginPassword(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
                 {error && (
-                  <Alert variant="destructive" className="border-red-200 bg-red-50">
-                    <AlertDescription className="text-base">{error}</AlertDescription>
+                  <Alert variant="destructive">
+                    <AlertDescription className="text-sm">{error}</AlertDescription>
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full h-12 text-base gradient-bg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5" disabled={loading}>
+                <Button type="submit" className="w-full h-10" disabled={loading}>
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
             </TabsContent>
 
             <TabsContent value="register">
-              <form onSubmit={handleRegister} className="space-y-5">
-                <div className="space-y-2.5">
-                  <Label htmlFor="register-firstname" className="text-base">First Name</Label>
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="register-firstname" className="text-sm">First Name</Label>
                   <Input
                     id="register-firstname"
                     placeholder="Your first name"
@@ -255,12 +249,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     onChange={(e) => setRegisterFirstName(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="register-lastname" className="text-base">Last Name</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="register-lastname" className="text-sm">Last Name</Label>
                   <Input
                     id="register-lastname"
                     placeholder="Your last name"
@@ -268,12 +262,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     onChange={(e) => setRegisterLastName(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="register-email" className="text-base">Email</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="register-email" className="text-sm">Email</Label>
                   <Input
                     id="register-email"
                     type="email"
@@ -282,12 +276,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     onChange={(e) => setRegisterEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="register-fin" className="text-base">FIN Code</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="register-fin" className="text-sm">FIN Code</Label>
                   <Input
                     id="register-fin"
                     placeholder="7 characters"
@@ -296,12 +290,12 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     maxLength={7}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label htmlFor="register-password" className="text-base">Password</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="register-password" className="text-sm">Password</Label>
                   <Input
                     id="register-password"
                     type="password"
@@ -310,17 +304,17 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 text-base"
+                    className="h-10"
                   />
                 </div>
 
                 {error && (
-                  <Alert variant="destructive" className="border-red-200 bg-red-50">
-                    <AlertDescription className="text-base">{error}</AlertDescription>
+                  <Alert variant="destructive">
+                    <AlertDescription className="text-sm">{error}</AlertDescription>
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full h-12 text-base gradient-bg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5" disabled={loading}>
+                <Button type="submit" className="w-full h-10" disabled={loading}>
                   {loading ? 'Registering...' : 'Register'}
                 </Button>
               </form>
