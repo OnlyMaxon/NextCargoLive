@@ -4,7 +4,8 @@ import { Card } from './ui/card';
 import { Package, Truck, MapPin, Shield, Clock, CreditCard, ChevronDown, MessageCircle, Phone, Mail } from 'lucide-react';
 
 interface LandingPageProps {
-  onGetStarted: () => void;
+  onLoginClick: () => void;
+  onRegisterClick: () => void;
 }
 
 const faqs = [
@@ -101,18 +102,18 @@ const advantages = [
   }
 ];
 
-export default function LandingPage({ onGetStarted }: LandingPageProps) {
+export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const handleWhatsApp = () => {
-    window.open('https://wa.me/994501234567?text=Здравствуйте! Хочу узнать о доставке из Европы', '_blank');
+    window.open('https://wa.me/994508700969?text=Здравствуйте! Хочу узнать о доставке из Европы', '_blank');
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Promo Banner */}
       <div className="bg-primary text-primary-foreground text-center py-2 px-4 text-sm font-medium">
-        🎉 Первый заказ — скидка 50%! Используйте код: <span className="font-bold">FIRST50</span>
+        🎉 Первый заказ — скидка 50%!
       </div>
 
       {/* Header */}
@@ -129,7 +130,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
               <MessageCircle className="w-4 h-4 mr-2" />
               WhatsApp
             </Button>
-            <Button onClick={onGetStarted} size="sm">
+            <Button onClick={onLoginClick} size="sm">
               Войти
             </Button>
           </div>
@@ -146,7 +147,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             Покупайте в любых европейских магазинах. Мы доставим ваши заказы из Польши в Баку за 7-14 дней.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={onGetStarted} className="text-base px-8">
+            <Button size="lg" onClick={onRegisterClick} className="text-base px-8">
               Начать бесплатно
             </Button>
             <Button size="lg" variant="outline" onClick={handleWhatsApp} className="text-base px-8">
@@ -230,7 +231,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             ))}
           </div>
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Минимальная оплата — $7. Первый заказ — скидка 50%.
+            Минимальная оплата — $7. <span className="text-primary font-medium">Первый заказ — скидка 50%!</span>
           </p>
         </div>
       </section>
@@ -281,8 +282,8 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
               <div>
                 <div className="font-semibold mb-2">NextCargo Warehouse</div>
                 <div className="text-muted-foreground text-sm space-y-1">
-                  <div>ul. Magazynowa 15/7</div>
-                  <div>05-090 Raszyn, Polska</div>
+                  <div>Wierchow 25</div>
+                  <div>04-653 Warszawa, Polska</div>
                   <div className="pt-2 text-primary font-medium">
                     Ваш ID: <span className="font-mono">получите после регистрации</span>
                   </div>
@@ -303,7 +304,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             Зарегистрируйтесь сейчас и получите персональный адрес склада в Польше. Первый заказ — со скидкой 50%.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={onGetStarted} className="text-base px-8">
+            <Button size="lg" onClick={onRegisterClick} className="text-base px-8">
               Зарегистрироваться
             </Button>
             <Button size="lg" variant="outline" onClick={handleWhatsApp} className="text-base px-8">
@@ -336,20 +337,27 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
               <h4 className="font-semibold mb-4">Контакты</h4>
               <div className="space-y-3 text-sm">
                 <a 
-                  href="https://wa.me/994501234567" 
+                  href="https://wa.me/994508700969" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  WhatsApp: +994 50 123 45 67
+                  WhatsApp: +994 50 870 09 69
                 </a>
                 <a 
-                  href="tel:+994501234567"
+                  href="tel:+994508700969"
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Phone className="w-4 h-4" />
-                  +994 50 123 45 67
+                  AZ: +994 50 870 09 69
+                </a>
+                <a 
+                  href="tel:+48576925110"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Phone className="w-4 h-4" />
+                  PL: +48 576 925 110
                 </a>
                 <a 
                   href="mailto:info@nextcargo.eu"
