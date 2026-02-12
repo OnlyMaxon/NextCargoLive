@@ -44,6 +44,12 @@ export function LandingPage({ onLoginClick, onRegisterClick }: LandingPageProps)
       {/* Hero Section */}
       <section className="w-full max-w-7xl mx-auto px-4 py-12 sm:py-20">
         <div className="max-w-2xl mx-auto text-center space-y-5">
+          {/* Promo Banner */}
+          <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
+            <span className="text-lg">🎉</span>
+            <span>First order — <strong>50% OFF!</strong></span>
+          </div>
+          
           <p className="text-xs sm:text-sm font-medium text-muted-foreground">
             Poland → Azerbaijan Delivery
           </p>
