@@ -16,58 +16,58 @@ export function Profile({ user, onLogout }: ProfileProps) {
   return (
     <div className="p-3 space-y-3">
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-border" />
-        <h2 className="text-xs font-medium text-muted-foreground">Profile</h2>
-        <div className="h-px flex-1 bg-border" />
+        <div className="h-px flex-1 bg-gray-200" />
+        <h2 className="text-xs font-medium text-gray-500">Profile</h2>
+        <div className="h-px flex-1 bg-gray-200" />
       </div>
 
-      <Card className="border shadow-sm">
+      <Card className="border border-gray-200 shadow-sm bg-white">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-3">
-            <Avatar className="w-12 h-12 border">
-              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+            <Avatar className="w-12 h-12 border border-gray-200">
+              <AvatarFallback className="bg-blue-600 text-white text-sm font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <CardTitle className="text-base font-semibold truncate">{user.firstName} {user.lastName}</CardTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">Customer</p>
+              <CardTitle className="text-base font-semibold truncate text-gray-900">{user.firstName} {user.lastName}</CardTitle>
+              <p className="text-xs text-gray-500 mt-0.5">Customer</p>
             </div>
           </div>
         </CardHeader>
-        <Separator />
+        <Separator className="bg-gray-200" />
         <CardContent className="pt-3 space-y-2">
-          <div className="flex items-center gap-2.5 p-2.5 bg-muted/30 rounded-lg">
-            <UserIcon size={16} className="text-muted-foreground flex-shrink-0" />
+          <div className="flex items-center gap-2.5 p-2.5 bg-gray-50 rounded-lg">
+            <UserIcon size={16} className="text-gray-400 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-muted-foreground">Full Name</p>
-              <p className="font-medium text-sm truncate">{user.firstName} {user.lastName}</p>
+              <p className="text-[10px] text-gray-500">Full Name</p>
+              <p className="font-medium text-sm truncate text-gray-900">{user.firstName} {user.lastName}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 p-2.5 bg-muted/30 rounded-lg">
-            <Envelope size={16} className="text-muted-foreground flex-shrink-0" />
+          <div className="flex items-center gap-2.5 p-2.5 bg-gray-50 rounded-lg">
+            <Envelope size={16} className="text-gray-400 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-muted-foreground">Email</p>
-              <p className="font-medium text-sm truncate">{user.email}</p>
+              <p className="text-[10px] text-gray-500">Email</p>
+              <p className="font-medium text-sm truncate text-gray-900">{user.email}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 p-2.5 bg-muted/30 rounded-lg">
-            <Barcode size={16} className="text-muted-foreground flex-shrink-0" />
+          <div className="flex items-center gap-2.5 p-2.5 bg-blue-50 rounded-lg">
+            <Barcode size={16} className="text-blue-600 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-muted-foreground">FIN Code</p>
-              <p className="font-mono font-semibold text-primary text-sm">{user.finCode}</p>
+              <p className="text-[10px] text-gray-500">FIN Code</p>
+              <p className="font-mono font-semibold text-blue-600 text-sm">{user.finCode}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="border shadow-sm">
+      <Card className="border border-gray-200 shadow-sm bg-white">
         <CardContent className="pt-3 pb-3">
           <Button
             variant="destructive"
-            className="w-full h-9 text-sm"
+            className="w-full h-9 text-sm bg-red-500 hover:bg-red-600 text-white"
             onClick={onLogout}
           >
             <SignOut size={16} className="mr-1.5" />

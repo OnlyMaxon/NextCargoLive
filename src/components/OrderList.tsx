@@ -65,28 +65,28 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                <Warehouse size={16} weight="bold" className="text-primary-foreground" />
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Warehouse size={16} weight="bold" className="text-white" />
               </div>
               <div className="min-w-0">
                 <span className="font-semibold text-sm">Your Warehouse Address</span>
                 <p className="text-[10px] text-muted-foreground">Use this for Polish online stores</p>
               </div>
             </div>
-            <div className="space-y-0.5 text-xs font-mono bg-muted/50 rounded-lg p-2.5 border">
-              <p className="font-semibold text-foreground">{WAREHOUSE_ADDRESS.name}</p>
-              <p className="text-primary font-semibold">{user.firstName} {user.lastName} - {user.finCode}</p>
-              <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.street}</p>
-              <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
-              <p className="text-muted-foreground">{WAREHOUSE_ADDRESS.country}</p>
-              <p className="text-muted-foreground pt-0.5">Tel: {WAREHOUSE_ADDRESS.phone}</p>
+            <div className="space-y-0.5 text-xs font-mono bg-gray-50 rounded-lg p-2.5 border border-gray-200">
+              <p className="font-semibold text-gray-900">{WAREHOUSE_ADDRESS.name}</p>
+              <p className="text-blue-600 font-semibold">{user.firstName} {user.lastName} - {user.finCode}</p>
+              <p className="text-gray-600">{WAREHOUSE_ADDRESS.street}</p>
+              <p className="text-gray-600">{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
+              <p className="text-gray-600">{WAREHOUSE_ADDRESS.country}</p>
+              <p className="text-gray-600 pt-0.5">Tel: {WAREHOUSE_ADDRESS.phone}</p>
             </div>
           </div>
           <Button 
             variant={copied ? "default" : "outline"}
             size="sm" 
             onClick={copyWarehouseAddress}
-            className={`flex-shrink-0 gap-1 h-8 text-xs ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+            className={`flex-shrink-0 gap-1 h-8 text-xs ${copied ? 'bg-green-500 hover:bg-green-600 text-white' : 'border-blue-600 text-blue-600 hover:bg-blue-50'}`}
           >
             {copied ? (
               <>
@@ -101,9 +101,9 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
             )}
           </Button>
         </div>
-        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-muted-foreground bg-muted/50 border p-2 rounded-lg">
+        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-gray-600 bg-blue-50 border border-blue-100 p-2 rounded-lg">
           <span>💡</span>
-          <span>Your <span className="font-medium">FIN code ({user.finCode})</span> helps us identify your packages</span>
+          <span>Your <span className="font-medium text-blue-600">FIN code ({user.finCode})</span> helps us identify your packages</span>
         </div>
       </CardContent>
     </Card>

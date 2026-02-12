@@ -217,12 +217,12 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto animate-pulse">
-            <Package size={32} weight="bold" className="text-primary-foreground" />
+          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto animate-pulse">
+            <Package size={32} weight="bold" className="text-white" />
           </div>
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-gray-500">Loading...</p>
         </div>
       </div>
     )
@@ -276,15 +276,15 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background w-full overflow-x-hidden">
-      <header className="border-b bg-white sticky top-0 z-10">
+    <div className="min-h-screen bg-gray-50 w-full overflow-x-hidden">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="px-4 py-3 flex items-center gap-3">
-          <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-            <Package size={20} weight="bold" className="text-primary-foreground" />
+          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Package size={20} weight="bold" className="text-white" />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-base font-semibold tracking-tight truncate">NextCargo</h1>
-            <p className="text-xs text-muted-foreground truncate">Welcome, {currentUser.firstName}</p>
+            <h1 className="text-base font-semibold tracking-tight truncate text-gray-900">NextCargo</h1>
+            <p className="text-xs text-gray-500 truncate">Welcome, {currentUser.firstName}</p>
           </div>
         </div>
       </header>
@@ -298,7 +298,7 @@ function App() {
         {activeTab === 'apps' && <Marketplaces />}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t z-20 safe-area-inset-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 safe-area-inset-bottom">
         <div className="flex items-center justify-around px-2 py-1">
           {[
             { id: 'orders' as Tab, icon: Package, label: 'Orders' },
@@ -311,8 +311,8 @@ function App() {
               variant="ghost"
               className={`flex-col h-auto py-1.5 px-3 gap-0.5 min-w-[56px] rounded-lg ${
                 activeTab === item.id 
-                  ? 'text-primary' 
-                  : 'text-muted-foreground'
+                  ? 'text-blue-600' 
+                  : 'text-gray-400'
               }`}
               onClick={() => setActiveTab(item.id)}
             >
