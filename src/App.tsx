@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { User, Order, SupportMessage, Notification, ViewMode, AuthTab } from '@/lib/types'
-import { LandingPage } from '@/components/LandingPage'
+import LandingPage from '@/components/LandingPage'
 import { Auth } from '@/components/Auth'
 import { AdminPanel } from '@/components/AdminPanel'
 import { OrderList } from '@/components/OrderList'
