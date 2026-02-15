@@ -1,32 +1,29 @@
 import { useState, useEffect } from 'react'
-import { User, Order, SupportMessage, Notification, ViewMode, AuthTab } from '@/lib/types'
+import { User, Order, Notification, ViewMode, AuthTab } from '@/lib/types'
 import LandingPage from '@/components/LandingPage'
 import { Auth } from '@/components/Auth'
 import { AdminPanel } from '@/components/AdminPanel'
 import { OrderList } from '@/components/OrderList'
-import { Support } from '@/components/Support'
 import { Profile } from '@/components/Profile'
 import { Marketplaces } from '@/components/Marketplaces'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
-import { Package, ChatCircle, User as UserIcon, AppWindow } from '@phosphor-icons/react'
+import { Package, User as UserIcon, AppWindow } from '@phosphor-icons/react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { 
   authService, 
   ordersService, 
-  supportService, 
   notificationsService, 
   usersService 
 } from '@/lib/firebase-services'
 import { toast } from 'sonner'
 
-type Tab = 'orders' | 'support' | 'profile' | 'apps'
+type Tab = 'orders' | 'profile' | 'apps'
 
 function App() {
   const [users, setUsers] = useState<User[]>([])
   const [orders, setOrders] = useState<Order[]>([])
-  const [messages, setMessages] = useState<SupportMessage[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('landing')
@@ -52,7 +49,6 @@ function App() {
         } else {
           setCurrentUser(null)
           setOrders([])
-          setMessages([])
           setNotifications([])
           setViewMode('landing')
         }
@@ -67,50 +63,21 @@ function App() {
     return () => unsubscribe()
   }, [])
 
-  // Real-time messages subscription
-  useEffect(() => {
-    if (!currentUser) return
-
-    let unsubscribe: (() => void) | undefined
-
-    if (currentUser.isAdmin) {
-      // Admin subscribes to all messages
-      unsubscribe = supportService.subscribeToAllMessages((newMessages) => {
-        setMessages(newMessages)
-      })
-    } else {
-      // User subscribes to their own messages
-      unsubscribe = supportService.subscribeToUserMessages(currentUser.id, (newMessages) => {
-        setMessages(newMessages)
-      })
-    }
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe()
-      }
-    }
-  }, [currentUser])
-
   const loadUserData = async (user: User) => {
     try {
       if (user.isAdmin) {
-        const [allOrders, allMessages, allUsers] = await Promise.all([
+        const [allOrders, allUsers] = await Promise.all([
           ordersService.getAllOrders(),
-          supportService.getAllMessages(),
           usersService.getAllUsers()
         ])
         setOrders(allOrders)
-        setMessages(allMessages)
         setUsers(allUsers)
       } else {
-        const [userOrders, userMessages, userNotifications] = await Promise.all([
+        const [userOrders, userNotifications] = await Promise.all([
           ordersService.getUserOrders(user.id),
-          supportService.getUserMessages(user.id),
           notificationsService.getUserNotifications(user.id)
         ])
         setOrders(userOrders)
-        setMessages(userMessages)
         setNotifications(userNotifications)
       }
     } catch (error) {
@@ -137,7 +104,6 @@ function App() {
       await authService.logout()
       setCurrentUser(null)
       setOrders([])
-      setMessages([])
       setNotifications([])
       setUsers([])
       setActiveTab('orders')
@@ -158,7 +124,6 @@ function App() {
       await authService.logout()
       setCurrentUser(null)
       setOrders([])
-      setMessages([])
       setNotifications([])
       setUsers([])
       setActiveTab('orders')
@@ -201,17 +166,6 @@ function App() {
     } catch (error) {
       console.error('Failed to delete order:', error)
       toast.error('Failed to delete order')
-    }
-  }
-
-  const handleSendMessage = async (message: SupportMessage) => {
-    try {
-      const messageId = await supportService.sendMessage(message)
-      const messageWithId = { ...message, id: messageId }
-      setMessages((current) => [...current, messageWithId])
-    } catch (error) {
-      console.error('Failed to send message:', error)
-      toast.error('Failed to send message')
     }
   }
 
@@ -271,12 +225,10 @@ function App() {
         <AdminPanel
           orders={orders}
           users={users}
-          messages={messages}
           onUpdateOrder={handleUpdateOrder}
           onAddOrder={handleAddOrder}
           onDeleteOrder={handleDeleteOrder}
           onSendNotification={handleSendNotification}
-          onSendMessage={handleSendMessage}
           onLogout={handleAdminLogout}
         />
         <Toaster />
@@ -314,11 +266,8 @@ function App() {
         </div>
       </header>
 
-      <main className={activeTab === 'support' ? '' : 'pb-14'}>
+      <main className="pb-14">
         {activeTab === 'orders' && <OrderList orders={orders} user={currentUser} />}
-        {activeTab === 'support' && (
-          <Support messages={messages} user={currentUser} onSendMessage={handleSendMessage} />
-        )}
         {activeTab === 'profile' && <Profile user={currentUser} onLogout={handleLogout} />}
         {activeTab === 'apps' && <Marketplaces />}
       </main>
@@ -327,7 +276,6 @@ function App() {
         <div className="flex items-center justify-around px-2 py-1">
           {[
             { id: 'orders' as Tab, icon: Package, label: 'Orders' },
-            { id: 'support' as Tab, icon: ChatCircle, label: 'Support' },
             { id: 'profile' as Tab, icon: UserIcon, label: 'Profile' },
             { id: 'apps' as Tab, icon: AppWindow, label: 'Apps' }
           ].map((item) => (

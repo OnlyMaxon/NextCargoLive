@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Order, User, SupportMessage, Notification, OrderStatus, TrackingEvent } from '@/lib/types'
+import { Order, User, Notification, OrderStatus, TrackingEvent } from '@/lib/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,43 +10,36 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
-import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, ChatCircle, Package, PaperPlaneRight, CaretUpDown, Check, Envelope, Copy } from '@phosphor-icons/react'
+import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, Package, CaretUpDown, Check, Envelope, Copy } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 interface AdminPanelProps {
   orders: Order[]
   users: User[]
-  messages: SupportMessage[]
   onUpdateOrder: (order: Order) => void
   onAddOrder: (order: Order) => void
   onDeleteOrder: (orderId: string) => void
   onSendNotification: (notification: Notification) => void
-  onSendMessage: (message: SupportMessage) => void
   onLogout: () => void
 }
 
 export function AdminPanel({
   orders,
   users,
-  messages,
   onUpdateOrder,
   onAddOrder,
   onDeleteOrder,
   onSendNotification,
-  onSendMessage,
   onLogout
 }: AdminPanelProps) {
   const [searchFin, setSearchFin] = useState('')
   const [editingOrder, setEditingOrder] = useState<Order | null>(null)
   const [isAddingOrder, setIsAddingOrder] = useState(false)
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
-  const [replyText, setReplyText] = useState('')
   const [customerSearchOpen, setCustomerSearchOpen] = useState(false)
 
   const [newOrder, setNewOrder] = useState({
@@ -67,20 +60,6 @@ export function AdminPanel({
     : orders
 
   const sortedOrders = [...filteredOrders].sort((a, b) => b.createdAt - a.createdAt)
-
-  const conversations = Array.from(new Set(messages.map(m => m.conversationId)))
-    .map(convId => {
-      const convMessages = messages.filter(m => m.conversationId === convId)
-      const lastMessage = convMessages[convMessages.length - 1]
-      const user = users.find(u => u.id === convId)
-      return {
-        conversationId: convId,
-        user,
-        lastMessage,
-        unreadCount: convMessages.filter(m => !m.isAdmin).length
-      }
-    })
-    .sort((a, b) => (b.lastMessage?.timestamp || 0) - (a.lastMessage?.timestamp || 0))
 
   const handleUpdateStatus = (order: Order, newStatus: OrderStatus) => {
     const now = Date.now()
@@ -190,27 +169,6 @@ export function AdminPanel({
     setCustomerSearchOpen(false)
   }
 
-  const handleSendReply = () => {
-    if (!replyText.trim() || !selectedConversation) return
-
-    const user = users.find(u => u.id === selectedConversation)
-    if (!user) return
-
-    const message: SupportMessage = {
-      id: `msg_${Date.now()}`,
-      userId: selectedConversation,
-      userName: 'Support Team',
-      message: replyText.trim(),
-      timestamp: Date.now(),
-      isAdmin: true,
-      conversationId: selectedConversation
-    }
-
-    onSendMessage(message)
-    setReplyText('')
-    toast.success('Reply sent')
-  }
-
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString('en-GB', {
       day: '2-digit',
@@ -252,9 +210,8 @@ export function AdminPanel({
 
       <div className="px-4 sm:px-6 lg:container lg:mx-auto py-4">
         <Tabs defaultValue="orders">
-          <TabsList className="grid w-full grid-cols-2 mb-4 h-10">
+          <TabsList className="mb-4 h-10">
             <TabsTrigger value="orders" className="text-sm">Orders</TabsTrigger>
-            <TabsTrigger value="support" className="text-sm">Support</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="space-y-4">
@@ -436,154 +393,6 @@ export function AdminPanel({
                 </ScrollArea>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="support" className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-              <Card className="lg:col-span-1 border shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                    <ChatCircle size={20} className="text-primary" />
-                    Conversations
-                  </CardTitle>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    {conversations.length} {conversations.length === 1 ? 'conversation' : 'conversations'}
-                  </p>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <ScrollArea className="h-[300px] sm:h-[400px] lg:h-[600px]">
-                    {conversations.length === 0 ? (
-                      <div className="p-4">
-                        <Alert className="bg-primary/5 border-primary/20">
-                          <ChatCircle className="h-4 w-4 text-primary" />
-                          <AlertDescription>No support messages yet</AlertDescription>
-                        </Alert>
-                      </div>
-                    ) : (
-                      <div className="divide-y divide-white/10">
-                        {conversations.map((conv) => {
-                          const isSelected = selectedConversation === conv.conversationId
-                          const lastMessageTime = conv.lastMessage?.timestamp 
-                            ? new Date(conv.lastMessage.timestamp).toLocaleTimeString('en-GB', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })
-                            : ''
-                          
-                          return (
-                            <button
-                              key={conv.conversationId}
-                              className={cn(
-                                "w-full text-left p-3 sm:p-4 hover:bg-muted/50",
-                                isSelected && "bg-muted border-l-2 border-l-primary"
-                              )}
-                              onClick={() => setSelectedConversation(conv.conversationId)}
-                            >
-                              <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                                  <span className="text-sm sm:text-base font-medium text-foreground">
-                                    {conv.user?.firstName?.[0]}{conv.user?.lastName?.[0]}
-                                  </span>
-                                </div>
-                                
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-start justify-between gap-2 mb-1">
-                                    <div className="min-w-0 flex-1">
-                                      <p className="font-semibold text-sm sm:text-[15px] truncate">
-                                        {conv.user ? `${conv.user.firstName} ${conv.user.lastName}` : 'Unknown'}
-                                      </p>
-                                      <p className="text-[10px] sm:text-[11px] text-muted-foreground font-mono">
-                                        FIN: {conv.user?.finCode || 'N/A'}
-                                      </p>
-                                    </div>
-                                    {conv.lastMessage && (
-                                      <span className="text-[10px] sm:text-[11px] text-muted-foreground flex-shrink-0 mt-0.5">
-                                        {lastMessageTime}
-                                      </span>
-                                    )}
-                                  </div>
-                                  
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 flex-1 min-w-0">
-                                      {conv.lastMessage?.isAdmin && (
-                                        <span className="text-primary font-medium">You: </span>
-                                      )}
-                                      {conv.lastMessage?.message || 'No messages'}
-                                    </p>
-                                    {conv.unreadCount > 0 && (
-                                      <Badge variant="destructive" className="flex-shrink-0 h-5 min-w-[20px] px-1.5 text-xs">
-                                        {conv.unreadCount}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-
-              <Card className="lg:col-span-2 border shadow-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                    <PaperPlaneRight size={20} className="text-muted-foreground" />
-                    Messages
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {!selectedConversation ? (
-                    <Alert>
-                      <ChatCircle className="h-4 w-4" />
-                      <AlertDescription>Select a conversation to view messages</AlertDescription>
-                    </Alert>
-                  ) : (
-                    <div className="space-y-4">
-                      <ScrollArea className="h-[300px] sm:h-[380px] lg:h-[480px]">
-                        <div className="space-y-3 pr-4">
-                          {messages
-                            .filter(m => m.conversationId === selectedConversation)
-                            .sort((a, b) => a.timestamp - b.timestamp)
-                            .map((msg) => (
-                              <div
-                                key={msg.id}
-                                className={`flex ${msg.isAdmin ? 'justify-end' : 'justify-start'}`}
-                              >
-                                <Card className={`max-w-[90%] sm:max-w-[85%] lg:max-w-[80%] ${msg.isAdmin ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                                  <CardContent className="p-3 space-y-1">
-                                    {!msg.isAdmin && (
-                                      <p className="text-xs font-semibold">{msg.userName}</p>
-                                    )}
-                                    <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{msg.message}</p>
-                                    <p className={`text-xs ${msg.isAdmin ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                                      {formatDate(msg.timestamp)}
-                                    </p>
-                                  </CardContent>
-                                </Card>
-                              </div>
-                            ))}
-                        </div>
-                      </ScrollArea>
-
-                      <div className="flex gap-2 pt-4 border-t">
-                        <Textarea
-                          placeholder="Type your reply..."
-                          value={replyText}
-                          onChange={(e) => setReplyText(e.target.value)}
-                          className="flex-1 min-h-[60px] max-h-[120px] resize-none"
-                        />
-                        <Button onClick={handleSendReply} disabled={!replyText.trim()} className="self-end h-11 w-11 sm:h-auto sm:w-auto sm:px-4">
-                          <PaperPlaneRight size={20} weight="bold" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
           </TabsContent>
         </Tabs>
       </div>
