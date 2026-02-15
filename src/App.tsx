@@ -67,6 +67,31 @@ function App() {
     return () => unsubscribe()
   }, [])
 
+  // Real-time messages subscription
+  useEffect(() => {
+    if (!currentUser) return
+
+    let unsubscribe: (() => void) | undefined
+
+    if (currentUser.isAdmin) {
+      // Admin subscribes to all messages
+      unsubscribe = supportService.subscribeToAllMessages((newMessages) => {
+        setMessages(newMessages)
+      })
+    } else {
+      // User subscribes to their own messages
+      unsubscribe = supportService.subscribeToUserMessages(currentUser.id, (newMessages) => {
+        setMessages(newMessages)
+      })
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    }
+  }, [currentUser])
+
   const loadUserData = async (user: User) => {
     try {
       if (user.isAdmin) {

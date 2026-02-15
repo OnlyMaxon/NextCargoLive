@@ -16,7 +16,9 @@ import {
   orderBy,
   Timestamp,
   setDoc,
-  getDoc
+  getDoc,
+  onSnapshot,
+  Unsubscribe
 } from 'firebase/firestore'
 import { auth, db } from './firebase'
 import { User, Order, SupportMessage, Notification } from './types'
@@ -244,6 +246,59 @@ export const supportService = {
       console.error('Error getting all messages:', error)
       return []
     }
+  },
+
+  // Real-time subscription for user messages
+  subscribeToUserMessages(userId: string, callback: (messages: SupportMessage[]) => void): Unsubscribe {
+    const messagesQuery = query(
+      collection(db, 'support_messages'),
+      where('conversationId', '==', userId),
+      orderBy('timestamp', 'asc')
+    )
+    
+    return onSnapshot(messagesQuery, (snapshot) => {
+      const messages = snapshot.docs.map(doc => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          userId: data.userId,
+          userName: data.userName,
+          message: data.message,
+          timestamp: convertTimestamp(data.timestamp),
+          isAdmin: data.isAdmin,
+          conversationId: data.conversationId
+        } as SupportMessage
+      })
+      callback(messages)
+    }, (error) => {
+      console.error('Error subscribing to messages:', error)
+    })
+  },
+
+  // Real-time subscription for all messages (admin)
+  subscribeToAllMessages(callback: (messages: SupportMessage[]) => void): Unsubscribe {
+    const messagesQuery = query(
+      collection(db, 'support_messages'),
+      orderBy('timestamp', 'desc')
+    )
+    
+    return onSnapshot(messagesQuery, (snapshot) => {
+      const messages = snapshot.docs.map(doc => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          userId: data.userId,
+          userName: data.userName,
+          message: data.message,
+          timestamp: convertTimestamp(data.timestamp),
+          isAdmin: data.isAdmin,
+          conversationId: data.conversationId
+        } as SupportMessage
+      })
+      callback(messages)
+    }, (error) => {
+      console.error('Error subscribing to all messages:', error)
+    })
   }
 }
 
