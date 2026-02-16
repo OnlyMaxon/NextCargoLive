@@ -342,27 +342,27 @@ export const translations = {
     }
   },
   
-  // Orders
+  // Orders / Warehouse
   orders: {
     title: {
-      ru: 'Мои заказы',
-      en: 'My Orders',
-      az: 'Sifarişlərim'
+      ru: 'Мой склад',
+      en: 'My Warehouse',
+      az: 'Mənim anbarım'
     },
     myOrders: {
-      ru: 'Мои заказы',
-      en: 'My Orders',
-      az: 'Sifarişlərim'
+      ru: 'Мои посылки',
+      en: 'My Packages',
+      az: 'Mənim bağlamalarım'
     },
     warehouseTitle: {
-      ru: 'Ваш адрес склада',
-      en: 'Your Warehouse Address',
-      az: 'Sizin anbar ünvanınız'
+      ru: 'Ваш адрес склада в Польше',
+      en: 'Your Warehouse Address in Poland',
+      az: 'Polşada anbar ünvanınız'
     },
     warehouseHint: {
-      ru: 'Используйте этот адрес для польских интернет-магазинов',
-      en: 'Use this for Polish online stores',
-      az: 'Polşa onlayn mağazaları üçün istifadə edin'
+      ru: 'Укажите этот адрес при заказе товаров',
+      en: 'Use this address when ordering products',
+      az: 'Məhsul sifariş edərkən bu ünvanı istifadə edin'
     },
     finCodeHelp: {
       ru: 'Ваш FIN код помогает нам идентифицировать ваши посылки',
@@ -395,14 +395,14 @@ export const translations = {
       az: 'Status'
     },
     noOrders: {
-      ru: 'У вас пока нет заказов. Посетите вкладку Маркетплейсы, чтобы делать покупки в польских магазинах и отправлять на наш склад!',
-      en: 'You don\'t have any orders yet. Visit the Apps tab to shop from Polish marketplaces and ship to our warehouse!',
-      az: 'Hələ sifarişiniz yoxdur. Polşa mağazalarından alış-veriş etmək və anbarımıza göndərmək üçün Tətbiqlər bölməsinə daxil olun!'
+      ru: 'На вашем складе пока нет посылок. Закажите товары из польских магазинов и укажите адрес нашего склада!',
+      en: 'Your warehouse is empty. Order products from Polish stores and use our warehouse address!',
+      az: 'Anbarınızda hələ bağlama yoxdur. Polşa mağazalarından sifariş edin və anbar ünvanımızı istifadə edin!'
     },
     orderDetails: {
-      ru: 'Детали заказа',
-      en: 'Order Details',
-      az: 'Sifariş detalları'
+      ru: 'Детали посылки',
+      en: 'Package Details',
+      az: 'Bağlama detalları'
     },
     details: {
       ru: 'Детали',
@@ -443,6 +443,67 @@ export const translations = {
       ru: 'Последнее обновление',
       en: 'Last Updated',
       az: 'Son yenilənmə'
+    },
+    // Pricing section
+    pricingTitle: {
+      ru: 'Тарифы доставки',
+      en: 'Delivery Rates',
+      az: 'Çatdırılma tarifləri'
+    },
+    pricingSubtitle: {
+      ru: 'Из Польши в Азербайджан',
+      en: 'From Poland to Azerbaijan',
+      az: 'Polşadan Azərbaycana'
+    },
+    documents: {
+      ru: 'Документы / 500 г',
+      en: 'Documents / 500 g',
+      az: 'Sənədlər / 500 q'
+    },
+    paymentTitle: {
+      ru: 'Оплата',
+      en: 'Payment',
+      az: 'Ödəniş'
+    },
+    paymentMethod: {
+      ru: 'Оплата на польскую карту',
+      en: 'Payment to Polish card',
+      az: 'Polşa kartına ödəniş'
+    },
+    paymentNote: {
+      ru: 'После поступления посылки на склад, вам придет уведомление на email с суммой и реквизитами для оплаты',
+      en: 'After your package arrives at the warehouse, you will receive an email notification with the amount and payment details',
+      az: 'Bağlamanız anbara çatdıqdan sonra ödəniş məbləği və detalları ilə e-poçt bildirişi alacaqsınız'
+    },
+    howItWorks: {
+      ru: 'Как это работает',
+      en: 'How it works',
+      az: 'Necə işləyir'
+    },
+    step1: {
+      ru: 'Закажите товар в польском магазине',
+      en: 'Order from a Polish store',
+      az: 'Polşa mağazasından sifariş edin'
+    },
+    step2: {
+      ru: 'Укажите адрес нашего склада',
+      en: 'Use our warehouse address',
+      az: 'Anbar ünvanımızı istifadə edin'
+    },
+    step3: {
+      ru: 'Мы получим и взвесим посылку',
+      en: 'We receive and weigh your package',
+      az: 'Biz bağlamanızı alıb çəkirik'
+    },
+    step4: {
+      ru: 'Оплатите доставку на карту',
+      en: 'Pay delivery to our card',
+      az: 'Çatdırılmanı kartımıza ödəyin'
+    },
+    step5: {
+      ru: 'Получите посылку в Азербайджане',
+      en: 'Receive your package in Azerbaijan',
+      az: 'Bağlamanızı Azərbaycanda alın'
     }
   },
   
@@ -616,9 +677,9 @@ export const translations = {
   // Navigation
   nav: {
     orders: {
-      ru: 'Заказы',
-      en: 'Orders',
-      az: 'Sifarişlər'
+      ru: 'Склад',
+      en: 'Warehouse',
+      az: 'Anbar'
     },
     profile: {
       ru: 'Профиль',

@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Package, MapPin, Barcode, Calendar, ArrowsClockwise, ClockClockwise, Copy, CheckCircle, Warehouse } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ClockClockwise, Copy, CheckCircle, Warehouse, CreditCard, Envelope, Scales, Airplane, NumberCircleOne, NumberCircleTwo, NumberCircleThree, NumberCircleFour, NumberCircleFive } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
@@ -38,6 +38,14 @@ const WAREHOUSE_ADDRESS = {
   phone: '+48 576 925 110'
 }
 
+// Pricing table data
+const PRICING = [
+  { weight: 'documents', price: '100 zł' },
+  { weight: '0-5', price: '200 zł' },
+  { weight: '5-10', price: '300 zł' },
+  { weight: '10-23', price: '600 zł' }
+]
+
 interface OrderListProps {
   orders: Order[]
   user: User
@@ -62,6 +70,14 @@ export function OrderList({ orders, user }: OrderListProps) {
     }
     const key = statusMap[status]
     return key ? statusTxt[key][language] : status
+  }
+
+  // Get weight label translation
+  const getWeightLabel = (weight: string) => {
+    if (weight === 'documents') {
+      return txt.documents[language]
+    }
+    return `${weight} ${language === 'ru' ? 'кг' : language === 'az' ? 'kq' : 'kg'}`
   }
 
   const userOrders = orders
@@ -92,66 +108,130 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
   // Warehouse Address Card Component
   const WarehouseAddressCard = () => (
-    <Card className="border shadow-sm">
+    <Card className="border-2 border-blue-200 shadow-sm bg-gradient-to-br from-blue-50 to-white">
       <CardContent className="p-3 sm:p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Warehouse size={16} weight="bold" className="text-white" />
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Warehouse size={20} weight="bold" className="text-white" />
               </div>
               <div className="min-w-0">
-                <span className="font-semibold text-sm">{txt.warehouseTitle[language]}</span>
-                <p className="text-[10px] text-muted-foreground">{txt.warehouseHint[language]}</p>
+                <span className="font-bold text-sm text-gray-900">{txt.warehouseTitle[language]}</span>
+                <p className="text-[10px] text-blue-600 font-medium">{txt.warehouseHint[language]}</p>
               </div>
             </div>
-            <div className="space-y-0.5 text-xs font-mono bg-gray-50 rounded-lg p-2.5 border border-gray-200">
-              <p className="font-semibold text-gray-900">{WAREHOUSE_ADDRESS.name}</p>
-              <p className="text-blue-600 font-semibold">{user.firstName} {user.lastName} - {user.finCode}</p>
+            <div className="space-y-0.5 text-xs font-mono bg-white rounded-lg p-3 border-2 border-blue-100 shadow-inner">
+              <p className="font-bold text-gray-900">{WAREHOUSE_ADDRESS.name}</p>
+              <p className="text-blue-600 font-bold text-sm">{user.firstName} {user.lastName} - {user.finCode}</p>
               <p className="text-gray-600">{WAREHOUSE_ADDRESS.street}</p>
               <p className="text-gray-600">{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
               <p className="text-gray-600">{WAREHOUSE_ADDRESS.country}</p>
-              <p className="text-gray-600 pt-0.5">Tel: {WAREHOUSE_ADDRESS.phone}</p>
+              <p className="text-gray-600 pt-1 border-t border-gray-100 mt-1">Tel: {WAREHOUSE_ADDRESS.phone}</p>
             </div>
           </div>
           <Button 
             variant={copied ? "default" : "outline"}
             size="sm" 
             onClick={copyWarehouseAddress}
-            className={`flex-shrink-0 gap-1 h-8 text-xs ${copied ? 'bg-green-500 hover:bg-green-600 text-white' : 'border-blue-600 text-blue-600 hover:bg-blue-50'}`}
+            className={`flex-shrink-0 gap-1.5 h-9 text-xs font-semibold ${copied ? 'bg-green-500 hover:bg-green-600 text-white' : 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50'}`}
           >
             {copied ? (
               <>
-                <CheckCircle size={12} weight="bold" />
+                <CheckCircle size={14} weight="bold" />
                 {txt.copied[language]}
               </>
             ) : (
               <>
-                <Copy size={12} />
+                <Copy size={14} weight="bold" />
                 {txt.copy[language]}
               </>
             )}
           </Button>
         </div>
-        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-gray-600 bg-blue-50 border border-blue-100 p-2 rounded-lg">
-          <span>💡</span>
-          <span>{txt.finCodeHelp[language].replace('FIN', '')} <span className="font-medium text-blue-600">FIN ({user.finCode})</span></span>
+        <div className="mt-3 flex items-center gap-2 text-xs text-blue-700 bg-blue-100 border border-blue-200 p-2.5 rounded-lg">
+          <span className="text-base">💡</span>
+          <span className="font-medium">
+            {language === 'ru' ? 'Ваш' : language === 'az' ? 'Sizin' : 'Your'} <span className="font-bold text-blue-800">FIN: {user.finCode}</span> — {language === 'ru' ? 'обязателен для идентификации посылок' : language === 'az' ? 'bağlamaların müəyyənləşdirilməsi üçün vacibdir' : 'required to identify your packages'}
+          </span>
         </div>
       </CardContent>
     </Card>
   )
 
-  if (userOrders.length === 0) {
-    return (
-      <div className="p-3 space-y-3">
-        <WarehouseAddressCard />
-        <Alert className="text-sm">
-          <Package className="h-4 w-4" />
-          <AlertDescription className="text-sm leading-relaxed">
-            {txt.noOrders[language]}
-          </AlertDescription>
-        </Alert>
+  // Pricing Card Component
+  const PricingCard = () => (
+    <Card className="border shadow-sm overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Scales size={18} weight="bold" className="text-white" />
+          <div>
+            <h3 className="font-bold text-white text-sm">{txt.pricingTitle[language]}</h3>
+            <p className="text-blue-100 text-[10px]">{txt.pricingSubtitle[language]} 🇵🇱 → 🇦🇿</p>
+          </div>
+        </div>
       </div>
+      <CardContent className="p-0">
+        <div className="divide-y divide-gray-100">
+          {PRICING.map((item, index) => (
+            <div key={index} className={`flex items-center justify-between px-4 py-2.5 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+              <span className="text-sm text-gray-700 font-medium">{getWeightLabel(item.weight)}</span>
+              <span className="text-sm font-bold text-blue-600">{item.price}</span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  // Payment Info Card
+  const PaymentCard = () => (
+    <Card className="border shadow-sm overflow-hidden">
+      <div className="bg-gradient-to-r from-green-600 to-green-700 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <CreditCard size={18} weight="bold" className="text-white" />
+          <div>
+            <h3 className="font-bold text-white text-sm">{txt.paymentTitle[language]}</h3>
+            <p className="text-green-100 text-[10px]">{txt.paymentMethod[language]}</p>
+          </div>
+        </div>
+      </div>
+      <CardContent className="p-3">
+        <div className="flex items-start gap-2 text-xs text-gray-600 bg-amber-50 border border-amber-200 p-2.5 rounded-lg">
+          <Envelope size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+          <p className="leading-relaxed">{txt.paymentNote[language]}</p>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  // How It Works Card
+  const HowItWorksCard = () => {
+    const steps = [
+      { icon: NumberCircleOne, text: txt.step1[language] },
+      { icon: NumberCircleTwo, text: txt.step2[language] },
+      { icon: NumberCircleThree, text: txt.step3[language] },
+      { icon: NumberCircleFour, text: txt.step4[language] },
+      { icon: NumberCircleFive, text: txt.step5[language] }
+    ]
+
+    return (
+      <Card className="border shadow-sm">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Airplane size={16} weight="bold" className="text-blue-600" />
+            <h3 className="font-bold text-sm text-gray-900">{txt.howItWorks[language]}</h3>
+          </div>
+          <div className="space-y-2">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <step.icon size={20} weight="fill" className="text-blue-600 flex-shrink-0" />
+                <span className="text-xs text-gray-700">{step.text}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -159,43 +239,74 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
     <>
       <ScrollArea className="h-[calc(100vh-120px)]">
         <div className="p-3 space-y-3">
+          {/* Warehouse Address - Most Important */}
           <WarehouseAddressCard />
           
-          <div className="flex items-center gap-3">
+          {/* Pricing and Payment Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <PricingCard />
+            <PaymentCard />
+          </div>
+
+          {/* How It Works */}
+          <HowItWorksCard />
+
+          {/* My Packages Section */}
+          <div className="flex items-center gap-3 pt-2">
             <div className="h-px flex-1 bg-border" />
-            <h2 className="text-sm font-medium text-muted-foreground">{txt.myOrders[language]}</h2>
+            <h2 className="text-sm font-bold text-gray-700 flex items-center gap-2">
+              <Package size={16} weight="bold" className="text-blue-600" />
+              {txt.myOrders[language]}
+            </h2>
             <div className="h-px flex-1 bg-border" />
           </div>
           
-          <div className="space-y-2">
-            {userOrders.map((order) => (
-              <Card
-                key={order.id}
-                className="cursor-pointer hover:bg-muted/30 border shadow-sm"
-                onClick={() => setSelectedOrder(order)}
-              >
-                <CardContent className="p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 space-y-1.5 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <Package size={14} className="text-muted-foreground flex-shrink-0" />
-                        <span className="font-medium text-sm truncate">{order.trackingNumber}</span>
+          {userOrders.length === 0 ? (
+            <Alert className="bg-blue-50 border-blue-200">
+              <Package className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-sm text-blue-800 leading-relaxed">
+                {txt.noOrders[language]}
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <div className="space-y-2">
+              {userOrders.map((order) => (
+                <Card
+                  key={order.id}
+                  className="cursor-pointer hover:bg-muted/30 border shadow-sm transition-all hover:shadow-md"
+                  onClick={() => setSelectedOrder(order)}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 space-y-1.5 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <Package size={14} className="text-blue-600 flex-shrink-0" />
+                          <span className="font-mono font-semibold text-sm truncate">{order.trackingNumber}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {order.description}
+                        </p>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <Calendar size={10} />
+                          {formatDate(order.createdAt)}
+                          {order.weight && (
+                            <>
+                              <span>•</span>
+                              <Scales size={10} />
+                              {order.weight}
+                            </>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {order.description}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {formatDate(order.createdAt)}
-                      </p>
+                      <Badge className={`${STATUS_COLORS[order.status]} text-[10px] flex-shrink-0 font-semibold`}>
+                        {getStatusLabel(order.status)}
+                      </Badge>
                     </div>
-                    <Badge className={`${STATUS_COLORS[order.status]} text-[10px] flex-shrink-0`}>
-                      {getStatusLabel(order.status)}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </ScrollArea>
 
@@ -203,7 +314,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
         <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Package size={18} className="text-primary" />
+              <Package size={18} className="text-blue-600" />
               {txt.orderDetails[language]}
             </DialogTitle>
           </DialogHeader>
@@ -223,7 +334,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                 <TabsContent value="details" className="mt-0 space-y-5 pr-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm sm:text-base text-muted-foreground">{txt.status[language]}</span>
-                    <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm`}>
+                    <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm font-semibold`}>
                       {getStatusLabel(selectedOrder.status)}
                     </Badge>
                   </div>
@@ -232,15 +343,15 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
-                      <Barcode size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                      <Barcode size={20} className="text-blue-600 mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.trackingNumber[language]}</p>
-                        <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.trackingNumber}</p>
+                        <p className="font-mono font-bold text-sm sm:text-base break-all">{selectedOrder.trackingNumber}</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <Package size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                      <Package size={20} className="text-blue-600 mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.description[language]}</p>
                         <p className="font-medium text-sm sm:text-base">{selectedOrder.description}</p>
@@ -249,7 +360,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
                     {selectedOrder.origin && (
                       <div className="flex items-start gap-3">
-                        <MapPin size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <MapPin size={20} className="text-blue-600 mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.origin[language]}</p>
                           <p className="font-medium text-sm sm:text-base">{selectedOrder.origin}</p>
@@ -259,7 +370,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
                     {selectedOrder.destination && (
                       <div className="flex items-start gap-3">
-                        <MapPin size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <MapPin size={20} weight="fill" className="text-green-600 mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.destination[language]}</p>
                           <p className="font-medium text-sm sm:text-base">{selectedOrder.destination}</p>
@@ -269,10 +380,10 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
 
                     {selectedOrder.weight && (
                       <div className="flex items-start gap-3">
-                        <ArrowsClockwise size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
+                        <Scales size={20} className="text-blue-600 mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.weight[language]}</p>
-                          <p className="font-medium text-sm sm:text-base">{selectedOrder.weight}</p>
+                          <p className="font-bold text-sm sm:text-base text-blue-600">{selectedOrder.weight}</p>
                         </div>
                       </div>
                     )}
