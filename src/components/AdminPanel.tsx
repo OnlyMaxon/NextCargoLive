@@ -245,8 +245,8 @@ export function AdminPanel({
       <header className="border-b bg-white sticky top-0 z-10">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="h-10 flex-shrink-0">
-              <img src="/logo.png" alt="NextCargo" className="h-full w-auto object-contain" />
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <Package size={22} weight="bold" className="text-primary-foreground" />
             </div>
             <div className="min-w-0">
               <h1 className="text-lg font-semibold tracking-tight truncate">{txt.adminPanel[language]}</h1>

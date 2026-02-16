@@ -203,8 +203,8 @@ function App() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-20 h-20 mx-auto animate-pulse">
-            <img src="/logo.png" alt="NextCargo" className="w-full h-full object-contain" />
+          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto animate-pulse">
+            <Package size={32} weight="bold" className="text-white" />
           </div>
           <p className="text-gray-500">{commonTxt.loading[language]}</p>
         </div>
@@ -261,10 +261,11 @@ function App() {
     <div className="min-h-screen bg-gray-50 w-full overflow-x-hidden">
       <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="px-4 py-3 flex items-center gap-3">
-          <div className="h-9 flex-shrink-0">
-            <img src="/logo.png" alt="NextCargo" className="h-full w-auto object-contain" />
+          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Package size={20} weight="bold" className="text-white" />
           </div>
           <div className="min-w-0 flex-1">
+            <h1 className="text-base font-semibold tracking-tight truncate text-gray-900">NextCargo</h1>
             <p className="text-xs text-gray-500 truncate">Welcome, {currentUser.firstName}</p>
           </div>
         </div>
