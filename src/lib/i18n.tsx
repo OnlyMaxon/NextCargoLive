@@ -687,9 +687,9 @@ export const translations = {
       az: 'Profil'
     },
     apps: {
-      ru: 'Маркетплейсы',
-      en: 'Marketplaces',
-      az: 'Marketpleyslar'
+      ru: 'Магазины',
+      en: 'Shops',
+      az: 'Mağazalar'
     }
   },
   

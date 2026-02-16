@@ -278,7 +278,7 @@ function App() {
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 safe-area-inset-bottom">
-        <div className="flex items-center justify-around px-2 py-1">
+        <div className="grid grid-cols-3 px-2 py-1">
           {[
             { id: 'orders' as Tab, icon: Package, label: navTxt.orders[language] },
             { id: 'profile' as Tab, icon: UserIcon, label: navTxt.profile[language] },
@@ -287,7 +287,7 @@ function App() {
             <Button
               key={item.id}
               variant="ghost"
-              className={`flex-col h-auto py-1.5 px-3 gap-0.5 min-w-[56px] rounded-lg ${
+              className={`flex-col h-auto py-1.5 px-1 gap-0.5 w-full rounded-lg ${
                 activeTab === item.id 
                   ? 'text-blue-600' 
                   : 'text-gray-400'
@@ -298,7 +298,7 @@ function App() {
                 size={18} 
                 weight={activeTab === item.id ? 'fill' : 'regular'} 
               />
-              <span className="text-[10px] font-medium">
+              <span className="text-[10px] font-medium truncate max-w-full">
                 {item.label}
               </span>
             </Button>
