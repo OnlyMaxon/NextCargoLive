@@ -220,12 +220,9 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
             <LanguageSelector />
           </div>
           <div className="flex justify-center">
-            <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center">
-              <Package size={28} weight="bold" className="text-white" />
-            </div>
+            <img src="/logo.png" alt="NextCargo" className="h-16 w-auto object-contain" />
           </div>
           <div className="text-center">
-            <CardTitle className="text-xl font-semibold tracking-tight text-gray-900">NextCargo</CardTitle>
             <CardDescription className="text-xs mt-1.5 text-gray-500">
               {txt.subtitle[language]}
             </CardDescription>

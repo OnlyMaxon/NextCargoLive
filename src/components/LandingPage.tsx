@@ -410,10 +410,7 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
       <header className="border-b border-gray-200 bg-white/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Package className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">nextcargo.eu</span>
+            <img src="/logo.png" alt="NextCargo" className="h-10 w-auto object-contain" />
           </div>
           <div className="flex items-center gap-3">
             <LanguageSelector className="hidden sm:flex" />
@@ -660,10 +657,7 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
             {/* Logo & Description */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Package className="w-5 h-5 text-white" />
-                </div>
-                <span className="font-bold text-xl text-gray-900">nextcargo.eu</span>
+                <img src="/logo.png" alt="NextCargo" className="h-10 w-auto object-contain" />
               </div>
               <p className="text-sm text-gray-600">
                 {txt.footerDescription[language]}
