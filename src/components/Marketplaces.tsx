@@ -2,8 +2,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { MARKETPLACES } from '@/lib/constants'
 import { ArrowSquareOut, ShoppingCart } from '@phosphor-icons/react'
+import { useTranslation, translations } from '@/lib/i18n'
+
+const txt = translations.marketplaces
+const navTxt = translations.nav
 
 export function Marketplaces() {
+  const { language } = useTranslation()
+
   const handleOpenMarketplace = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer')
   }
@@ -12,7 +18,7 @@ export function Marketplaces() {
     <div className="p-3 space-y-3">
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-border" />
-        <h2 className="text-xs font-medium text-muted-foreground">Marketplaces</h2>
+        <h2 className="text-xs font-medium text-muted-foreground">{navTxt.apps[language]}</h2>
         <div className="h-px flex-1 bg-border" />
       </div>
 
@@ -23,9 +29,9 @@ export function Marketplaces() {
               <ShoppingCart size={16} weight="bold" className="text-primary-foreground" />
             </div>
             <div className="min-w-0">
-              <h3 className="font-semibold text-sm mb-0.5">Shop from Poland 🇵🇱</h3>
+              <h3 className="font-semibold text-sm mb-0.5">{txt.title[language]} 🇵🇱</h3>
               <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Order from these marketplaces and use our warehouse address. We'll handle the delivery to Azerbaijan!
+                {txt.subtitle[language]}
               </p>
             </div>
           </div>
@@ -57,7 +63,7 @@ export function Marketplaces() {
                 className="w-full h-8 text-xs"
                 onClick={() => handleOpenMarketplace(marketplace.url)}
               >
-                Visit {marketplace.name}
+                {txt.visitStore[language]} {marketplace.name}
                 <ArrowSquareOut size={14} className="ml-1.5" />
               </Button>
             </CardContent>

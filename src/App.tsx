@@ -18,10 +18,15 @@ import {
   usersService 
 } from '@/lib/firebase-services'
 import { toast } from 'sonner'
+import { useTranslation, translations } from '@/lib/i18n'
+
+const navTxt = translations.nav
+const commonTxt = translations.common
 
 type Tab = 'orders' | 'profile' | 'apps'
 
 function App() {
+  const { language } = useTranslation()
   const [users, setUsers] = useState<User[]>([])
   const [orders, setOrders] = useState<Order[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -201,7 +206,7 @@ function App() {
           <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto animate-pulse">
             <Package size={32} weight="bold" className="text-white" />
           </div>
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-500">{commonTxt.loading[language]}</p>
         </div>
       </div>
     )
@@ -275,9 +280,9 @@ function App() {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 safe-area-inset-bottom">
         <div className="flex items-center justify-around px-2 py-1">
           {[
-            { id: 'orders' as Tab, icon: Package, label: 'Orders' },
-            { id: 'profile' as Tab, icon: UserIcon, label: 'Profile' },
-            { id: 'apps' as Tab, icon: AppWindow, label: 'Apps' }
+            { id: 'orders' as Tab, icon: Package, label: navTxt.orders[language] },
+            { id: 'profile' as Tab, icon: UserIcon, label: navTxt.profile[language] },
+            { id: 'apps' as Tab, icon: AppWindow, label: navTxt.apps[language] }
           ].map((item) => (
             <Button
               key={item.id}

@@ -18,6 +18,54 @@ import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
 import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, Package, CaretUpDown, Check, Envelope, Copy } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { useTranslation, LanguageSelector, Language } from '@/lib/i18n'
+
+// Admin translations
+const adminTxt = {
+  adminPanel: { ru: 'Панель администратора', en: 'Admin Panel', az: 'Admin paneli' },
+  cargoManagement: { ru: 'Управление грузами', en: 'Cargo Management', az: 'Yük idarəetməsi' },
+  logout: { ru: 'Выйти', en: 'Logout', az: 'Çıxış' },
+  orders: { ru: 'Заказы', en: 'Orders', az: 'Sifarişlər' },
+  searchFilter: { ru: 'Поиск и фильтр', en: 'Search & Filter', az: 'Axtar və filtrələ' },
+  searchByFin: { ru: 'Поиск по FIN коду...', en: 'Search by FIN code...', az: 'FIN kodu ilə axtarış...' },
+  addOrder: { ru: 'Добавить заказ', en: 'Add Order', az: 'Sifariş əlavə et' },
+  allOrders: { ru: 'Все заказы', en: 'All Orders', az: 'Bütün sifarişlər' },
+  noOrdersFound: { ru: 'Заказы не найдены', en: 'No orders found', az: 'Sifariş tapılmadı' },
+  trackingNumber: { ru: 'Номер отслеживания', en: 'Tracking Number', az: 'İzləmə nömrəsi' },
+  customer: { ru: 'Клиент', en: 'Customer', az: 'Müştəri' },
+  status: { ru: 'Статус', en: 'Status', az: 'Status' },
+  description: { ru: 'Описание', en: 'Description', az: 'Təsvir' },
+  origin: { ru: 'Откуда', en: 'Origin', az: 'Haradan' },
+  destination: { ru: 'Куда', en: 'Destination', az: 'Haraya' },
+  weight: { ru: 'Вес', en: 'Weight', az: 'Çəki' },
+  edit: { ru: 'Редактировать', en: 'Edit', az: 'Redaktə et' },
+  delete: { ru: 'Удалить', en: 'Delete', az: 'Sil' },
+  save: { ru: 'Сохранить', en: 'Save', az: 'Yadda saxla' },
+  cancel: { ru: 'Отмена', en: 'Cancel', az: 'Ləğv et' },
+  selectCustomer: { ru: 'Выберите клиента...', en: 'Select customer...', az: 'Müştəri seçin...' },
+  searchCustomer: { ru: 'Поиск по имени или FIN...', en: 'Search by name or FIN...', az: 'Ad və ya FIN ilə axtarış...' },
+  noCustomerFound: { ru: 'Клиент не найден.', en: 'No customer found.', az: 'Müştəri tapılmadı.' },
+  editOrder: { ru: 'Редактировать заказ', en: 'Edit Order', az: 'Sifarişi redaktə et' },
+  addNewOrder: { ru: 'Добавить новый заказ', en: 'Add New Order', az: 'Yeni sifariş əlavə et' },
+  orderAdded: { ru: 'Заказ добавлен', en: 'Order added', az: 'Sifariş əlavə edildi' },
+  orderUpdated: { ru: 'Заказ обновлен', en: 'Order updated', az: 'Sifariş yeniləndi' },
+  orderDeleted: { ru: 'Заказ удален', en: 'Order deleted', az: 'Sifariş silindi' },
+  inTransit: { ru: 'В пути', en: 'In Transit', az: 'Yolda' },
+  atWarehouse: { ru: 'На складе', en: 'At Warehouse', az: 'Anbarda' },
+  delivered: { ru: 'Доставлен', en: 'Delivered', az: 'Çatdırılıb' },
+  finCopied: { ru: 'FIN скопирован', en: 'FIN copied', az: 'FIN kopyalandı' },
+  copyFin: { ru: 'Копировать FIN', en: 'Copy FIN', az: 'FIN kopyala' }
+}
+
+// Status labels by language
+const getStatusLabel = (status: OrderStatus, lang: Language): string => {
+  const labels: Record<OrderStatus, Record<Language, string>> = {
+    'in_transit': { ru: 'В пути', en: 'In Transit', az: 'Yolda' },
+    'at_warehouse': { ru: 'На складе', en: 'At Warehouse', az: 'Anbarda' },
+    'delivered': { ru: 'Доставлен', en: 'Delivered', az: 'Çatdırılıb' }
+  }
+  return labels[status][lang]
+}
 
 interface AdminPanelProps {
   orders: Order[]
@@ -170,6 +218,9 @@ export function AdminPanel({
     setCustomerSearchOpen(false)
   }
 
+  const { language } = useTranslation()
+  const txt = adminTxt
+
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString('en-GB', {
       day: '2-digit',
@@ -198,21 +249,28 @@ export function AdminPanel({
               <Package size={22} weight="bold" className="text-primary-foreground" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-semibold tracking-tight truncate">Admin Panel</h1>
-              <p className="text-xs text-muted-foreground hidden sm:block">Cargo Management</p>
+              <h1 className="text-lg font-semibold tracking-tight truncate">{txt.adminPanel[language]}</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block">{txt.cargoManagement[language]}</p>
             </div>
           </div>
-          <Button variant="destructive" size="sm" onClick={onLogout} className="flex-shrink-0">
-            <SignOut size={16} className="sm:mr-2" />
-            <span className="hidden sm:inline">Logout</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <LanguageSelector className="hidden sm:flex" />
+            <Button variant="destructive" size="sm" onClick={onLogout} className="flex-shrink-0">
+              <SignOut size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">{txt.logout[language]}</span>
+            </Button>
+          </div>
+        </div>
+        {/* Mobile Language Selector */}
+        <div className="sm:hidden flex justify-center py-2 border-t bg-gray-50">
+          <LanguageSelector />
         </div>
       </header>
 
       <div className="px-4 sm:px-6 lg:container lg:mx-auto py-4">
         <Tabs defaultValue="orders">
           <TabsList className="mb-4 h-10">
-            <TabsTrigger value="orders" className="text-sm">Orders</TabsTrigger>
+            <TabsTrigger value="orders" className="text-sm">{txt.orders[language]}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="space-y-4">
@@ -220,7 +278,7 @@ export function AdminPanel({
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                   <MagnifyingGlass size={18} className="text-muted-foreground" />
-                  Search & Filter
+                  {txt.searchFilter[language]}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -228,7 +286,7 @@ export function AdminPanel({
                   <div className="flex-1 relative">
                     <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                     <Input
-                      placeholder="Search by FIN code..."
+                      placeholder={txt.searchByFin[language]}
                       value={searchFin}
                       onChange={(e) => setSearchFin(e.target.value)}
                       className="pl-9 h-10"
@@ -236,7 +294,7 @@ export function AdminPanel({
                   </div>
                   <Button onClick={() => setIsAddingOrder(true)} className="h-10 w-full sm:w-auto">
                     <Plus size={18} className="mr-2" />
-                    Add Order
+                    {txt.addOrder[language]}
                   </Button>
                 </div>
               </CardContent>
@@ -246,7 +304,7 @@ export function AdminPanel({
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Package size={18} className="text-muted-foreground" />
-                  All Orders
+                  {txt.allOrders[language]}
                   <Badge variant="secondary" className="ml-auto">
                     {sortedOrders.length}
                   </Badge>
@@ -258,20 +316,20 @@ export function AdminPanel({
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="font-medium">Tracking</TableHead>
-                          <TableHead className="font-medium">Customer</TableHead>
+                          <TableHead className="font-medium">{txt.trackingNumber[language]}</TableHead>
+                          <TableHead className="font-medium">{txt.customer[language]}</TableHead>
                           <TableHead className="font-medium">FIN</TableHead>
-                          <TableHead className="font-medium">Description</TableHead>
-                          <TableHead className="font-medium">Status</TableHead>
-                          <TableHead className="font-medium">Created</TableHead>
-                          <TableHead className="font-medium">Actions</TableHead>
+                          <TableHead className="font-medium">{txt.description[language]}</TableHead>
+                          <TableHead className="font-medium">{txt.status[language]}</TableHead>
+                          <TableHead className="font-medium">{language === 'ru' ? 'Создан' : language === 'az' ? 'Yaradılıb' : 'Created'}</TableHead>
+                          <TableHead className="font-medium">{language === 'ru' ? 'Действия' : language === 'az' ? 'Hərəkətlər' : 'Actions'}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {sortedOrders.length === 0 ? (
                           <TableRow>
                             <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                              No orders found
+                              {txt.noOrdersFound[language]}
                             </TableCell>
                           </TableRow>
                         ) : (
@@ -295,7 +353,7 @@ export function AdminPanel({
                                 <TableCell className="max-w-xs truncate">{order.description}</TableCell>
                                 <TableCell>
                                   <Badge className={`${STATUS_COLORS[order.status]} shadow-sm`}>
-                                    {STATUS_LABELS[order.status]}
+                                    {getStatusLabel(order.status, language)}
                                   </Badge>
                                 </TableCell>
                                 <TableCell className="text-sm text-muted-foreground">{formatDate(order.createdAt)}</TableCell>
@@ -330,7 +388,7 @@ export function AdminPanel({
                   {sortedOrders.length === 0 ? (
                     <div className="py-12 text-center text-muted-foreground">
                       <Package size={48} className="mx-auto mb-3 text-muted-foreground/50" />
-                      <p>No orders found</p>
+                      <p>{txt.noOrdersFound[language]}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -356,7 +414,7 @@ export function AdminPanel({
                                   </p>
                                 </div>
                                 <Badge className={`${STATUS_COLORS[order.status]} flex-shrink-0`}>
-                                  {STATUS_LABELS[order.status]}
+                                  {getStatusLabel(order.status, language)}
                                 </Badge>
                               </div>
 
@@ -373,7 +431,7 @@ export function AdminPanel({
                                   className="flex-1"
                                 >
                                   <PencilSimple size={18} className="mr-2" />
-                                  Edit
+                                  {txt.edit[language]}
                                 </Button>
                                 <Button
                                   size="sm"
@@ -382,7 +440,7 @@ export function AdminPanel({
                                   className="flex-1"
                                 >
                                   <Trash size={18} className="mr-2" />
-                                  Delete
+                                  {txt.delete[language]}
                                 </Button>
                               </div>
                             </CardContent>
@@ -405,12 +463,12 @@ export function AdminPanel({
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Plus size={18} weight="bold" className="text-primary-foreground" />
               </div>
-              Add New Order
+              {txt.addNewOrder[language]}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-sm sm:text-base font-medium">Customer</Label>
+              <Label className="text-sm sm:text-base font-medium">{txt.customer[language]}</Label>
               <Popover open={customerSearchOpen} onOpenChange={setCustomerSearchOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -424,16 +482,16 @@ export function AdminPanel({
                         {getSelectedCustomer()?.firstName} {getSelectedCustomer()?.lastName} ({getSelectedCustomer()?.finCode})
                       </span>
                     ) : (
-                      <span className="text-muted-foreground">Search customer...</span>
+                      <span className="text-muted-foreground">{txt.selectCustomer[language]}</span>
                     )}
                     <CaretUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[calc(95vw-2rem)] sm:w-full p-0" align="start">
                   <Command>
-                    <CommandInput placeholder="Search by name or FIN..." />
+                    <CommandInput placeholder={txt.searchCustomer[language]} />
                     <CommandList>
-                      <CommandEmpty>No customer found.</CommandEmpty>
+                      <CommandEmpty>{txt.noCustomerFound[language]}</CommandEmpty>
                       <CommandGroup>
                         {users.filter(u => !u.isAdmin).map((user) => (
                           <CommandItem
@@ -489,14 +547,16 @@ export function AdminPanel({
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Copy email to notify customer via Outlook
+                    {language === 'ru' ? 'Скопируйте email для уведомления клиента' : 
+                     language === 'az' ? 'Müştəriyə bildiriş göndərmək üçün emaili kopyalayın' : 
+                     'Copy email to notify customer via Outlook'}
                   </p>
                 </div>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm sm:text-base font-medium">Tracking Number</Label>
+              <Label className="text-sm sm:text-base font-medium">{txt.trackingNumber[language]}</Label>
               <Input
                 placeholder="e.g., PL123456789"
                 value={newOrder.trackingNumber}
@@ -506,9 +566,9 @@ export function AdminPanel({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm sm:text-base font-medium">Description</Label>
+              <Label className="text-sm sm:text-base font-medium">{txt.description[language]}</Label>
               <Textarea
-                placeholder="Order description"
+                placeholder={language === 'ru' ? 'Описание заказа' : language === 'az' ? 'Sifariş təsviri' : 'Order description'}
                 value={newOrder.description}
                 onChange={(e) => setNewOrder({ ...newOrder, description: e.target.value })}
                 className="min-h-[80px]"
@@ -516,22 +576,22 @@ export function AdminPanel({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm sm:text-base font-medium">Status</Label>
+              <Label className="text-sm sm:text-base font-medium">{txt.status[language]}</Label>
               <Select value={newOrder.status} onValueChange={(value: OrderStatus) => setNewOrder({ ...newOrder, status: value })}>
                 <SelectTrigger className="h-10">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="in_transit">In Transit</SelectItem>
-                  <SelectItem value="at_warehouse">At Warehouse</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="in_transit">{txt.inTransit[language]}</SelectItem>
+                  <SelectItem value="at_warehouse">{txt.atWarehouse[language]}</SelectItem>
+                  <SelectItem value="delivered">{txt.delivered[language]}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-sm sm:text-base font-medium">Origin</Label>
+                <Label className="text-sm sm:text-base font-medium">{txt.origin[language]}</Label>
                 <Input
                   placeholder="Poland"
                   value={newOrder.origin}
@@ -541,7 +601,7 @@ export function AdminPanel({
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm sm:text-base font-medium">Destination</Label>
+                <Label className="text-sm sm:text-base font-medium">{txt.destination[language]}</Label>
                 <Input
                   placeholder="Azerbaijan"
                   value={newOrder.destination}
@@ -552,7 +612,7 @@ export function AdminPanel({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm sm:text-base font-medium">Weight</Label>
+              <Label className="text-sm sm:text-base font-medium">{txt.weight[language]}</Label>
               <Input
                 placeholder="e.g., 5.2 kg"
                 value={newOrder.weight}
@@ -562,8 +622,8 @@ export function AdminPanel({
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={handleCloseAddDialog} className="w-full sm:w-auto h-10">Cancel</Button>
-            <Button onClick={handleAddOrder} className="w-full sm:w-auto h-10">Add Order</Button>
+            <Button variant="outline" onClick={handleCloseAddDialog} className="w-full sm:w-auto h-10">{txt.cancel[language]}</Button>
+            <Button onClick={handleAddOrder} className="w-full sm:w-auto h-10">{txt.addOrder[language]}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -575,23 +635,23 @@ export function AdminPanel({
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <PencilSimple size={18} weight="bold" className="text-primary-foreground" />
               </div>
-              Update Order Status
+              {txt.editOrder[language]}
             </DialogTitle>
           </DialogHeader>
           {editingOrder && (
             <div className="space-y-4 py-4">
               <div className="p-4 rounded-lg bg-muted/50 border">
-                <p className="text-xs text-muted-foreground mb-1">Tracking Number</p>
+                <p className="text-xs text-muted-foreground mb-1">{txt.trackingNumber[language]}</p>
                 <p className="font-mono font-semibold text-base sm:text-lg break-all">{editingOrder.trackingNumber}</p>
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Customer</p>
+                <p className="text-sm text-muted-foreground">{txt.customer[language]}</p>
                 <p className="font-medium">{getUserName(editingOrder.userId)}</p>
               </div>
 
               <div className="space-y-3">
-                <Label className="text-sm sm:text-base font-medium">New Status</Label>
+                <Label className="text-sm sm:text-base font-medium">{language === 'ru' ? 'Новый статус' : language === 'az' ? 'Yeni status' : 'New Status'}</Label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     variant={editingOrder.status === 'in_transit' ? 'default' : 'outline'}
@@ -601,7 +661,7 @@ export function AdminPanel({
                     )}
                     onClick={() => handleUpdateStatus(editingOrder, 'in_transit')}
                   >
-                    In Transit
+                    {txt.inTransit[language]}
                   </Button>
                   <Button
                     variant={editingOrder.status === 'at_warehouse' ? 'default' : 'outline'}
@@ -611,7 +671,7 @@ export function AdminPanel({
                     )}
                     onClick={() => handleUpdateStatus(editingOrder, 'at_warehouse')}
                   >
-                    At Warehouse
+                    {txt.atWarehouse[language]}
                   </Button>
                   <Button
                     variant={editingOrder.status === 'delivered' ? 'default' : 'outline'}
@@ -621,7 +681,7 @@ export function AdminPanel({
                     )}
                     onClick={() => handleUpdateStatus(editingOrder, 'delivered')}
                   >
-                    Delivered
+                    {txt.delivered[language]}
                   </Button>
                 </div>
               </div>

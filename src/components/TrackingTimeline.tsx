@@ -1,12 +1,32 @@
 import { TrackingEvent } from '@/lib/types'
-import { STATUS_COLORS, STATUS_LABELS } from '@/lib/constants'
+import { STATUS_COLORS } from '@/lib/constants'
 import { MapPin, Package, CheckCircle, Clock } from '@phosphor-icons/react'
+import { useTranslation, Language, translations } from '@/lib/i18n'
+
+const statusTxt = translations.statuses
+
+// Get translated status label
+const getStatusLabel = (status: string, language: Language) => {
+  const statusMap: Record<string, keyof typeof statusTxt> = {
+    'in_transit': 'inTransit',
+    'at_warehouse': 'inWarehouse',
+    'delivered': 'delivered',
+    'pending': 'pending',
+    'processing': 'processing',
+    'shipped': 'shipped',
+    'out_for_delivery': 'outForDelivery',
+    'cancelled': 'cancelled'
+  }
+  const key = statusMap[status]
+  return key ? statusTxt[key][language] : status
+}
 
 interface TrackingTimelineProps {
   events: TrackingEvent[]
 }
 
 export function TrackingTimeline({ events }: TrackingTimelineProps) {
+  const { language } = useTranslation()
   const sortedEvents = [...events].sort((a, b) => b.timestamp - a.timestamp)
 
   const getStatusIcon = (status: string) => {
@@ -56,8 +76,14 @@ export function TrackingTimeline({ events }: TrackingTimelineProps) {
         <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
           <Package size={32} className="text-muted-foreground" />
         </div>
-        <p>No tracking history available yet</p>
-        <p className="text-xs mt-1">Updates will appear here when your order ships</p>
+        <p>{language === 'ru' ? 'История отслеживания пока недоступна' : 
+           language === 'az' ? 'İzləmə tarixi hələ mövcud deyil' : 
+           'No tracking history available yet'}</p>
+        <p className="text-xs mt-1">
+          {language === 'ru' ? 'Обновления появятся здесь после отправки' : 
+           language === 'az' ? 'Sifariş göndərildikdən sonra yenilənmələr burada görünəcək' : 
+           'Updates will appear here when your order ships'}
+        </p>
       </div>
     )
   }
@@ -106,11 +132,11 @@ export function TrackingTimeline({ events }: TrackingTimelineProps) {
                           ${isLatest ? `${statusColor} text-white` : 'bg-muted text-muted-foreground'}
                         `}
                       >
-                        {STATUS_LABELS[event.status]}
+                        {getStatusLabel(event.status, language)}
                       </span>
                       {isLatest && (
                         <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                          Latest
+                          {language === 'ru' ? 'Последнее' : language === 'az' ? 'Son' : 'Latest'}
                         </span>
                       )}
                     </div>
@@ -136,7 +162,7 @@ export function TrackingTimeline({ events }: TrackingTimelineProps) {
 
                 {event.updatedBy && (
                   <div className="text-xs text-muted-foreground/70 italic">
-                    Updated by: {event.updatedBy}
+                    {language === 'ru' ? 'Обновлено:' : language === 'az' ? 'Yeniləyən:' : 'Updated by:'} {event.updatedBy}
                   </div>
                 )}
               </div>

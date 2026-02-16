@@ -6,12 +6,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
 import { Package, MapPin, Barcode, Calendar, ArrowsClockwise, ClockClockwise, Copy, CheckCircle, Warehouse } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
+import { useTranslation, translations } from '@/lib/i18n'
+
+const txt = translations.orders
+const statusTxt = translations.statuses
+
+// Status colors
+const STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  processing: 'bg-blue-100 text-blue-800 border-blue-200',
+  shipped: 'bg-purple-100 text-purple-800 border-purple-200',
+  in_transit: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+  in_warehouse: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+  out_for_delivery: 'bg-orange-100 text-orange-800 border-orange-200',
+  delivered: 'bg-green-100 text-green-800 border-green-200',
+  cancelled: 'bg-red-100 text-red-800 border-red-200'
+}
 
 // Warehouse address constant
 const WAREHOUSE_ADDRESS = {
@@ -29,8 +44,25 @@ interface OrderListProps {
 }
 
 export function OrderList({ orders, user }: OrderListProps) {
+  const { language } = useTranslation()
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [copied, setCopied] = useState(false)
+
+  // Get translated status label
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, keyof typeof statusTxt> = {
+      'pending': 'pending',
+      'processing': 'processing',
+      'shipped': 'shipped',
+      'in_transit': 'inTransit',
+      'in_warehouse': 'inWarehouse',
+      'out_for_delivery': 'outForDelivery',
+      'delivered': 'delivered',
+      'cancelled': 'cancelled'
+    }
+    const key = statusMap[status]
+    return key ? statusTxt[key][language] : status
+  }
 
   const userOrders = orders
     .filter(order => order.userId === user.id)
@@ -54,7 +86,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
     
     navigator.clipboard.writeText(addressText)
     setCopied(true)
-    toast.success('Address copied to clipboard!')
+    toast.success(txt.addressCopied[language])
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -69,8 +101,8 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                 <Warehouse size={16} weight="bold" className="text-white" />
               </div>
               <div className="min-w-0">
-                <span className="font-semibold text-sm">Your Warehouse Address</span>
-                <p className="text-[10px] text-muted-foreground">Use this for Polish online stores</p>
+                <span className="font-semibold text-sm">{txt.warehouseTitle[language]}</span>
+                <p className="text-[10px] text-muted-foreground">{txt.warehouseHint[language]}</p>
               </div>
             </div>
             <div className="space-y-0.5 text-xs font-mono bg-gray-50 rounded-lg p-2.5 border border-gray-200">
@@ -91,19 +123,19 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
             {copied ? (
               <>
                 <CheckCircle size={12} weight="bold" />
-                Copied
+                {txt.copied[language]}
               </>
             ) : (
               <>
                 <Copy size={12} />
-                Copy
+                {txt.copy[language]}
               </>
             )}
           </Button>
         </div>
         <div className="mt-2 flex items-center gap-1.5 text-[10px] text-gray-600 bg-blue-50 border border-blue-100 p-2 rounded-lg">
           <span>💡</span>
-          <span>Your <span className="font-medium text-blue-600">FIN code ({user.finCode})</span> helps us identify your packages</span>
+          <span>{txt.finCodeHelp[language].replace('FIN', '')} <span className="font-medium text-blue-600">FIN ({user.finCode})</span></span>
         </div>
       </CardContent>
     </Card>
@@ -116,7 +148,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
         <Alert className="text-sm">
           <Package className="h-4 w-4" />
           <AlertDescription className="text-sm leading-relaxed">
-            You don't have any orders yet. Visit the Apps tab to shop from Polish marketplaces and ship to our warehouse!
+            {txt.noOrders[language]}
           </AlertDescription>
         </Alert>
       </div>
@@ -131,7 +163,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
           
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
-            <h2 className="text-sm font-medium text-muted-foreground">My Orders</h2>
+            <h2 className="text-sm font-medium text-muted-foreground">{txt.myOrders[language]}</h2>
             <div className="h-px flex-1 bg-border" />
           </div>
           
@@ -157,7 +189,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                       </p>
                     </div>
                     <Badge className={`${STATUS_COLORS[order.status]} text-[10px] flex-shrink-0`}>
-                      {STATUS_LABELS[order.status]}
+                      {getStatusLabel(order.status)}
                     </Badge>
                   </div>
                 </CardContent>
@@ -172,27 +204,27 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
               <Package size={18} className="text-primary" />
-              Order Details
+              {txt.orderDetails[language]}
             </DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <Tabs defaultValue="details" className="flex-1 flex flex-col min-h-0">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details" className="text-xs sm:text-sm">
-                  Details
+                  {txt.details[language]}
                 </TabsTrigger>
                 <TabsTrigger value="tracking" className="text-xs sm:text-sm">
                   <ClockClockwise size={16} className="mr-1.5" />
-                  Tracking History
+                  {txt.trackingHistory[language]}
                 </TabsTrigger>
               </TabsList>
 
               <ScrollArea className="flex-1 mt-4">
                 <TabsContent value="details" className="mt-0 space-y-5 pr-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm sm:text-base text-muted-foreground">Status</span>
+                    <span className="text-sm sm:text-base text-muted-foreground">{txt.status[language]}</span>
                     <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm`}>
-                      {STATUS_LABELS[selectedOrder.status]}
+                      {getStatusLabel(selectedOrder.status)}
                     </Badge>
                   </div>
 
@@ -202,7 +234,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                     <div className="flex items-start gap-3">
                       <Barcode size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Tracking Number</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.trackingNumber[language]}</p>
                         <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.trackingNumber}</p>
                       </div>
                     </div>
@@ -210,7 +242,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                     <div className="flex items-start gap-3">
                       <Package size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Description</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.description[language]}</p>
                         <p className="font-medium text-sm sm:text-base">{selectedOrder.description}</p>
                       </div>
                     </div>
@@ -219,7 +251,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                       <div className="flex items-start gap-3">
                         <MapPin size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Origin</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.origin[language]}</p>
                           <p className="font-medium text-sm sm:text-base">{selectedOrder.origin}</p>
                         </div>
                       </div>
@@ -229,7 +261,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                       <div className="flex items-start gap-3">
                         <MapPin size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Destination</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.destination[language]}</p>
                           <p className="font-medium text-sm sm:text-base">{selectedOrder.destination}</p>
                         </div>
                       </div>
@@ -239,7 +271,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                       <div className="flex items-start gap-3">
                         <ArrowsClockwise size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Weight</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.weight[language]}</p>
                           <p className="font-medium text-sm sm:text-base">{selectedOrder.weight}</p>
                         </div>
                       </div>
@@ -250,7 +282,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                     <div className="flex items-start gap-3">
                       <Calendar size={20} className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Created</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.created[language]}</p>
                         <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.createdAt)}</p>
                       </div>
                     </div>
@@ -258,7 +290,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
                     <div className="flex items-start gap-3">
                       <Calendar size={20} weight="fill" className="text-muted-foreground mt-1 flex-shrink-0 sm:w-[22px] sm:h-[22px]" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">Last Updated</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-1">{txt.lastUpdated[language]}</p>
                         <p className="font-medium text-sm sm:text-base">{formatDate(selectedOrder.updatedAt)}</p>
                       </div>
                     </div>
