@@ -40,10 +40,10 @@ const WAREHOUSE_ADDRESS = {
 
 // Pricing table data
 const PRICING = [
-  { weight: 'documents', price: '100 zł' },
-  { weight: '0-5', price: '200 zł' },
-  { weight: '5-10', price: '300 zł' },
-  { weight: '10-23', price: '600 zł' }
+  { weight: 'documents', price: '23€' },
+  { weight: '0-5', price: '47€' },
+  { weight: '5-10', price: '70€' },
+  { weight: '10-23', price: '140€' }
 ]
 
 interface OrderListProps {

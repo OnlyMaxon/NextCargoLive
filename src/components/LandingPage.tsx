@@ -261,9 +261,9 @@ const getSteps = (lang: Language) => [
 // Pricing tiers
 const getPricingTiers = (lang: Language) => [
   {
-    weight: { ru: 'до 5 кг', en: 'up to 5 kg', az: '5 kq-a qədər' }[lang],
-    price: "$7",
-    perKg: { ru: 'за кг', en: 'per kg', az: 'kq üçün' }[lang],
+    weight: { ru: 'Документы', en: 'Documents', az: 'Sənədlər' }[lang],
+    price: "23€",
+    perKg: { ru: 'до 500 г', en: 'up to 500g', az: '500 q-a qədər' }[lang],
     popular: false,
     features: [
       { ru: 'Стандартная упаковка', en: 'Standard packaging', az: 'Standart qablaşdırma' }[lang],
@@ -272,9 +272,9 @@ const getPricingTiers = (lang: Language) => [
     ]
   },
   {
-    weight: { ru: '5-10 кг', en: '5-10 kg', az: '5-10 kq' }[lang],
-    price: "$6",
-    perKg: { ru: 'за кг', en: 'per kg', az: 'kq üçün' }[lang],
+    weight: { ru: '0-5 кг', en: '0-5 kg', az: '0-5 kq' }[lang],
+    price: "47€",
+    perKg: { ru: 'фикс. цена', en: 'fixed price', az: 'sabit qiymət' }[lang],
     popular: true,
     features: [
       { ru: 'Усиленная упаковка', en: 'Enhanced packaging', az: 'Gücləndirilmiş qablaşdırma' }[lang],
@@ -284,9 +284,21 @@ const getPricingTiers = (lang: Language) => [
     ]
   },
   {
-    weight: { ru: 'от 10 кг', en: 'from 10 kg', az: '10 kq-dan' }[lang],
-    price: "$5",
-    perKg: { ru: 'за кг', en: 'per kg', az: 'kq üçün' }[lang],
+    weight: { ru: '5-10 кг', en: '5-10 kg', az: '5-10 kq' }[lang],
+    price: "70€",
+    perKg: { ru: 'фикс. цена', en: 'fixed price', az: 'sabit qiymət' }[lang],
+    popular: false,
+    features: [
+      { ru: 'Усиленная упаковка', en: 'Enhanced packaging', az: 'Gücləndirilmiş qablaşdırma' }[lang],
+      { ru: 'Приоритетная отправка', en: 'Priority shipping', az: 'Prioritet göndərmə' }[lang],
+      { ru: 'Отслеживание', en: 'Tracking', az: 'İzləmə' }[lang],
+      { ru: 'Полная страховка', en: 'Full insurance', az: 'Tam sığorta' }[lang]
+    ]
+  },
+  {
+    weight: { ru: '10-23 кг', en: '10-23 kg', az: '10-23 kq' }[lang],
+    price: "140€",
+    perKg: { ru: 'фикс. цена', en: 'fixed price', az: 'sabit qiymət' }[lang],
     popular: false,
     features: [
       { ru: 'Усиленная упаковка', en: 'Enhanced packaging', az: 'Gücləndirilmiş qablaşdırma' }[lang],
