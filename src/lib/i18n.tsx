@@ -504,6 +504,37 @@ export const translations = {
       ru: 'Получите посылку в Азербайджане',
       en: 'Receive your package in Azerbaijan',
       az: 'Bağlamanızı Azərbaycanda alın'
+    },
+    // Discount system
+    firstOrderDiscount: {
+      ru: '🎉 Скидка 50% на первый заказ!',
+      en: '🎉 50% off your first order!',
+      az: '🎉 İlk sifarişinizə 50% endirim!'
+    },
+    discountApplied: {
+      ru: 'Ваша скидка',
+      en: 'Your discount',
+      az: 'Sizin endirim'
+    },
+    originalPrice: {
+      ru: 'Обычная цена',
+      en: 'Regular price',
+      az: 'Adi qiymət'
+    },
+    discountedPrice: {
+      ru: 'Со скидкой',
+      en: 'With discount',
+      az: 'Endirimlə'
+    },
+    newCustomer: {
+      ru: 'Новый клиент',
+      en: 'New customer',
+      az: 'Yeni müştəri'
+    },
+    discountValidUntil: {
+      ru: 'Скидка действует на ваш первый заказ',
+      en: 'Discount applies to your first order',
+      az: 'Endirim ilk sifarişinizə şamil edilir'
     }
   },
   

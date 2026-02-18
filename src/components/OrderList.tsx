@@ -38,13 +38,19 @@ const WAREHOUSE_ADDRESS = {
   phone: '+48 576 925 110'
 }
 
-// Pricing table data
+// Pricing table data with original prices
 const PRICING = [
-  { weight: 'documents', price: '23€' },
-  { weight: '0-5', price: '47€' },
-  { weight: '5-10', price: '70€' },
-  { weight: '10-23', price: '140€' }
+  { weight: 'documents', price: 23, priceStr: '23€' },
+  { weight: '0-5', price: 47, priceStr: '47€' },
+  { weight: '5-10', price: 70, priceStr: '70€' },
+  { weight: '10-23', price: 140, priceStr: '140€' }
 ]
+
+// Calculate discounted price
+const getDiscountedPrice = (price: number, discountPercent: number): string => {
+  const discounted = Math.round(price * (1 - discountPercent / 100))
+  return `${discounted}€`
+}
 
 interface OrderListProps {
   orders: Order[]
@@ -55,6 +61,16 @@ export function OrderList({ orders, user }: OrderListProps) {
   const { language } = useTranslation()
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [copied, setCopied] = useState(false)
+
+  // Calculate user's completed orders count
+  const userOrders = orders
+    .filter(order => order.userId === user.id)
+    .sort((a, b) => b.createdAt - a.createdAt)
+  
+  // Check if user is eligible for first order discount (0 completed orders)
+  const completedOrdersCount = userOrders.filter(o => o.status === 'delivered').length
+  const isFirstOrder = completedOrdersCount === 0
+  const discountPercent = isFirstOrder ? 50 : 0
 
   // Get translated status label
   const getStatusLabel = (status: string) => {
@@ -79,10 +95,6 @@ export function OrderList({ orders, user }: OrderListProps) {
     }
     return `${weight} ${language === 'ru' ? 'кг' : language === 'az' ? 'kq' : 'kg'}`
   }
-
-  const userOrders = orders
-    .filter(order => order.userId === user.id)
-    .sort((a, b) => b.createdAt - a.createdAt)
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString('en-GB', {
@@ -159,27 +171,79 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
     </Card>
   )
 
-  // Pricing Card Component
+  // Discount Banner Component
+  const DiscountBanner = () => {
+    if (!isFirstOrder) return null
+    
+    return (
+      <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 rounded-xl p-4 shadow-lg mb-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <span className="text-2xl">🎁</span>
+            </div>
+            <div className="flex-1">
+              <Badge className="bg-yellow-400 text-yellow-900 text-[10px] font-bold mb-1">
+                {txt.newCustomer[language]}
+              </Badge>
+              <h3 className="text-white font-bold text-lg">{txt.firstOrderDiscount[language]}</h3>
+              <p className="text-white/80 text-xs">{txt.discountValidUntil[language]}</p>
+            </div>
+            <div className="text-right">
+              <div className="text-4xl font-black text-white">-50%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Pricing Card Component with discount
   const PricingCard = () => (
     <Card className="border shadow-sm overflow-hidden">
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <Scales size={18} weight="bold" className="text-white" />
-          <div>
-            <h3 className="font-bold text-white text-sm">{txt.pricingTitle[language]}</h3>
-            <p className="text-blue-100 text-[10px]">{txt.pricingSubtitle[language]} 🇵🇱 → 🇦🇿</p>
+      <div className={`px-4 py-3 ${isFirstOrder ? 'bg-gradient-to-r from-green-600 to-emerald-600' : 'bg-gradient-to-r from-blue-600 to-blue-700'}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Scales size={18} weight="bold" className="text-white" />
+            <div>
+              <h3 className="font-bold text-white text-sm">{txt.pricingTitle[language]}</h3>
+              <p className="text-white/70 text-[10px]">{txt.pricingSubtitle[language]} 🇵🇱 → 🇦🇿</p>
+            </div>
           </div>
+          {isFirstOrder && (
+            <Badge className="bg-yellow-400 text-yellow-900 text-xs font-bold animate-pulse">
+              -50%
+            </Badge>
+          )}
         </div>
       </div>
       <CardContent className="p-0">
         <div className="divide-y divide-gray-100">
           {PRICING.map((item, index) => (
-            <div key={index} className={`flex items-center justify-between px-4 py-2.5 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+            <div key={index} className={`flex items-center justify-between px-4 py-3 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
               <span className="text-sm text-gray-700 font-medium">{getWeightLabel(item.weight)}</span>
-              <span className="text-sm font-bold text-blue-600">{item.price}</span>
+              <div className="flex items-center gap-2">
+                {isFirstOrder ? (
+                  <>
+                    <span className="text-xs text-gray-400 line-through">{item.priceStr}</span>
+                    <span className="text-sm font-bold text-green-600">{getDiscountedPrice(item.price, discountPercent)}</span>
+                  </>
+                ) : (
+                  <span className="text-sm font-bold text-blue-600">{item.priceStr}</span>
+                )}
+              </div>
             </div>
           ))}
         </div>
+        {isFirstOrder && (
+          <div className="px-4 py-2 bg-green-50 border-t border-green-100">
+            <p className="text-xs text-green-700 text-center font-medium">
+              ✨ {txt.discountApplied[language]}: 50% {language === 'ru' ? 'на первый заказ' : language === 'az' ? 'ilk sifariş üçün' : 'on first order'}
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -239,6 +303,9 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
     <>
       <ScrollArea className="h-[calc(100vh-120px)]">
         <div className="p-3 space-y-3">
+          {/* Discount Banner for New Customers */}
+          <DiscountBanner />
+          
           {/* Warehouse Address - Most Important */}
           <WarehouseAddressCard />
           

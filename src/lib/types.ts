@@ -63,3 +63,28 @@ export interface Marketplace {
   logo: string
   description: string
 }
+
+// Discount system types
+export type DiscountType = 'first_order' | 'promo_code' | 'loyalty' | 'referral' | 'seasonal'
+
+export interface Discount {
+  id: string
+  type: DiscountType
+  percentage: number
+  code?: string // for promo codes
+  description: {
+    ru: string
+    en: string
+    az: string
+  }
+  validUntil?: number // timestamp
+  minOrders?: number // for loyalty discounts
+  maxOrders?: number // for first order (0 orders required)
+  isActive: boolean
+}
+
+export interface UserDiscount {
+  discountId: string
+  appliedAt: number
+  usedOnOrderId?: string
+}
