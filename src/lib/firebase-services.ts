@@ -70,7 +70,9 @@ export const authService = {
         email: data.email || '',
         finCode: data.finCode,
         password: '',
-        isAdmin: data.isAdmin || false
+        isAdmin: data.isAdmin || false,
+        documentSerial: data.documentSerial || '',
+        birthDate: data.birthDate || ''
       }
     } catch (error) {
       console.error('Error getting user data:', error)
@@ -93,7 +95,9 @@ export const authService = {
         email: data.email || '',
         finCode: data.finCode,
         password: '',
-        isAdmin: data.isAdmin || false
+        isAdmin: data.isAdmin || false,
+        documentSerial: data.documentSerial || '',
+        birthDate: data.birthDate || ''
       }
     } catch (error) {
       console.error('Error getting user by FIN:', error)
@@ -358,7 +362,9 @@ export const usersService = {
           email: data.email || '',
           finCode: data.finCode,
           password: '',
-          isAdmin: data.isAdmin || false
+          isAdmin: data.isAdmin || false,
+          documentSerial: data.documentSerial || '',
+          birthDate: data.birthDate || ''
         } as User
       })
     } catch (error) {
@@ -380,7 +386,9 @@ export const usersService = {
           email: data.email || '',
           finCode: data.finCode,
           password: '',
-          isAdmin: data.isAdmin || false
+          isAdmin: data.isAdmin || false,
+          documentSerial: data.documentSerial || '',
+          birthDate: data.birthDate || ''
         } as User
       })
 
@@ -394,6 +402,16 @@ export const usersService = {
     } catch (error) {
       console.error('Error searching users:', error)
       return []
+    }
+  },
+
+  async updateUser(userId: string, data: Partial<User>): Promise<void> {
+    try {
+      const userRef = doc(db, 'users', userId)
+      await updateDoc(userRef, data)
+    } catch (error) {
+      console.error('Error updating user:', error)
+      throw error
     }
   }
 }

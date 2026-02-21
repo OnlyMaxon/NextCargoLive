@@ -8,7 +8,8 @@ import { Profile } from '@/components/Profile'
 import { Marketplaces } from '@/components/Marketplaces'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
-import { Package, User as UserIcon, AppWindow } from '@phosphor-icons/react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Package, User as UserIcon, AppWindow, Warning, IdentificationCard } from '@phosphor-icons/react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { 
@@ -35,6 +36,27 @@ function App() {
   const [authTab, setAuthTab] = useState<AuthTab>('login')
   const [activeTab, setActiveTab] = useState<Tab>('orders')
   const [loading, setLoading] = useState(true)
+  const [showProfileWarning, setShowProfileWarning] = useState(false)
+
+  // Check if user profile is complete
+  const isProfileComplete = (user: User | null): boolean => {
+    if (!user) return true
+    return Boolean(user.documentSerial && user.birthDate)
+  }
+
+  // Show warning when user logs in with incomplete profile
+  useEffect(() => {
+    if (currentUser && !currentUser.isAdmin && !isProfileComplete(currentUser)) {
+      setShowProfileWarning(true)
+    }
+  }, [currentUser])
+
+  const handleUserUpdate = (updatedUser: User) => {
+    setCurrentUser(updatedUser)
+    if (isProfileComplete(updatedUser)) {
+      setShowProfileWarning(false)
+    }
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -273,9 +295,53 @@ function App() {
 
       <main className="pb-14">
         {activeTab === 'orders' && <OrderList orders={orders} user={currentUser} />}
-        {activeTab === 'profile' && <Profile user={currentUser} onLogout={handleLogout} />}
+        {activeTab === 'profile' && <Profile user={currentUser} onLogout={handleLogout} onUserUpdate={handleUserUpdate} />}
         {activeTab === 'apps' && <Marketplaces />}
       </main>
+
+      {/* Profile Warning Modal */}
+      <Dialog open={showProfileWarning} onOpenChange={setShowProfileWarning}>
+        <DialogContent className="max-w-sm mx-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                <Warning size={24} weight="fill" className="text-amber-600" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg">
+                  {language === 'ru' ? 'Заполните данные' : language === 'az' ? 'Məlumatları doldurun' : 'Complete Your Profile'}
+                </DialogTitle>
+              </div>
+            </div>
+            <DialogDescription className="text-sm text-gray-600">
+              {language === 'ru' 
+                ? 'Для получения посылок необходимо заполнить серийный номер документа и дату рождения в разделе Профиль.' 
+                : language === 'az' 
+                ? 'Bağlamaları almaq üçün Profil bölməsində sənəd seriya nömrəsini və doğum tarixini doldurmalısınız.' 
+                : 'To receive packages, please fill in your document serial number and date of birth in the Profile section.'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 mt-4">
+            <Button 
+              variant="outline" 
+              className="flex-1" 
+              onClick={() => setShowProfileWarning(false)}
+            >
+              {language === 'ru' ? 'Позже' : language === 'az' ? 'Sonra' : 'Later'}
+            </Button>
+            <Button 
+              className="flex-1 bg-blue-600 hover:bg-blue-700" 
+              onClick={() => {
+                setShowProfileWarning(false)
+                setActiveTab('profile')
+              }}
+            >
+              <IdentificationCard size={16} className="mr-1.5" />
+              {language === 'ru' ? 'Заполнить' : language === 'az' ? 'Doldur' : 'Fill Now'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 safe-area-inset-bottom">
         <div className="grid grid-cols-3 px-2 py-1">

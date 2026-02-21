@@ -12,6 +12,8 @@ export interface User {
   finCode: string
   password: string
   isAdmin: boolean
+  documentSerial?: string  // Max 10 characters
+  birthDate?: string       // Format: YYYY-MM-DD
 }
 
 export interface TrackingEvent {
