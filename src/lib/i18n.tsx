@@ -802,42 +802,15 @@ export const languageFlags: Record<Language, string> = {
   az: '🇦🇿'
 }
 
-// Detect language by country/browser
+// Detect language - Always default to English, only use saved preference
 export function detectLanguage(): Language {
-  // First check localStorage
+  // Only check localStorage - if user manually selected a language, use it
   const saved = localStorage.getItem('language') as Language
   if (saved && ['ru', 'en', 'az'].includes(saved)) {
     return saved
   }
   
-  // Get browser language
-  const browserLang = navigator.language.toLowerCase()
-  
-  // Russian-speaking countries
-  if (browserLang.startsWith('ru') || browserLang.startsWith('uk')) {
-    return 'ru'
-  }
-  
-  // Azerbaijani
-  if (browserLang.startsWith('az')) {
-    return 'az'
-  }
-  
-  // Try to detect by timezone (backup method)
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  
-  // Azerbaijan timezone
-  if (timezone === 'Asia/Baku') {
-    return 'az'
-  }
-  
-  // Russian/Ukrainian timezones
-  if (timezone.includes('Moscow') || timezone.includes('Kiev') || 
-      timezone.includes('Europe/Minsk') || timezone.includes('Europe/Chisinau')) {
-    return 'ru'
-  }
-  
-  // Default to English
+  // Always default to English
   return 'en'
 }
 
