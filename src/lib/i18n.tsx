@@ -481,29 +481,29 @@ export const translations = {
       az: 'Necə işləyir'
     },
     step1: {
-      ru: 'Закажите товар в польском магазине',
-      en: 'Order from a Polish store',
-      az: 'Polşa mağazasından sifariş edin'
+      ru: 'Укажите адрес нашего склада + ваши данные (Имя, FIN код)',
+      en: 'Use our warehouse address + your details (Name, FIN code)',
+      az: 'Anbar ünvanımızı + məlumatlarınızı göstərin (Ad, FIN kodu)'
     },
     step2: {
-      ru: 'Укажите адрес нашего склада',
-      en: 'Use our warehouse address',
-      az: 'Anbar ünvanımızı istifadə edin'
+      ru: 'Мы получаем посылку и идентифицируем владельца',
+      en: 'We receive the package and identify the owner',
+      az: 'Bağlamanı alırıq və sahibini müəyyən edirik'
     },
     step3: {
-      ru: 'Мы получим и взвесим посылку',
-      en: 'We receive and weigh your package',
-      az: 'Biz bağlamanızı alıb çəkirik'
+      ru: 'Отправляем вам email: статус, вес и способ оплаты',
+      en: 'We send you an email: status, weight and payment method',
+      az: 'Sizə e-poçt göndəririk: status, çəki və ödəniş üsulu'
     },
     step4: {
-      ru: 'Оплатите доставку на карту',
-      en: 'Pay delivery to our card',
-      az: 'Çatdırılmanı kartımıza ödəyin'
+      ru: 'Вы оплачиваете доставку на польскую карту',
+      en: 'You pay for delivery to our Polish card',
+      az: 'Çatdırılma üçün Polşa kartımıza ödəniş edirsiniz'
     },
     step5: {
-      ru: 'Получите посылку в Азербайджане',
-      en: 'Receive your package in Azerbaijan',
-      az: 'Bağlamanızı Azərbaycanda alın'
+      ru: 'Доставляем посылку в Азербайджан',
+      en: 'We deliver the package to Azerbaijan',
+      az: 'Bağlamanı Azərbaycana çatdırırıq'
     },
     // Discount system
     firstOrderDiscount: {
