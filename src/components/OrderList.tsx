@@ -35,7 +35,7 @@ const WAREHOUSE_ADDRESS = {
   postalCode: '04-653',
   city: 'Warsaw',
   country: 'Poland',
-  phone: '+48 576 925 110'
+  phone: '+48 787 372 555'
 }
 
 // Pricing table data with original prices

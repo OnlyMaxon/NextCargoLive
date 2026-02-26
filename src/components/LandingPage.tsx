@@ -707,7 +707,7 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
                   className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
-                  PL: +48 576 925 110
+                  PL: +48 787 372 555
                 </a>
                 <a 
                   href="mailto:info@nextcargo.eu"
