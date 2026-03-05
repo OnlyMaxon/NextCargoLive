@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Package, MapPin, Barcode, Calendar, ClockClockwise, Copy, CheckCircle, Warehouse, CreditCard, Envelope, Scales, Airplane, NumberCircleOne, NumberCircleTwo, NumberCircleThree, NumberCircleFour, NumberCircleFive } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ClockClockwise, Copy, CheckCircle, Warehouse, Scales, Airplane, NumberCircleOne, NumberCircleTwo, NumberCircleThree, NumberCircleFour, WhatsappLogo } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
@@ -248,49 +248,59 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
     </Card>
   )
 
-  // Payment Info Card
-  const PaymentCard = () => (
-    <Card className="border shadow-sm overflow-hidden">
-      <div className="bg-gradient-to-r from-green-600 to-green-700 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <CreditCard size={18} weight="bold" className="text-white" />
-          <div>
-            <h3 className="font-bold text-white text-sm">{txt.paymentTitle[language]}</h3>
-            <p className="text-green-100 text-[10px]">{txt.paymentMethod[language]}</p>
+  // WhatsApp Contact Card
+  const WhatsAppCard = () => {
+    const openWhatsApp = () => {
+      const message = language === 'ru' 
+        ? 'Здравствуйте! Отправляю скриншот заказа. Мой FIN: ' + user.finCode
+        : language === 'az'
+        ? 'Salam! Sifariş skrinşotunu göndərirəm. Mənim FIN: ' + user.finCode
+        : 'Hello! Sending order screenshot. My FIN: ' + user.finCode
+      window.open(`https://wa.me/994508700969?text=${encodeURIComponent(message)}`, '_blank')
+    }
+
+    return (
+      <Card className="border shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={openWhatsApp}>
+        <div className="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <WhatsappLogo size={20} weight="fill" className="text-white" />
+            <div>
+              <h3 className="font-bold text-white text-sm">{txt.whatsappTitle[language]}</h3>
+              <p className="text-green-100 text-[10px]">{txt.whatsappHint[language]}</p>
+            </div>
           </div>
         </div>
-      </div>
-      <CardContent className="p-3">
-        <div className="flex items-start gap-2 text-xs text-gray-600 bg-amber-50 border border-amber-200 p-2.5 rounded-lg">
-          <Envelope size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
-          <p className="leading-relaxed">{txt.paymentNote[language]}</p>
-        </div>
-      </CardContent>
-    </Card>
-  )
+        <CardContent className="p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-mono font-bold text-green-600">+994 50 870 0969</span>
+            <Badge className="bg-green-100 text-green-700 text-[10px]">WhatsApp</Badge>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
-  // How It Works Card
+  // How It Works Card - Simplified
   const HowItWorksCard = () => {
     const steps = [
       { icon: NumberCircleOne, text: txt.step1[language] },
       { icon: NumberCircleTwo, text: txt.step2[language] },
       { icon: NumberCircleThree, text: txt.step3[language] },
-      { icon: NumberCircleFour, text: txt.step4[language] },
-      { icon: NumberCircleFive, text: txt.step5[language] }
+      { icon: NumberCircleFour, text: txt.step4[language] }
     ]
 
     return (
       <Card className="border shadow-sm">
         <CardContent className="p-3">
-          <div className="flex items-center gap-2 mb-3">
-            <Airplane size={16} weight="bold" className="text-blue-600" />
-            <h3 className="font-bold text-sm text-gray-900">{txt.howItWorks[language]}</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <Airplane size={14} weight="bold" className="text-blue-600" />
+            <h3 className="font-bold text-xs text-gray-900">{txt.howItWorks[language]}</h3>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center gap-2">
-                <step.icon size={20} weight="fill" className="text-blue-600 flex-shrink-0" />
-                <span className="text-xs text-gray-700">{step.text}</span>
+                <step.icon size={16} weight="fill" className="text-blue-600 flex-shrink-0" />
+                <span className="text-[11px] text-gray-700">{step.text}</span>
               </div>
             ))}
           </div>
@@ -309,10 +319,10 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
           {/* Warehouse Address - Most Important */}
           <WarehouseAddressCard />
           
-          {/* Pricing and Payment Grid */}
+          {/* Pricing and WhatsApp Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <PricingCard />
-            <PaymentCard />
+            <WhatsAppCard />
           </div>
 
           {/* How It Works */}

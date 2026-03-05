@@ -481,29 +481,34 @@ export const translations = {
       az: 'Necə işləyir'
     },
     step1: {
-      ru: 'Укажите адрес нашего склада + ваши данные (Имя, FIN код)',
-      en: 'Use our warehouse address + your details (Name, FIN code)',
-      az: 'Anbar ünvanımızı + məlumatlarınızı göstərin (Ad, FIN kodu)'
+      ru: 'Укажите адрес склада + ваши данные',
+      en: 'Use warehouse address + your details',
+      az: 'Anbar ünvanı + məlumatlarınızı göstərin'
     },
     step2: {
-      ru: 'Мы получаем посылку и идентифицируем владельца',
-      en: 'We receive the package and identify the owner',
-      az: 'Bağlamanı alırıq və sahibini müəyyən edirik'
+      ru: 'Отправьте скриншот заказа на WhatsApp',
+      en: 'Send order screenshot to WhatsApp',
+      az: 'Sifariş skrinşotunu WhatsApp-a göndərin'
     },
     step3: {
-      ru: 'Отправляем вам email: статус, вес и способ оплаты',
-      en: 'We send you an email: status, weight and payment method',
-      az: 'Sizə e-poçt göndəririk: status, çəki və ödəniş üsulu'
+      ru: 'Мы получим посылку и свяжемся с вами',
+      en: 'We receive package and contact you',
+      az: 'Bağlamanı alırıq və sizinlə əlaqə saxlayırıq'
     },
     step4: {
-      ru: 'Вы оплачиваете доставку на польскую карту',
-      en: 'You pay for delivery to our Polish card',
-      az: 'Çatdırılma üçün Polşa kartımıza ödəniş edirsiniz'
+      ru: 'Доставляем в Азербайджан',
+      en: 'We deliver to Azerbaijan',
+      az: 'Azərbaycana çatdırırıq'
     },
-    step5: {
-      ru: 'Доставляем посылку в Азербайджан',
-      en: 'We deliver the package to Azerbaijan',
-      az: 'Bağlamanı Azərbaycana çatdırırıq'
+    whatsappTitle: {
+      ru: 'Отправьте скриншот заказа',
+      en: 'Send order screenshot',
+      az: 'Sifariş skrinşotunu göndərin'
+    },
+    whatsappHint: {
+      ru: 'После покупки отправьте скриншот заказа',
+      en: 'After purchase send order screenshot',
+      az: 'Alışdan sonra sifariş skrinşotunu göndərin'
     },
     // Discount system
     firstOrderDiscount: {
