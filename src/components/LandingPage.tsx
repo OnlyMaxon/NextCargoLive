@@ -224,36 +224,36 @@ const getSteps = (lang: Language) => [
     number: "1",
     title: { ru: 'Укажите наш адрес', en: 'Use our address', az: 'Ünvanımızı göstərin' }[lang],
     description: { 
-      ru: 'При заказе укажите адрес нашего склада в Польше + ваше имя и FIN код для идентификации',
-      en: 'When ordering, use our warehouse address in Poland + your name and FIN code for identification',
-      az: 'Sifariş edərkən Polşadakı anbar ünvanımızı + identifikasiya üçün adınızı və FIN kodunu göstərin'
+      ru: 'Укажите адрес склада + ваше имя и FIN код',
+      en: 'Use warehouse address + your name and FIN code',
+      az: 'Anbar ünvanı + adınız və FIN kodunu göstərin'
     }[lang]
   },
   {
     number: "2",
-    title: { ru: 'Мы получаем посылку', en: 'We receive package', az: 'Bağlamanı alırıq' }[lang],
+    title: { ru: 'Отправьте скриншот', en: 'Send screenshot', az: 'Skrinşot göndərin' }[lang],
     description: { 
-      ru: 'Принимаем вашу посылку на складе и определяем владельца по указанным данным',
-      en: 'We receive your package at the warehouse and identify the owner by the provided details',
-      az: 'Bağlamanızı anbarda qəbul edirik və göstərilən məlumatlara görə sahibini müəyyən edirik'
+      ru: 'После покупки отправьте скриншот заказа на WhatsApp +994 50 870 0969',
+      en: 'After purchase send order screenshot to WhatsApp +994 50 870 0969',
+      az: 'Alışdan sonra sifariş skrinşotunu WhatsApp-a göndərin +994 50 870 0969'
     }[lang]
   },
   {
     number: "3",
-    title: { ru: 'Email уведомление', en: 'Email notification', az: 'E-poçt bildirişi' }[lang],
+    title: { ru: 'Мы свяжемся', en: 'We contact you', az: 'Sizinlə əlaqə' }[lang],
     description: { 
-      ru: 'Отправляем вам email со статусом, весом посылки и реквизитами для оплаты',
-      en: 'We send you an email with status, package weight and payment details',
-      az: 'Sizə status, bağlama çəkisi və ödəniş detalları ilə e-poçt göndəririk'
+      ru: 'Получим посылку и свяжемся с вами по оплате',
+      en: 'We receive package and contact you about payment',
+      az: 'Bağlamanı alırıq və ödəniş barədə sizinlə əlaqə saxlayırıq'
     }[lang]
   },
   {
     number: "4",
-    title: { ru: 'Оплата и доставка', en: 'Payment & Delivery', az: 'Ödəniş və Çatdırılma' }[lang],
+    title: { ru: 'Доставка', en: 'Delivery', az: 'Çatdırılma' }[lang],
     description: { 
-      ru: 'Оплачиваете на польскую карту — мы доставляем посылку в Азербайджан',
-      en: 'Pay to our Polish card — we deliver the package to Azerbaijan',
-      az: 'Polşa kartımıza ödəniş edin — bağlamanı Azərbaycana çatdırırıq'
+      ru: 'Доставляем посылку в Азербайджан',
+      en: 'We deliver the package to Azerbaijan',
+      az: 'Bağlamanı Azərbaycana çatdırırıq'
     }[lang]
   }
 ];
