@@ -6,10 +6,11 @@ import { AdminPanel } from '@/components/AdminPanel'
 import { OrderList } from '@/components/OrderList'
 import { Profile } from '@/components/Profile'
 import { Marketplaces } from '@/components/Marketplaces'
+import { Instructions } from '@/components/Instructions'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Package, User as UserIcon, AppWindow, Warning, IdentificationCard } from '@phosphor-icons/react'
+import { Package, User as UserIcon, AppWindow, Warning, IdentificationCard, BookOpen } from '@phosphor-icons/react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { 
@@ -24,7 +25,7 @@ import { useTranslation, translations } from '@/lib/i18n'
 const navTxt = translations.nav
 const commonTxt = translations.common
 
-type Tab = 'orders' | 'profile' | 'apps'
+type Tab = 'orders' | 'profile' | 'apps' | 'instructions'
 
 function App() {
   const { language } = useTranslation()
@@ -297,6 +298,7 @@ function App() {
         {activeTab === 'orders' && <OrderList orders={orders} user={currentUser} />}
         {activeTab === 'profile' && <Profile user={currentUser} onLogout={handleLogout} onUserUpdate={handleUserUpdate} />}
         {activeTab === 'apps' && <Marketplaces />}
+        {activeTab === 'instructions' && <Instructions />}
       </main>
 
       {/* Profile Warning Modal */}
@@ -344,10 +346,11 @@ function App() {
       </Dialog>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 safe-area-inset-bottom">
-        <div className="grid grid-cols-3 px-2 py-1">
+        <div className="grid grid-cols-4 px-2 py-1">
           {[
             { id: 'orders' as Tab, icon: Package, label: navTxt.orders[language] },
             { id: 'profile' as Tab, icon: UserIcon, label: navTxt.profile[language] },
+            { id: 'instructions' as Tab, icon: BookOpen, label: language === 'ru' ? 'Инструкция' : language === 'az' ? 'Təlimat' : 'Instructions' },
             { id: 'apps' as Tab, icon: AppWindow, label: navTxt.apps[language] }
           ].map((item) => (
             <Button
