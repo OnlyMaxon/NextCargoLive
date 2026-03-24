@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Package, MapPin, Barcode, Calendar, ClockClockwise, Copy, CheckCircle, Warehouse, Scales, Airplane, NumberCircleOne, NumberCircleTwo, NumberCircleThree, NumberCircleFour, WhatsappLogo } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ClockClockwise, CheckCircle, Copy, Scales, WhatsappLogo } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
@@ -26,16 +26,6 @@ const STATUS_COLORS: Record<string, string> = {
   out_for_delivery: 'bg-orange-100 text-orange-800 border-orange-200',
   delivered: 'bg-green-100 text-green-800 border-green-200',
   cancelled: 'bg-red-100 text-red-800 border-red-200'
-}
-
-// Warehouse address constant
-const WAREHOUSE_ADDRESS = {
-  name: 'NextCargo Logistics',
-  street: 'Wierchow 25',
-  postalCode: '04-653',
-  city: 'Warsaw',
-  country: 'Poland',
-  phone: '+48 787 372 555'
 }
 
 // Pricing table data with original prices
@@ -60,7 +50,6 @@ interface OrderListProps {
 export function OrderList({ orders, user }: OrderListProps) {
   const { language } = useTranslation()
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [copied, setCopied] = useState(false)
 
   // Calculate user's completed orders count
   const userOrders = orders
@@ -104,72 +93,7 @@ export function OrderList({ orders, user }: OrderListProps) {
     })
   }
 
-  const copyWarehouseAddress = () => {
-    const addressText = `${WAREHOUSE_ADDRESS.name}
-${user.firstName} ${user.lastName} - ${user.finCode}
-${WAREHOUSE_ADDRESS.street}
-${WAREHOUSE_ADDRESS.postalCode} ${WAREHOUSE_ADDRESS.city}
-${WAREHOUSE_ADDRESS.country}
-Tel: ${WAREHOUSE_ADDRESS.phone}`
-    
-    navigator.clipboard.writeText(addressText)
-    setCopied(true)
-    toast.success(txt.addressCopied[language])
-    setTimeout(() => setCopied(false), 2000)
-  }
 
-  // Warehouse Address Card Component
-  const WarehouseAddressCard = () => (
-    <Card className="border-2 border-blue-200 shadow-sm bg-gradient-to-br from-blue-50 to-white">
-      <CardContent className="p-3 sm:p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Warehouse size={20} weight="bold" className="text-white" />
-              </div>
-              <div className="min-w-0">
-                <span className="font-bold text-sm text-gray-900">{txt.warehouseTitle[language]}</span>
-                <p className="text-[10px] text-blue-600 font-medium">{txt.warehouseHint[language]}</p>
-              </div>
-            </div>
-            <div className="space-y-0.5 text-xs font-mono bg-white rounded-lg p-3 border-2 border-blue-100 shadow-inner">
-              <p className="font-bold text-gray-900">{WAREHOUSE_ADDRESS.name}</p>
-              <p className="text-blue-600 font-bold text-sm">{user.firstName} {user.lastName} - {user.finCode}</p>
-              <p className="text-gray-600">{WAREHOUSE_ADDRESS.street}</p>
-              <p className="text-gray-600">{WAREHOUSE_ADDRESS.postalCode} {WAREHOUSE_ADDRESS.city}</p>
-              <p className="text-gray-600">{WAREHOUSE_ADDRESS.country}</p>
-              <p className="text-gray-600 pt-1 border-t border-gray-100 mt-1">Tel: {WAREHOUSE_ADDRESS.phone}</p>
-            </div>
-          </div>
-          <Button 
-            variant={copied ? "default" : "outline"}
-            size="sm" 
-            onClick={copyWarehouseAddress}
-            className={`flex-shrink-0 gap-1.5 h-9 text-xs font-semibold ${copied ? 'bg-green-500 hover:bg-green-600 text-white' : 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50'}`}
-          >
-            {copied ? (
-              <>
-                <CheckCircle size={14} weight="bold" />
-                {txt.copied[language]}
-              </>
-            ) : (
-              <>
-                <Copy size={14} weight="bold" />
-                {txt.copy[language]}
-              </>
-            )}
-          </Button>
-        </div>
-        <div className="mt-3 flex items-center gap-2 text-xs text-blue-700 bg-blue-100 border border-blue-200 p-2.5 rounded-lg">
-          <span className="text-base">💡</span>
-          <span className="font-medium">
-            {language === 'ru' ? 'Ваш' : language === 'az' ? 'Sizin' : 'Your'} <span className="font-bold text-blue-800">FIN: {user.finCode}</span> — {language === 'ru' ? 'обязателен для идентификации посылок' : language === 'az' ? 'bağlamaların müəyyənləşdirilməsi üçün vacibdir' : 'required to identify your packages'}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  )
 
   // Discount Banner Component
   const DiscountBanner = () => {
@@ -280,34 +204,7 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
     )
   }
 
-  // How It Works Card - Simplified
-  const HowItWorksCard = () => {
-    const steps = [
-      { icon: NumberCircleOne, text: txt.step1[language] },
-      { icon: NumberCircleTwo, text: txt.step2[language] },
-      { icon: NumberCircleThree, text: txt.step3[language] },
-      { icon: NumberCircleFour, text: txt.step4[language] }
-    ]
 
-    return (
-      <Card className="border shadow-sm">
-        <CardContent className="p-3">
-          <div className="flex items-center gap-2 mb-2">
-            <Airplane size={14} weight="bold" className="text-blue-600" />
-            <h3 className="font-bold text-xs text-gray-900">{txt.howItWorks[language]}</h3>
-          </div>
-          <div className="space-y-1.5">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <step.icon size={16} weight="fill" className="text-blue-600 flex-shrink-0" />
-                <span className="text-[11px] text-gray-700">{step.text}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
     <>
@@ -316,17 +213,11 @@ Tel: ${WAREHOUSE_ADDRESS.phone}`
           {/* Discount Banner for New Customers */}
           <DiscountBanner />
           
-          {/* Warehouse Address - Most Important */}
-          <WarehouseAddressCard />
-          
           {/* Pricing and WhatsApp Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <PricingCard />
             <WhatsAppCard />
           </div>
-
-          {/* How It Works */}
-          <HowItWorksCard />
 
           {/* My Packages Section */}
           <div className="flex items-center gap-3 pt-2">
