@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Package, MapPin, Barcode, Calendar, ClockClockwise, CheckCircle, Copy, Scales, WhatsappLogo } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ClockClockwise, CheckCircle, Copy, Scales } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
@@ -172,40 +172,6 @@ export function OrderList({ orders, user }: OrderListProps) {
     </Card>
   )
 
-  // WhatsApp Contact Card
-  const WhatsAppCard = () => {
-    const openWhatsApp = () => {
-      const message = language === 'ru' 
-        ? 'Здравствуйте! Отправляю скриншот заказа. Мой FIN: ' + user.finCode
-        : language === 'az'
-        ? 'Salam! Sifariş skrinşotunu göndərirəm. Mənim FIN: ' + user.finCode
-        : 'Hello! Sending order screenshot. My FIN: ' + user.finCode
-      window.open(`https://wa.me/994508700969?text=${encodeURIComponent(message)}`, '_blank')
-    }
-
-    return (
-      <Card className="border shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={openWhatsApp}>
-        <div className="bg-gradient-to-r from-green-500 to-green-600 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <WhatsappLogo size={20} weight="fill" className="text-white" />
-            <div>
-              <h3 className="font-bold text-white text-sm">{txt.whatsappTitle[language]}</h3>
-              <p className="text-green-100 text-[10px]">{txt.whatsappHint[language]}</p>
-            </div>
-          </div>
-        </div>
-        <CardContent className="p-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-mono font-bold text-green-600">+994 50 870 0969</span>
-            <Badge className="bg-green-100 text-green-700 text-[10px]">WhatsApp</Badge>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-
-
   return (
     <>
       <ScrollArea className="h-[calc(100vh-120px)]">
@@ -213,11 +179,8 @@ export function OrderList({ orders, user }: OrderListProps) {
           {/* Discount Banner for New Customers */}
           <DiscountBanner />
           
-          {/* Pricing and WhatsApp Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <PricingCard />
-            <WhatsAppCard />
-          </div>
+          {/* Pricing Card */}
+          <PricingCard />
 
           {/* My Packages Section */}
           <div className="flex items-center gap-3 pt-2">
