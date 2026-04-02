@@ -622,8 +622,8 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
               <div>
                 <div className="font-semibold mb-2 text-gray-900">NextCargo Warehouse</div>
                 <div className="text-gray-600 text-sm space-y-1">
-                  <div>Wierchow 25</div>
-                  <div>04-653 Warszawa, Polska</div>
+                  <div>Michała Bałuckiego 34/19</div>
+                  <div>02-557 Warszawa, Polska</div>
                   <div className="pt-2 text-blue-600 font-medium">
                     {txt.yourId[language]} <span className="font-mono">{txt.afterRegistration[language]}</span>
                   </div>

@@ -24,7 +24,7 @@ export function Instructions() {
 
   const warehouseData = {
     name: 'NextCargo Logistics',
-    address: 'Wierchow 25, 04-653 Warsaw, Poland',
+    address: 'Michała Bałuckiego 34/19, 02-557 Warszawa, Poland',
     phone1: '+48 787 372 555',
     phone2: '+48 783 456 789',
     email: 'warehouse@nextcargo.com',
