@@ -12,9 +12,9 @@ export const translations = {
       az: 'Polşadan Azərbaycana yük daşıması'
     },
     heroSubtitle: {
-      ru: 'Надежная и быстрая доставка ваших товаров. Отслеживайте посылки в реальном времени.',
-      en: 'Reliable and fast delivery of your goods. Track packages in real-time.',
-      az: 'Mallarınızın etibarlı və sürətli çatdırılması. Bağlamaları real vaxtda izləyin.'
+      ru: 'Мы доставляем товары по региону.',
+      en: 'We deliver goods throughout the region.',
+      az: 'Biz malları region üzrə çatdırırıq.'
     },
     getStarted: {
       ru: 'Начать',

@@ -35,9 +35,9 @@ const landingContent = {
     az: 'Avropadan Azərbaycana\nçatdırılma'
   },
   heroSubtitle: {
-    ru: 'Покупайте в любых европейских магазинах. Мы доставим ваши заказы из Польши в Баку за 7-14 дней.',
-    en: 'Shop at any European stores. We will deliver your orders from Poland to Baku in 7-14 days.',
-    az: 'İstənilən Avropa mağazalarından alış-veriş edin. Sifarişlərinizi Polşadan Bakıya 7-14 günə çatdıracağıq.'
+    ru: 'Мы доставляем товары по региону.',
+    en: 'We deliver goods throughout the region.',
+    az: 'Biz malları region üzrə çatdırırıq.'
   },
   startFree: {
     ru: 'Начать бесплатно',
