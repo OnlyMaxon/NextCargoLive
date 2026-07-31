@@ -7,9 +7,9 @@ export const translations = {
   // Landing Page
   landing: {
     heroTitle: {
-      ru: 'Доставка грузов из Польши в Азербайджан',
-      en: 'Cargo Delivery from Poland to Azerbaijan',
-      az: 'Polşadan Azərbaycana yük daşıması'
+      ru: 'Доставка товаров\nпо региону',
+      en: 'Goods Delivery\nThroughout the Region',
+      az: 'Malların çatdırılması\nregion üzrə'
     },
     heroSubtitle: {
       ru: 'Мы доставляем товары по региону.',

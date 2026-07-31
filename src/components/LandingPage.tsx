@@ -30,9 +30,9 @@ const landingContent = {
   },
   // Hero
   heroTitle: {
-    ru: 'Доставка из Европы\nв Азербайджан',
-    en: 'Delivery from Europe\nto Azerbaijan',
-    az: 'Avropadan Azərbaycana\nçatdırılma'
+    ru: 'Доставка товаров\nпо региону',
+    en: 'Goods Delivery\nThroughout the Region',
+    az: 'Malların çatdırılması\nregion üzrə'
   },
   heroSubtitle: {
     ru: 'Мы доставляем товары по региону.',
@@ -100,9 +100,9 @@ const landingContent = {
     az: 'Polşada anbar ünvanı'
   },
   warehouseSubtitle: {
-    ru: 'Укажите этот адрес при оформлении заказа в европейских магазинах',
-    en: 'Use this address when ordering from European stores',
-    az: 'Avropa mağazalarından sifariş edərkən bu ünvanı göstərin'
+    ru: 'Укажите этот адрес при оформлении заказа',
+    en: 'Use this address when placing your order',
+    az: 'Sifariş verərkən bu ünvanı göstərin'
   },
   yourId: {
     ru: 'Ваш ID:',
@@ -142,9 +142,9 @@ const landingContent = {
   },
   // Footer
   footerDescription: {
-    ru: 'Доставка товаров из Европы в Азербайджан. Надёжно, быстро, выгодно.',
-    en: 'Delivery from Europe to Azerbaijan. Reliable, fast, affordable.',
-    az: 'Avropadan Azərbaycana çatdırılma. Etibarlı, sürətli, sərfəli.'
+    ru: 'Доставка товаров по региону. Надёжно, быстро, выгодно.',
+    en: 'Goods delivery throughout the region. Reliable, fast, affordable.',
+    az: 'Malların region üzrə çatdırılması. Etibarlı, sürətli, sərfəli.'
   },
   contacts: {
     ru: 'Контакты',
@@ -318,9 +318,9 @@ const getFaqs = (lang: Language) => [
       az: 'Polşadan çatdırılma necə işləyir?'
     }[lang],
     answer: { 
-      ru: 'Вы покупаете товар в любом европейском магазине, указываете наш склад в Польше как адрес доставки. Мы принимаем посылку и доставляем её в Азербайджан.',
-      en: 'You buy products at any European store, specify our warehouse in Poland as the delivery address. We receive the package and deliver it to Azerbaijan.',
-      az: 'Siz istənilən Avropa mağazasından məhsul alırsınız, çatdırılma ünvanı olaraq Polşadakı anbarımızı göstərirsiniz. Bağlamanı qəbul edir və Azərbaycana çatdırırıq.'
+      ru: 'Вы покупаете товар в любом магазине, указываете наш склад в Польше как адрес доставки. Мы принимаем посылку и доставляем её в Азербайджан.',
+      en: 'You buy products from any store, specify our warehouse in Poland as the delivery address. We receive the package and deliver it to Azerbaijan.',
+      az: 'Siz istənilən mağazadan məhsul alırsınız, çatdırılma ünvanı olaraq Polşadakı anbarımızı göstərirsiniz. Bağlamanı qəbul edir və Azərbaycana çatdırırıq.'
     }[lang]
   },
   {
@@ -404,9 +404,9 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
 
   const handleWhatsApp = () => {
     const message = {
-      ru: 'Здравствуйте! Хочу узнать о доставке из Европы',
-      en: 'Hello! I want to learn about delivery from Europe',
-      az: 'Salam! Avropadan çatdırılma haqqında məlumat almaq istəyirəm'
+      ru: 'Здравствуйте! Хочу узнать о доставке по региону',
+      en: 'Hello! I want to learn about delivery throughout the region',
+      az: 'Salam! Region üzrə çatdırılma haqqında məlumat almaq istəyirəm'
     }[language];
     window.open(`https://wa.me/994508700969?text=${encodeURIComponent(message)}`, '_blank');
   };
