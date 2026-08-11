@@ -146,6 +146,11 @@ const landingContent = {
     en: 'Goods delivery throughout the region. Reliable, fast, affordable.',
     az: 'Malların region üzrə çatdırılması. Etibarlı, sürətli, sərfəli.'
   },
+  builtByStudio: {
+    ru: 'Сайт разработан студией',
+    en: 'Website built by',
+    az: 'Sayt tərəfindən hazırlanıb'
+  },
   contacts: {
     ru: 'Контакты',
     en: 'Contacts',
@@ -730,8 +735,19 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            {txt.copyright[language]}
+          <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500 space-y-2">
+            <div>{txt.copyright[language]}</div>
+            <div>
+              {txt.builtByStudio[language]}{' '}
+              <a
+                href="https://onlymaxon.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Onlymaxon
+              </a>
+            </div>
           </div>
         </div>
       </footer>
