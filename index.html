@@ -36,8 +36,11 @@
         content="Delivery in 7–14 days. Free registration, insured parcels, real-time tracking and pay-on-delivery." />
     <meta name="twitter:image" content="https://nextcargo.eu/logo.png" />
 
+    <!-- favicon.ico обязателен: браузеры и боты запрашивают /favicon.ico напрямую,
+         даже когда указан SVG. Без файла каждый такой запрос уходил в воркер. -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!-- Fonts: loaded non-blocking so they never delay first paint / LCP -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

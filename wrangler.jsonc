@@ -3,7 +3,10 @@
   "compatibility_date": "2026-02-02",
   "main": "index.js",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // Без "binding" переменной env.ASSETS не существует, и index.js падал
+    // с TypeError на каждом запросе к несуществующему файлу (например /favicon.ico).
+    "binding": "ASSETS"
   },
   "vars": {
     "VITE_FIREBASE_API_KEY": "AIzaSyAmjgWxjGBu8gw3NeZgcs30tJUY1Yi_o5o",
@@ -14,4 +17,3 @@
     "VITE_FIREBASE_APP_ID": "1:59171620744:web:a77c8f5f40f3e16d119c3d"
   }
 }
-//hii
