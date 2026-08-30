@@ -807,6 +807,25 @@ export const languageFlags: Record<Language, string> = {
   az: '🇦🇿'
 }
 
+// SEO metadata per language. Kept in sync with the static tags in index.html.
+export const seoMeta = {
+  title: {
+    ru: 'NextCargo — доставка товаров по региону',
+    en: 'NextCargo — Goods Delivery Throughout the Region',
+    az: 'NextCargo — malların region üzrə çatdırılması'
+  },
+  description: {
+    ru: 'NextCargo доставляет товары по региону за 7–14 дней. Бесплатная регистрация, страховка посылок, отслеживание в личном кабинете и оплата при получении. Первый заказ — скидка 50%.',
+    en: 'NextCargo delivers goods throughout the region in 7–14 days. Free registration, insured parcels, real-time tracking in your personal account and pay-on-delivery. First order — 50% off.',
+    az: 'NextCargo malları region üzrə 7–14 gün ərzində çatdırır. Pulsuz qeydiyyat, sığortalı bağlamalar, şəxsi hesabda izləmə və çatdırılmada ödəniş. İlk sifariş — 50% endirim.'
+  },
+  ogLocale: {
+    ru: 'ru_RU',
+    en: 'en_US',
+    az: 'az_AZ'
+  }
+} as const
+
 // Detect language - Always default to English, only use saved preference
 export function detectLanguage(): Language {
   // Only check localStorage - if user manually selected a language, use it
@@ -848,8 +867,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }
   
   useEffect(() => {
-    // Update html lang attribute
+    // Keep the crawlable <head> in sync with the selected language.
+    // The static defaults live in index.html; this only overrides them client-side.
     document.documentElement.lang = language
+
+    document.title = seoMeta.title[language]
+
+    const setMeta = (selector: string, content: string) => {
+      const el = document.head.querySelector<HTMLMetaElement>(selector)
+      if (el) el.content = content
+    }
+
+    setMeta('meta[name="description"]', seoMeta.description[language])
+    setMeta('meta[property="og:title"]', seoMeta.title[language])
+    setMeta('meta[property="og:description"]', seoMeta.description[language])
+    setMeta('meta[property="og:locale"]', seoMeta.ogLocale[language])
+    setMeta('meta[name="twitter:title"]', seoMeta.title[language])
+    setMeta('meta[name="twitter:description"]', seoMeta.description[language])
   }, [language])
   
   return (

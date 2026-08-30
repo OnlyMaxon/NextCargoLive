@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Build output — no crawlable content, saves crawl budget
+Disallow: /assets/
+
+Sitemap: https://nextcargo.eu/sitemap.xml

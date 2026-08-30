@@ -147,9 +147,19 @@ const landingContent = {
     az: 'Malların region üzrə çatdırılması. Etibarlı, sürətli, sərfəli.'
   },
   builtByStudio: {
-    ru: 'Сайт разработан студией',
-    en: 'Website built by',
-    az: 'Sayt tərəfindən hazırlanıb'
+    ru: 'Разработка и дизайн сайта —',
+    en: 'Website design and development by',
+    az: 'Saytın dizaynı və hazırlanması —'
+  },
+  studioAnchor: {
+    ru: 'веб-студия Onlymaxon',
+    en: 'Onlymaxon web studio',
+    az: 'Onlymaxon veb studiyası'
+  },
+  studioTitle: {
+    ru: 'Onlymaxon — веб-студия: разработка сайтов и дизайн',
+    en: 'Onlymaxon — web design and development studio',
+    az: 'Onlymaxon — veb sayt hazırlanması və dizayn studiyası'
   },
   contacts: {
     ru: 'Контакты',
@@ -739,13 +749,16 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
             <div>{txt.copyright[language]}</div>
             <div>
               {txt.builtByStudio[language]}{' '}
+              {/* Dofollow by design: `noreferrer` is intentionally omitted so the referrer
+                  header still reaches onlymaxon.com. `noopener` alone is enough for security. */}
               <a
-                href="https://onlymaxon.com"
+                href="https://onlymaxon.com/"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
+                title={txt.studioTitle[language]}
                 className="font-semibold text-gray-700 hover:text-blue-600 transition-colors"
               >
-                Onlymaxon
+                {txt.studioAnchor[language]}
               </a>
             </div>
           </div>

@@ -3,20 +3,261 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
-    <title>NextCargo</title>
+    <meta name="theme-color" content="#2563eb" />
+
+    <title>NextCargo — Goods Delivery Throughout the Region</title>
+    <meta name="description"
+        content="NextCargo delivers goods throughout the region in 7–14 days. Free registration, insured parcels, real-time tracking in your personal account and pay-on-delivery. First order — 50% off." />
+    <link rel="canonical" href="https://nextcargo.eu/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NextCargo" />
+    <meta property="og:url" content="https://nextcargo.eu/" />
+    <meta property="og:title" content="NextCargo — Goods Delivery Throughout the Region" />
+    <meta property="og:description"
+        content="Delivery in 7–14 days. Free registration, insured parcels, real-time tracking and pay-on-delivery. First order — 50% off." />
+    <meta property="og:image" content="https://nextcargo.eu/logo.png" />
+    <meta property="og:image:alt" content="NextCargo" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="az_AZ" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NextCargo — Goods Delivery Throughout the Region" />
+    <meta name="twitter:description"
+        content="Delivery in 7–14 days. Free registration, insured parcels, real-time tracking and pay-on-delivery." />
+    <meta name="twitter:image" content="https://nextcargo.eu/logo.png" />
+
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- Fonts: loaded non-blocking so they never delay first paint / LCP -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&family=PT+Serif&family=Roboto+Mono&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap">
+    </noscript>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://nextcargo.eu/#organization",
+          "name": "NextCargo",
+          "url": "https://nextcargo.eu/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://nextcargo.eu/logo.png"
+          },
+          "email": "info@nextcargo.eu",
+          "telephone": "+994508700969",
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "telephone": "+994508700969",
+              "contactType": "customer service",
+              "availableLanguage": ["en", "ru", "az"]
+            },
+            {
+              "@type": "ContactPoint",
+              "telephone": "+48787372555",
+              "contactType": "customer service",
+              "availableLanguage": ["en", "ru", "pl"]
+            }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://nextcargo.eu/#website",
+          "url": "https://nextcargo.eu/",
+          "name": "NextCargo",
+          "description": "Goods delivery throughout the region. Reliable, fast, affordable.",
+          "inLanguage": ["en", "ru", "az"],
+          "publisher": { "@id": "https://nextcargo.eu/#organization" },
+          "creator": { "@id": "https://onlymaxon.com/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://onlymaxon.com/#organization",
+          "name": "Onlymaxon",
+          "alternateName": "Onlymaxon Web Studio",
+          "url": "https://onlymaxon.com/",
+          "description": "Web design and development studio.",
+          "sameAs": ["https://onlymaxon.com/"]
+        }
+      ]
+    }
+    </script>
+
     <link href="/src/main.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="root"></div>
+    <!--
+      The block inside #root is the crawlable, no-JavaScript version of the landing page.
+      React replaces it on mount (createRoot clears the container), so users always get the
+      real app — but crawlers that do not execute JavaScript still see the full content and,
+      importantly, the outgoing link to Onlymaxon in the footer.
+
+      KEEP THIS IN SYNC with src/components/LandingPage.tsx (English strings).
+      If the two ever disagree, search engines treat the mismatch as a quality signal.
+    -->
+    <div id="root">
+        <div class="min-h-screen bg-white">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white text-center py-2.5 px-4 text-sm font-medium">
+                🎉 First order — 50% discount!
+            </div>
+
+            <header class="border-b border-gray-200 bg-white">
+                <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+                    <span class="font-bold text-xl text-gray-900">nextcargo.eu</span>
+                    <a href="https://wa.me/994508700969" rel="noopener"
+                        class="text-sm font-medium text-green-600">WhatsApp</a>
+                </div>
+            </header>
+
+            <section class="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 py-20 md:py-28 px-4">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-3xl md:text-5xl font-bold mb-6 leading-tight text-white">
+                        Goods Delivery Throughout the Region
+                    </h1>
+                    <p class="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                        We deliver goods throughout the region.
+                    </p>
+                    <p class="text-sm text-blue-200 mt-6">Free registration • Pay on delivery</p>
+                </div>
+            </section>
+
+            <section class="py-16 px-4 bg-gray-50">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-900">Why choose us</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">Reliable</h3>
+                            <p class="text-sm text-gray-600">All packages are insured. We guarantee product safety</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">Fast</h3>
+                            <p class="text-sm text-gray-600">Delivery 7-14 days. Weekly shipments</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">Affordable</h3>
+                            <p class="text-sm text-gray-600">Fair prices without hidden fees. Pay on delivery</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">Convenient</h3>
+                            <p class="text-sm text-gray-600">Door-to-door delivery. Tracking in your account</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 px-4 bg-white">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-900">How it works</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">1. Use our address</h3>
+                            <p class="text-sm text-gray-600">Use warehouse address + your name and FIN code</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">2. Send screenshot</h3>
+                            <p class="text-sm text-gray-600">After purchase send order screenshot to WhatsApp</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">3. We contact you</h3>
+                            <p class="text-sm text-gray-600">We receive package and contact you about payment</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-semibold mb-2 text-gray-900">4. Delivery</h3>
+                            <p class="text-sm text-gray-600">We deliver the package to you</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 px-4 bg-gray-50">
+                <div class="max-w-5xl mx-auto text-center">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-gray-900">Pricing</h2>
+                    <p class="text-gray-600 mb-8">Simple and clear prices. The more weight — the better the deal.</p>
+                    <ul class="text-gray-700 space-y-2">
+                        <li>Documents up to 500g — 23€</li>
+                        <li>0-5 kg — 47€ fixed price</li>
+                        <li>5-10 kg — 70€ fixed price</li>
+                        <li>10-23 kg — 140€ fixed price</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="py-16 px-4 bg-white">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-900">FAQ</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-1">How long does delivery take?</h3>
+                            <p class="text-gray-600">Standard delivery takes 7-14 business days from the moment the
+                                goods arrive at our warehouse.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-1">How is the cost calculated?</h3>
+                            <p class="text-gray-600">The cost is calculated by the weight of the package. Minimum
+                                payment — $7.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-1">What products can I order?</h3>
+                            <p class="text-gray-600">You can order clothes, electronics, cosmetics, children's products
+                                and much more. Prohibited: dangerous goods, weapons, counterfeits.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-1">How to track a package?</h3>
+                            <p class="text-gray-600">After registration, you get a personal account where you can see
+                                the status of all your packages in real time.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-1">Is there insurance?</h3>
+                            <p class="text-gray-600">Yes, all packages are insured. In case of loss or damage, we will
+                                compensate the cost of the goods.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="border-t border-gray-200 py-12 px-4 bg-white">
+                <div class="max-w-6xl mx-auto">
+                    <p class="text-sm text-gray-600 mb-6">Goods delivery throughout the region. Reliable, fast,
+                        affordable.</p>
+                    <div class="text-sm text-gray-600 space-y-2 mb-8">
+                        <div><a href="https://wa.me/994508700969" rel="noopener">WhatsApp: +994 50 870 09 69</a></div>
+                        <div><a href="tel:+994508700969">AZ: +994 50 870 09 69</a></div>
+                        <div><a href="tel:+48787372555">PL: +48 787 372 555</a></div>
+                        <div><a href="mailto:info@nextcargo.eu">info@nextcargo.eu</a></div>
+                    </div>
+                    <div class="border-t border-gray-200 pt-8 text-center text-sm text-gray-500 space-y-2">
+                        <div>© 2025 NextCargo. All rights reserved.</div>
+                        <div>
+                            Website design and development by
+                            <a href="https://onlymaxon.com/" rel="noopener"
+                                title="Onlymaxon — web design and development studio"
+                                class="font-semibold text-gray-700">Onlymaxon web studio</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
 </body>
 
