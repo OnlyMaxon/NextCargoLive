@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-# Build output — no crawlable content, saves crawl budget
-Disallow: /assets/
+# /assets/ намеренно открыт: там лежат JS и CSS бандлы.
+# Сайт рендерится на клиенте, и без них Googlebot не сможет
+# отрисовать страницу — закрывать их нельзя.
 
 Sitemap: https://nextcargo.eu/sitemap.xml
