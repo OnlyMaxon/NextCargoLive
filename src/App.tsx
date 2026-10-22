@@ -1,31 +1,50 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { User, Order, Notification, ViewMode, AuthTab } from '@/lib/types'
 import LandingPage from '@/components/LandingPage'
 import { Auth } from '@/components/Auth'
-import { AdminPanel } from '@/components/AdminPanel'
 import { OrderList } from '@/components/OrderList'
 import { Profile } from '@/components/Profile'
 import { Marketplaces } from '@/components/Marketplaces'
 import { Instructions } from '@/components/Instructions'
+import { NotificationsBell } from '@/components/NotificationsBell'
 import { Toaster } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Package, User as UserIcon, AppWindow, Warning, IdentificationCard, BookOpen } from '@phosphor-icons/react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { 
-  authService, 
-  ordersService, 
-  notificationsService, 
-  usersService 
+import {
+  authService,
+  ordersService,
+  notificationsService,
+  usersService
 } from '@/lib/firebase-services'
 import { toast } from 'sonner'
 import { useTranslation, translations } from '@/lib/i18n'
 
+// Админка нужна одному человеку, а весила 700 строк в общем бандле.
+const AdminPanel = lazy(() =>
+  import('@/components/AdminPanel').then(m => ({ default: m.AdminPanel }))
+)
+
 const navTxt = translations.nav
 const commonTxt = translations.common
+const appTxt = translations.app
 
 type Tab = 'orders' | 'profile' | 'apps' | 'instructions'
+
+function LoadingScreen({ label }: { label: string }) {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center space-y-4">
+        <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto animate-pulse">
+          <Package size={32} weight="bold" className="text-white" />
+        </div>
+        <p className="text-gray-500">{label}</p>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   const { language } = useTranslation()
@@ -39,13 +58,11 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [showProfileWarning, setShowProfileWarning] = useState(false)
 
-  // Check if user profile is complete
   const isProfileComplete = (user: User | null): boolean => {
     if (!user) return true
     return Boolean(user.documentSerial && user.birthDate)
   }
 
-  // Show warning when user logs in with incomplete profile
   useEffect(() => {
     if (currentUser && !currentUser.isAdmin && !isProfileComplete(currentUser)) {
       setShowProfileWarning(true)
@@ -59,58 +76,89 @@ function App() {
     }
   }
 
+  const resetSession = () => {
+    setCurrentUser(null)
+    setOrders([])
+    setNotifications([])
+    setUsers([])
+    setActiveTab('orders')
+    setViewMode('landing')
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
-        if (firebaseUser) {
-          const userData = await authService.getUserData(firebaseUser.uid)
-          if (userData) {
-            setCurrentUser(userData)
-            // Auto-switch to admin mode if user is admin
-            if (userData.isAdmin) {
-              setViewMode('admin')
-            } else {
-              setViewMode('user')
-            }
-            await loadUserData(userData)
-          }
-        } else {
-          setCurrentUser(null)
-          setOrders([])
-          setNotifications([])
-          setViewMode('landing')
+        if (!firebaseUser) {
+          resetSession()
+          return
         }
+
+        const userData = await authService.getUserData(firebaseUser.uid)
+
+        if (!userData) {
+          // Аккаунт есть, профиля в Firestore нет. Раньше приложение молча
+          // оставалось на лендинге в залогиненном состоянии — выйти или
+          // зарегистрироваться заново было невозможно.
+          console.error('Authenticated user has no profile document:', firebaseUser.uid)
+          toast.error(appTxt.profileMissing[language])
+          await authService.logout()
+          return
+        }
+
+        setCurrentUser(userData)
+        setViewMode(userData.isAdmin ? 'admin' : 'user')
+        await loadUserData(userData)
       } catch (error) {
         console.error('Auth state change error:', error)
-        toast.error('Failed to load user data')
+        toast.error(appTxt.loadFailed[language])
       } finally {
         setLoading(false)
       }
     })
 
     return () => unsubscribe()
+    // language читается только для текста тоста; переподписка на auth не нужна.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /**
+   * Живые данные админки. Без подписок панель показывала срез на момент входа:
+   * клиент, зарегистрировавшийся минуту назад, не находился в списке.
+   */
+  useEffect(() => {
+    if (!currentUser?.isAdmin) return
+
+    const unsubscribeOrders = ordersService.subscribeToAllOrders(
+      setOrders,
+      () => toast.error(appTxt.loadFailed[language])
+    )
+    const unsubscribeUsers = usersService.subscribeToAllUsers(
+      setUsers,
+      () => toast.error(appTxt.loadFailed[language])
+    )
+
+    return () => {
+      unsubscribeOrders()
+      unsubscribeUsers()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.isAdmin])
+
   const loadUserData = async (user: User) => {
+    // Данные админки целиком держат подписки выше: onSnapshot отдаёт полный
+    // снимок сразу, поэтому отдельный стартовый запрос только дублировал бы его.
+    if (user.isAdmin) return
+
     try {
-      if (user.isAdmin) {
-        const [allOrders, allUsers] = await Promise.all([
-          ordersService.getAllOrders(),
-          usersService.getAllUsers()
-        ])
-        setOrders(allOrders)
-        setUsers(allUsers)
-      } else {
-        const [userOrders, userNotifications] = await Promise.all([
-          ordersService.getUserOrders(user.id),
-          notificationsService.getUserNotifications(user.id)
-        ])
-        setOrders(userOrders)
-        setNotifications(userNotifications)
-      }
+      const [userOrders, userNotifications] = await Promise.all([
+        ordersService.getUserOrders(user.id),
+        notificationsService.getUserNotifications(user.id)
+      ])
+      setOrders(userOrders)
+      setNotifications(userNotifications)
     } catch (error) {
       console.error('Failed to load user data:', error)
-      toast.error('Failed to load data')
+      toast.error(appTxt.loadFailed[language])
     }
   }
 
@@ -130,36 +178,11 @@ function App() {
   const handleLogout = async () => {
     try {
       await authService.logout()
-      setCurrentUser(null)
-      setOrders([])
-      setNotifications([])
-      setUsers([])
-      setActiveTab('orders')
-      setViewMode('landing')
-      toast.success('Logged out successfully')
+      resetSession()
+      toast.success(appTxt.loggedOut[language])
     } catch (error) {
       console.error('Logout error:', error)
-      toast.error('Failed to logout')
-    }
-  }
-
-  const handleAdminLogin = () => {
-    setViewMode('admin')
-  }
-
-  const handleAdminLogout = async () => {
-    try {
-      await authService.logout()
-      setCurrentUser(null)
-      setOrders([])
-      setNotifications([])
-      setUsers([])
-      setActiveTab('orders')
-      setViewMode('landing')
-      toast.success('Logged out successfully')
-    } catch (error) {
-      console.error('Logout error:', error)
-      toast.error('Failed to logout')
+      toast.error(appTxt.logoutFailed[language])
     }
   }
 
@@ -167,22 +190,22 @@ function App() {
     try {
       await ordersService.updateOrder(updatedOrder.id, updatedOrder)
       setOrders((current) => current.map(o => o.id === updatedOrder.id ? updatedOrder : o))
-      toast.success('Order updated successfully')
+      toast.success(appTxt.orderUpdated[language])
     } catch (error) {
       console.error('Failed to update order:', error)
-      toast.error('Failed to update order')
+      toast.error(appTxt.orderUpdateFailed[language])
     }
   }
 
-  const handleAddOrder = async (newOrder: Order) => {
+  /** Возвращает id созданного документа — AdminPanel привязывает к нему уведомление. */
+  const handleAddOrder = async (newOrder: Omit<Order, 'id'>): Promise<string | null> => {
     try {
       const orderId = await ordersService.createOrder(newOrder)
-      const orderWithId = { ...newOrder, id: orderId }
-      setOrders((current) => [...current, orderWithId])
-      toast.success('Order added successfully')
+      setOrders((current) => [...current, { ...newOrder, id: orderId }])
+      return orderId
     } catch (error) {
       console.error('Failed to add order:', error)
-      toast.error('Failed to add order')
+      return null
     }
   }
 
@@ -190,21 +213,31 @@ function App() {
     try {
       await ordersService.deleteOrder(orderId)
       setOrders((current) => current.filter(o => o.id !== orderId))
-      toast.success('Order deleted successfully')
     } catch (error) {
       console.error('Failed to delete order:', error)
-      toast.error('Failed to delete order')
+      toast.error(appTxt.orderDeleteFailed[language])
     }
   }
 
-  const handleSendNotification = async (notification: Notification) => {
+  const handleSendNotification = async (notification: Omit<Notification, 'id'>) => {
     try {
       const notificationId = await notificationsService.createNotification(notification)
-      const notificationWithId = { ...notification, id: notificationId }
-      setNotifications((current) => [...current, notificationWithId])
+      setNotifications((current) => [...current, { ...notification, id: notificationId }])
     } catch (error) {
       console.error('Failed to send notification:', error)
-      toast.error('Failed to send notification')
+      toast.error(appTxt.notificationFailed[language])
+    }
+  }
+
+  const handleMarkNotificationsRead = async () => {
+    const unread = notifications.filter(n => !n.read)
+    if (unread.length === 0) return
+
+    setNotifications((current) => current.map(n => ({ ...n, read: true })))
+    try {
+      await Promise.all(unread.map(n => notificationsService.markAsRead(n.id)))
+    } catch (error) {
+      console.error('Failed to mark notifications as read:', error)
     }
   }
 
@@ -223,22 +256,30 @@ function App() {
   }
 
   if (loading) {
+    return <LoadingScreen label={commonTxt.loading[language]} />
+  }
+
+  if (viewMode === 'auth') {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto animate-pulse">
-            <Package size={32} weight="bold" className="text-white" />
-          </div>
-          <p className="text-gray-500">{commonTxt.loading[language]}</p>
-        </div>
-      </div>
+      <>
+        <Auth
+          onLogin={handleLogin}
+          onRegister={handleRegister}
+          defaultTab={authTab}
+          onBackClick={handleBackToLanding}
+        />
+        <Toaster />
+      </>
     )
   }
 
-  if (viewMode === 'landing') {
+  // Все экраны ниже требуют загруженный профиль. Раньше здесь читался
+  // currentUser.firstName без проверки — при viewMode 'user' и currentUser null
+  // это был краш, который скрывался флагом --noCheck в сборке.
+  if (viewMode === 'landing' || !currentUser) {
     return (
       <>
-        <LandingPage 
+        <LandingPage
           onLoginClick={handleLoginClick}
           onRegisterClick={handleRegisterClick}
         />
@@ -250,31 +291,17 @@ function App() {
   if (viewMode === 'admin') {
     return (
       <>
-        <AdminPanel
-          orders={orders}
-          users={users}
-          onUpdateOrder={handleUpdateOrder}
-          onAddOrder={handleAddOrder}
-          onDeleteOrder={handleDeleteOrder}
-          onSendNotification={handleSendNotification}
-          onLogout={handleAdminLogout}
-        />
-        <Toaster />
-      </>
-    )
-  }
-
-  if (viewMode === 'auth') {
-    return (
-      <>
-        <Auth 
-          onLogin={handleLogin} 
-          users={users} 
-          onRegister={handleRegister}
-          onAdminLogin={handleAdminLogin}
-          defaultTab={authTab}
-          onBackClick={handleBackToLanding}
-        />
+        <Suspense fallback={<LoadingScreen label={commonTxt.loading[language]} />}>
+          <AdminPanel
+            orders={orders}
+            users={users}
+            onUpdateOrder={handleUpdateOrder}
+            onAddOrder={handleAddOrder}
+            onDeleteOrder={handleDeleteOrder}
+            onSendNotification={handleSendNotification}
+            onLogout={handleLogout}
+          />
+        </Suspense>
         <Toaster />
       </>
     )
@@ -289,8 +316,14 @@ function App() {
           </div>
           <div className="min-w-0 flex-1">
             <h1 className="text-base font-semibold tracking-tight truncate text-gray-900">NextCargo</h1>
-            <p className="text-xs text-gray-500 truncate">Welcome, {currentUser.firstName}</p>
+            <p className="text-xs text-gray-500 truncate">
+              {appTxt.welcome[language]}, {currentUser.firstName}
+            </p>
           </div>
+          <NotificationsBell
+            notifications={notifications}
+            onMarkAllRead={handleMarkNotificationsRead}
+          />
         </div>
       </header>
 
@@ -310,36 +343,30 @@ function App() {
                 <Warning size={24} weight="fill" className="text-amber-600" />
               </div>
               <div>
-                <DialogTitle className="text-lg">
-                  {language === 'ru' ? 'Заполните данные' : language === 'az' ? 'Məlumatları doldurun' : 'Complete Your Profile'}
-                </DialogTitle>
+                <DialogTitle className="text-lg">{appTxt.completeProfileTitle[language]}</DialogTitle>
               </div>
             </div>
             <DialogDescription className="text-sm text-gray-600">
-              {language === 'ru' 
-                ? 'Для получения посылок необходимо заполнить серийный номер документа и дату рождения в разделе Профиль.' 
-                : language === 'az' 
-                ? 'Bağlamaları almaq üçün Profil bölməsində sənəd seriya nömrəsini və doğum tarixini doldurmalısınız.' 
-                : 'To receive packages, please fill in your document serial number and date of birth in the Profile section.'}
+              {appTxt.completeProfileBody[language]}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 mt-4">
-            <Button 
-              variant="outline" 
-              className="flex-1" 
+            <Button
+              variant="outline"
+              className="flex-1"
               onClick={() => setShowProfileWarning(false)}
             >
-              {language === 'ru' ? 'Позже' : language === 'az' ? 'Sonra' : 'Later'}
+              {appTxt.later[language]}
             </Button>
-            <Button 
-              className="flex-1 bg-blue-600 hover:bg-blue-700" 
+            <Button
+              className="flex-1 bg-blue-600 hover:bg-blue-700"
               onClick={() => {
                 setShowProfileWarning(false)
                 setActiveTab('profile')
               }}
             >
               <IdentificationCard size={16} className="mr-1.5" />
-              {language === 'ru' ? 'Заполнить' : language === 'az' ? 'Doldur' : 'Fill Now'}
+              {appTxt.fillNow[language]}
             </Button>
           </div>
         </DialogContent>
@@ -350,22 +377,23 @@ function App() {
           {[
             { id: 'orders' as Tab, icon: Package, label: navTxt.orders[language] },
             { id: 'profile' as Tab, icon: UserIcon, label: navTxt.profile[language] },
-            { id: 'instructions' as Tab, icon: BookOpen, label: language === 'ru' ? 'Инструкция' : language === 'az' ? 'Təlimat' : 'Instructions' },
+            { id: 'instructions' as Tab, icon: BookOpen, label: navTxt.instructions[language] },
             { id: 'apps' as Tab, icon: AppWindow, label: navTxt.apps[language] }
           ].map((item) => (
             <Button
               key={item.id}
               variant="ghost"
+              aria-current={activeTab === item.id ? 'page' : undefined}
               className={`flex-col h-auto py-1.5 px-1 gap-0.5 w-full rounded-lg ${
-                activeTab === item.id 
-                  ? 'text-blue-600' 
+                activeTab === item.id
+                  ? 'text-blue-600'
                   : 'text-gray-400'
               }`}
               onClick={() => setActiveTab(item.id)}
             >
-              <item.icon 
-                size={18} 
-                weight={activeTab === item.id ? 'fill' : 'regular'} 
+              <item.icon
+                size={18}
+                weight={activeTab === item.id ? 'fill' : 'regular'}
               />
               <span className="text-[10px] font-medium truncate max-w-full">
                 {item.label}

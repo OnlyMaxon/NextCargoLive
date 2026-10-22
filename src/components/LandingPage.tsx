@@ -78,9 +78,9 @@ const landingContent = {
     az: 'Sadə və aydın qiymətlər. Çəki nə qədər çox - bir o qədər sərfəli.'
   },
   minPayment: {
-    ru: 'Минимальная оплата — $7.',
-    en: 'Minimum payment — $7.',
-    az: 'Minimum ödəniş — $7.'
+    ru: 'Оплата при получении.',
+    en: 'Pay on delivery.',
+    az: 'Çatdırılma zamanı ödəniş.'
   },
   firstOrderDiscount: {
     ru: 'Первый заказ — скидка 50%!',
@@ -248,9 +248,9 @@ const getSteps = (lang: Language) => [
     number: "2",
     title: { ru: 'Отправьте скриншот', en: 'Send screenshot', az: 'Skrinşot göndərin' }[lang],
     description: { 
-      ru: 'После покупки отправьте скриншот заказа на WhatsApp +994 50 870 0969',
-      en: 'After purchase send order screenshot to WhatsApp +994 50 870 0969',
-      az: 'Alışdan sonra sifariş skrinşotunu WhatsApp-a göndərin +994 50 870 0969'
+      ru: 'После покупки отправьте скриншот заказа на WhatsApp +994 50 870 09 69',
+      en: 'After purchase send order screenshot to WhatsApp +994 50 870 09 69',
+      az: 'Alışdan sonra sifariş skrinşotunu WhatsApp-a göndərin +994 50 870 09 69'
     }[lang]
   },
   {
@@ -357,9 +357,9 @@ const getFaqs = (lang: Language) => [
       az: 'Dəyər necə hesablanır?'
     }[lang],
     answer: { 
-      ru: 'Стоимость рассчитывается по весу посылки. От 1 кг — $7 за кг, от 5 кг — $6 за кг, от 10 кг — $5 за кг. Минимальная оплата — $7.',
-      en: 'The cost is calculated by the weight of the package. From 1 kg — $7 per kg, from 5 kg — $6 per kg, from 10 kg — $5 per kg. Minimum payment — $7.',
-      az: 'Dəyər bağlamanın çəkisinə görə hesablanır. 1 kq-dan — kq üçün $7, 5 kq-dan — kq üçün $6, 10 kq-dan — kq üçün $5. Minimum ödəniş — $7.'
+      ru: 'Стоимость зависит только от веса посылки и фиксирована: документы до 500 г — 23€, 0-5 кг — 47€, 5-10 кг — 70€, 10-23 кг — 140€. Доплат по весу внутри тарифа нет.',
+      en: 'The cost depends only on the weight of the package and is fixed: documents up to 500 g — 23€, 0-5 kg — 47€, 5-10 kg — 70€, 10-23 kg — 140€. There are no per-kilogram surcharges within a tier.',
+      az: 'Dəyər yalnız bağlamanın çəkisindən asılıdır və sabitdir: 500 q-a qədər sənədlər — 23€, 0-5 kq — 47€, 5-10 kq — 70€, 10-23 kq — 140€. Tarif daxilində kiloqrama görə əlavə ödəniş yoxdur.'
     }[lang]
   },
   {
@@ -718,7 +718,7 @@ export default function LandingPage({ onLoginClick, onRegisterClick }: LandingPa
                   AZ: +994 50 870 09 69
                 </a>
                 <a 
-                  href="tel:+48576925110"
+                  href="tel:+48787372555"
                   className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
                 >
                   <Phone className="w-4 h-4" />

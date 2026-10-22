@@ -8,17 +8,20 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
+import { STATUS_BADGE_CLASSES, STATUS_DEFAULT_LOCATION } from '@/lib/constants'
 import { MagnifyingGlass, Plus, PencilSimple, Trash, SignOut, Package, CaretUpDown, Check, Envelope, Copy } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { useTranslation, LanguageSelector, Language } from '@/lib/i18n'
+import { useTranslation, LanguageSelector, getStatusLabel } from '@/lib/i18n'
 
 // Admin translations
 const adminTxt = {
@@ -54,26 +57,59 @@ const adminTxt = {
   atWarehouse: { ru: 'На складе', en: 'At Warehouse', az: 'Anbarda' },
   delivered: { ru: 'Доставлен', en: 'Delivered', az: 'Çatdırılıb' },
   finCopied: { ru: 'FIN скопирован', en: 'FIN copied', az: 'FIN kopyalandı' },
-  copyFin: { ru: 'Копировать FIN', en: 'Copy FIN', az: 'FIN kopyala' }
-}
-
-// Status labels by language
-const getStatusLabel = (status: OrderStatus, lang: Language): string => {
-  const labels: Record<OrderStatus, Record<Language, string>> = {
-    'in_transit': { ru: 'В пути', en: 'In Transit', az: 'Yolda' },
-    'at_warehouse': { ru: 'На складе', en: 'At Warehouse', az: 'Anbarda' },
-    'delivered': { ru: 'Доставлен', en: 'Delivered', az: 'Çatdırılıb' }
+  copyFin: { ru: 'Копировать FIN', en: 'Copy FIN', az: 'FIN kopyala' },
+  emailCopied: { ru: 'Email скопирован', en: 'Email copied', az: 'E-poçt kopyalandı' },
+  copyEmailHint: {
+    ru: 'Скопируйте email для уведомления клиента',
+    en: 'Copy email to notify the customer',
+    az: 'Müştəriyə bildiriş göndərmək üçün e-poçtu kopyalayın'
+  },
+  fillRequired: {
+    ru: 'Заполните все обязательные поля',
+    en: 'Please fill all required fields',
+    az: 'Bütün tələb olunan sahələri doldurun'
+  },
+  orderAddFailed: {
+    ru: 'Не удалось добавить заказ',
+    en: 'Failed to add order',
+    az: 'Sifariş əlavə edilə bilmədi'
+  },
+  orderAddedNotified: {
+    ru: 'Заказ добавлен, клиент уведомлён',
+    en: 'Order added and customer notified',
+    az: 'Sifariş əlavə edildi, müştəri xəbərdar edildi'
+  },
+  statusUpdatedNotified: {
+    ru: 'Статус обновлён, уведомление отправлено',
+    en: 'Status updated and notification sent',
+    az: 'Status yeniləndi, bildiriş göndərildi'
+  },
+  confirmDeleteTitle: {
+    ru: 'Удалить заказ?',
+    en: 'Delete this order?',
+    az: 'Sifarişi silmək?'
+  },
+  confirmDeleteBody: {
+    ru: 'Заказ и его история отслеживания будут удалены безвозвратно.',
+    en: 'The order and its tracking history will be permanently deleted.',
+    az: 'Sifariş və onun izləmə tarixçəsi həmişəlik silinəcək.'
+  },
+  newStatus: { ru: 'Новый статус', en: 'New Status', az: 'Yeni status' },
+  created: { ru: 'Создан', en: 'Created', az: 'Yaradılıb' },
+  actions: { ru: 'Действия', en: 'Actions', az: 'Hərəkətlər' },
+  orderDescriptionPlaceholder: {
+    ru: 'Описание заказа', en: 'Order description', az: 'Sifariş təsviri'
   }
-  return labels[status][lang]
 }
 
 interface AdminPanelProps {
   orders: Order[]
   users: User[]
   onUpdateOrder: (order: Order) => void
-  onAddOrder: (order: Order) => void
+  /** Возвращает id созданного документа — он нужен, чтобы привязать уведомление. */
+  onAddOrder: (order: Omit<Order, 'id'>) => Promise<string | null>
   onDeleteOrder: (orderId: string) => void
-  onSendNotification: (notification: Notification) => void
+  onSendNotification: (notification: Omit<Notification, 'id'>) => void
   onLogout: () => void
 }
 
@@ -86,10 +122,14 @@ export function AdminPanel({
   onSendNotification,
   onLogout
 }: AdminPanelProps) {
+  const { language } = useTranslation()
+  const txt = adminTxt
+
   const [searchFin, setSearchFin] = useState('')
   const [editingOrder, setEditingOrder] = useState<Order | null>(null)
   const [isAddingOrder, setIsAddingOrder] = useState(false)
   const [customerSearchOpen, setCustomerSearchOpen] = useState(false)
+  const [deletingOrder, setDeletingOrder] = useState<Order | null>(null)
 
   const [newOrder, setNewOrder] = useState({
     userId: '',
@@ -112,44 +152,42 @@ export function AdminPanel({
 
   const handleUpdateStatus = (order: Order, newStatus: OrderStatus) => {
     const now = Date.now()
-    
+
     const newTrackingEvent: TrackingEvent = {
       id: `event_${now}`,
       timestamp: now,
       status: newStatus,
-      location: newStatus === 'in_transit' ? 'Poland - In Transit' : 
-                newStatus === 'at_warehouse' ? 'Azerbaijan Warehouse' : 
-                'Delivered to Customer',
-      description: `Order status updated to ${STATUS_LABELS[newStatus]}`,
+      location: STATUS_DEFAULT_LOCATION[newStatus],
+      // Описание пишется по-английски как аудит-лог; клиенту таймлайн собирает
+      // текст из status на его языке.
+      description: `Order status updated to ${getStatusLabel(newStatus, 'en')}`,
       updatedBy: 'Admin'
     }
 
-    const updatedOrder = { 
-      ...order, 
-      status: newStatus, 
+    const updatedOrder = {
+      ...order,
+      status: newStatus,
       updatedAt: now,
       trackingHistory: [...(order.trackingHistory || []), newTrackingEvent]
     }
-    
+
     onUpdateOrder(updatedOrder)
 
-    const notification: Notification = {
-      id: `notif_${now}`,
+    onSendNotification({
       userId: order.userId,
-      message: `Your order ${order.trackingNumber} status changed to ${STATUS_LABELS[newStatus]}`,
+      message: `Your order ${order.trackingNumber} status changed to ${getStatusLabel(newStatus, 'en')}`,
       timestamp: now,
       read: false,
       orderId: order.id
-    }
-    onSendNotification(notification)
+    })
 
-    toast.success('Order status updated and notification sent')
+    toast.success(txt.statusUpdatedNotified[language])
     setEditingOrder(null)
   }
 
-  const handleAddOrder = () => {
+  const handleAddOrder = async () => {
     if (!newOrder.userId || !newOrder.trackingNumber || !newOrder.description) {
-      toast.error('Please fill all required fields')
+      toast.error(txt.fillRequired[language])
       return
     }
 
@@ -159,15 +197,15 @@ export function AdminPanel({
       id: `event_${now}`,
       timestamp: now,
       status: newOrder.status,
-      location: newOrder.status === 'in_transit' ? 'Poland - In Transit' : 
-                newOrder.status === 'at_warehouse' ? 'Azerbaijan Warehouse' : 
-                'Delivered to Customer',
-      description: `Order created with status: ${STATUS_LABELS[newOrder.status]}`,
+      location: STATUS_DEFAULT_LOCATION[newOrder.status],
+      description: `Order created with status: ${getStatusLabel(newOrder.status, 'en')}`,
       updatedBy: 'Admin'
     }
 
-    const order: Order = {
-      id: `order_${now}`,
+    // id заказа раньше придумывался здесь (`order_${now}`) и не совпадал с id
+    // документа, который выдаёт Firestore. Уведомление ссылалось на этот
+    // несуществующий id. Теперь id приходит из ответа на запись.
+    const orderId = await onAddOrder({
       userId: newOrder.userId,
       trackingNumber: newOrder.trackingNumber,
       description: newOrder.description,
@@ -178,21 +216,22 @@ export function AdminPanel({
       destination: newOrder.destination || undefined,
       weight: newOrder.weight || undefined,
       trackingHistory: [initialTrackingEvent]
+    })
+
+    if (!orderId) {
+      toast.error(txt.orderAddFailed[language])
+      return
     }
 
-    onAddOrder(order)
-    
-    const notification: Notification = {
-      id: `notif_${now}`,
+    onSendNotification({
       userId: newOrder.userId,
       message: `New order ${newOrder.trackingNumber} has been added to your account`,
       timestamp: now,
       read: false,
-      orderId: order.id
-    }
-    onSendNotification(notification)
+      orderId
+    })
 
-    toast.success('Order added and user notified')
+    toast.success(txt.orderAddedNotified[language])
     setIsAddingOrder(false)
     setCustomerSearchOpen(false)
     setNewOrder({
@@ -206,11 +245,11 @@ export function AdminPanel({
     })
   }
 
-  const handleDeleteOrder = (orderId: string) => {
-    if (confirm('Are you sure you want to delete this order?')) {
-      onDeleteOrder(orderId)
-      toast.success('Order deleted')
-    }
+  const handleConfirmDelete = () => {
+    if (!deletingOrder) return
+    onDeleteOrder(deletingOrder.id)
+    toast.success(txt.orderDeleted[language])
+    setDeletingOrder(null)
   }
 
   const handleCloseAddDialog = () => {
@@ -218,10 +257,9 @@ export function AdminPanel({
     setCustomerSearchOpen(false)
   }
 
-  const { language } = useTranslation()
-  const txt = adminTxt
-
   const formatDate = (timestamp: number) => {
+    // 0 приходит из convertTimestamp, когда в документе нет даты.
+    if (!timestamp) return '—'
     return new Date(timestamp).toLocaleString('en-GB', {
       day: '2-digit',
       month: 'short',
@@ -321,8 +359,8 @@ export function AdminPanel({
                           <TableHead className="font-medium">FIN</TableHead>
                           <TableHead className="font-medium">{txt.description[language]}</TableHead>
                           <TableHead className="font-medium">{txt.status[language]}</TableHead>
-                          <TableHead className="font-medium">{language === 'ru' ? 'Создан' : language === 'az' ? 'Yaradılıb' : 'Created'}</TableHead>
-                          <TableHead className="font-medium">{language === 'ru' ? 'Действия' : language === 'az' ? 'Hərəkətlər' : 'Actions'}</TableHead>
+                          <TableHead className="font-medium">{txt.created[language]}</TableHead>
+                          <TableHead className="font-medium">{txt.actions[language]}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -343,7 +381,7 @@ export function AdminPanel({
                                     <span className="text-sm">{getUserName(order.userId)}</span>
                                     <span className="text-xs text-muted-foreground cursor-pointer hover:text-primary" onClick={() => {
                                       navigator.clipboard.writeText(user?.email || '')
-                                      toast.success('Email copied!')
+                                      toast.success(txt.emailCopied[language])
                                     }}>
                                       {user?.email}
                                     </span>
@@ -352,7 +390,7 @@ export function AdminPanel({
                                 <TableCell className="font-mono text-sm text-muted-foreground">{user?.finCode}</TableCell>
                                 <TableCell className="max-w-xs truncate">{order.description}</TableCell>
                                 <TableCell>
-                                  <Badge className={`${STATUS_COLORS[order.status]} shadow-sm`}>
+                                  <Badge className={`${STATUS_BADGE_CLASSES[order.status]} shadow-sm`}>
                                     {getStatusLabel(order.status, language)}
                                   </Badge>
                                 </TableCell>
@@ -369,7 +407,7 @@ export function AdminPanel({
                                     <Button
                                       size="sm"
                                       variant="destructive"
-                                      onClick={() => handleDeleteOrder(order.id)}
+                                      onClick={() => setDeletingOrder(order)}
                                     >
                                       <Trash size={16} />
                                     </Button>
@@ -406,14 +444,14 @@ export function AdminPanel({
                                     className="text-xs text-muted-foreground cursor-pointer hover:underline mt-1 flex items-center gap-1"
                                     onClick={() => {
                                       navigator.clipboard.writeText(user?.email || '')
-                                      toast.success('Email copied!')
+                                      toast.success(txt.emailCopied[language])
                                     }}
                                   >
                                     <Envelope size={12} />
                                     {user?.email}
                                   </p>
                                 </div>
-                                <Badge className={`${STATUS_COLORS[order.status]} flex-shrink-0`}>
+                                <Badge className={`${STATUS_BADGE_CLASSES[order.status]} flex-shrink-0`}>
                                   {getStatusLabel(order.status, language)}
                                 </Badge>
                               </div>
@@ -436,7 +474,7 @@ export function AdminPanel({
                                 <Button
                                   size="sm"
                                   variant="destructive"
-                                  onClick={() => handleDeleteOrder(order.id)}
+                                  onClick={() => setDeletingOrder(order)}
                                   className="flex-1"
                                 >
                                   <Trash size={18} className="mr-2" />
@@ -540,16 +578,14 @@ export function AdminPanel({
                       className="h-8 px-2"
                       onClick={() => {
                         navigator.clipboard.writeText(getSelectedCustomer()?.email || '')
-                        toast.success('Email copied!')
+                        toast.success(txt.emailCopied[language])
                       }}
                     >
                       <Copy size={16} />
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {language === 'ru' ? 'Скопируйте email для уведомления клиента' : 
-                     language === 'az' ? 'Müştəriyə bildiriş göndərmək üçün emaili kopyalayın' : 
-                     'Copy email to notify customer via Outlook'}
+                    {txt.copyEmailHint[language]}
                   </p>
                 </div>
               )}
@@ -568,7 +604,7 @@ export function AdminPanel({
             <div className="space-y-2">
               <Label className="text-sm sm:text-base font-medium">{txt.description[language]}</Label>
               <Textarea
-                placeholder={language === 'ru' ? 'Описание заказа' : language === 'az' ? 'Sifariş təsviri' : 'Order description'}
+                placeholder={txt.orderDescriptionPlaceholder[language]}
                 value={newOrder.description}
                 onChange={(e) => setNewOrder({ ...newOrder, description: e.target.value })}
                 className="min-h-[80px]"
@@ -628,6 +664,26 @@ export function AdminPanel({
         </DialogContent>
       </Dialog>
 
+      <AlertDialog open={!!deletingOrder} onOpenChange={(open) => !open && setDeletingOrder(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{txt.confirmDeleteTitle[language]}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deletingOrder?.trackingNumber} — {txt.confirmDeleteBody[language]}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{txt.cancel[language]}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {txt.delete[language]}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Dialog open={!!editingOrder} onOpenChange={() => setEditingOrder(null)}>
         <DialogContent className="max-w-[95vw] sm:max-w-lg">
           <DialogHeader>
@@ -651,7 +707,7 @@ export function AdminPanel({
               </div>
 
               <div className="space-y-3">
-                <Label className="text-sm sm:text-base font-medium">{language === 'ru' ? 'Новый статус' : language === 'az' ? 'Yeni status' : 'New Status'}</Label>
+                <Label className="text-sm sm:text-base font-medium">{txt.newStatus[language]}</Label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     variant={editingOrder.status === 'in_transit' ? 'default' : 'outline'}

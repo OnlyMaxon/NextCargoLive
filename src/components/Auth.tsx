@@ -8,9 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { validateFINCode, validateEmail, validatePassword, validateName } from '@/lib/validation'
 import { User, AuthTab } from '@/lib/types'
 import { Package, ArrowLeft } from '@phosphor-icons/react'
-import { authService } from '@/lib/firebase-services'
+import { authService, FIN_CODE_TAKEN } from '@/lib/firebase-services'
 import { toast } from 'sonner'
-import { useTranslation, LanguageSelector, Language } from '@/lib/i18n'
+import { useTranslation, LanguageSelector } from '@/lib/i18n'
 
 // Auth translations
 const authTxt = {
@@ -44,19 +44,43 @@ const authTxt = {
   weakPassword: { ru: 'Пароль слишком слабый', en: 'Password is too weak', az: 'Şifrə çox zəifdir' },
   registrationFailed: { ru: 'Ошибка регистрации. Попробуйте снова', en: 'Registration failed. Please try again', az: 'Qeydiyyat uğursuz oldu. Yenidən cəhd edin' },
   loginSuccess: { ru: 'Успешный вход!', en: 'Login successful', az: 'Uğurlu giriş!' },
-  registerSuccess: { ru: 'Регистрация успешна!', en: 'Registration successful', az: 'Qeydiyyat uğurlu oldu!' }
+  registerSuccess: { ru: 'Регистрация успешна!', en: 'Registration successful', az: 'Qeydiyyat uğurlu oldu!' },
+  emailAlreadyInUse: { ru: 'Этот email уже зарегистрирован', en: 'This email is already registered', az: 'Bu e-poçt artıq qeydiyyatdan keçib' },
+  forgotPassword: { ru: 'Забыли пароль?', en: 'Forgot password?', az: 'Şifrəni unutmusunuz?' },
+  resetTitle: { ru: 'Сброс пароля', en: 'Reset password', az: 'Şifrənin sıfırlanması' },
+  resetHint: {
+    ru: 'Укажите email — пришлём ссылку для установки нового пароля.',
+    en: 'Enter your email and we will send you a link to set a new password.',
+    az: 'E-poçtunuzu daxil edin — yeni şifrə təyin etmək üçün keçid göndərəcəyik.'
+  },
+  resetSend: { ru: 'Отправить ссылку', en: 'Send link', az: 'Keçid göndər' },
+  resetSending: { ru: 'Отправляем...', en: 'Sending...', az: 'Göndərilir...' },
+  resetSent: {
+    ru: 'Письмо отправлено. Проверьте почту.',
+    en: 'Email sent. Please check your inbox.',
+    az: 'Məktub göndərildi. Poçtunuzu yoxlayın.'
+  },
+  resetFailed: {
+    ru: 'Не удалось отправить письмо',
+    en: 'Failed to send the email',
+    az: 'Məktub göndərilə bilmədi'
+  }
 }
+
+/** Firebase бросает ошибки с полем `code`; unknown сужаем до него. */
+const errorCode = (error: unknown): string =>
+  typeof error === 'object' && error !== null && 'code' in error
+    ? String((error as { code: unknown }).code)
+    : ''
 
 interface AuthProps {
   onLogin: (user: User) => void
-  users: User[]
   onRegister: (user: User) => void
-  onAdminLogin: () => void
   defaultTab?: AuthTab
   onBackClick?: () => void
 }
 
-export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'login', onBackClick }: AuthProps) {
+export function Auth({ onLogin, onRegister, defaultTab = 'login', onBackClick }: AuthProps) {
   const { language } = useTranslation()
   const txt = authTxt
   
@@ -68,8 +92,10 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
   const [registerFin, setRegisterFin] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState(defaultTab)
+  const [activeTab, setActiveTab] = useState<AuthTab>(defaultTab)
   const [loading, setLoading] = useState(false)
+  const [resetOpen, setResetOpen] = useState(false)
+  const [resetSending, setResetSending] = useState(false)
 
   useEffect(() => {
     setActiveTab(defaultTab)
@@ -98,28 +124,43 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
       const userData = await authService.getUserData(firebaseUser.uid)
       
       if (userData) {
-        // Check if user is admin and redirect accordingly
-        if (userData.isAdmin) {
-          onLogin(userData)
-          onAdminLogin()
-        } else {
-          onLogin(userData)
-        }
+        onLogin(userData)
         toast.success(txt.loginSuccess[language])
       } else {
         setError(txt.loginFailed[language])
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error)
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+      const code = errorCode(error)
+      if (code === 'auth/invalid-credential' || code === 'auth/user-not-found') {
         setError(txt.invalidCredentials[language])
-      } else if (error.code === 'auth/too-many-requests') {
+      } else if (code === 'auth/too-many-requests') {
         setError(txt.tooManyRequests[language])
       } else {
         setError(txt.loginFailed[language])
       }
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    if (!validateEmail(loginEmail)) {
+      setError(txt.invalidEmail[language])
+      return
+    }
+
+    setError('')
+    setResetSending(true)
+    try {
+      await authService.resetPassword(loginEmail.trim().toLowerCase())
+      toast.success(txt.resetSent[language])
+      setResetOpen(false)
+    } catch (error) {
+      console.error('Password reset error:', error)
+      toast.error(txt.resetFailed[language])
+    } finally {
+      setResetSending(false)
     }
   }
 
@@ -159,13 +200,6 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
         return
       }
 
-      const existingUser = await authService.getUserByFinCode(registerFin)
-      if (existingUser) {
-        setError(txt.finAlreadyRegistered[language])
-        setLoading(false)
-        return
-      }
-
       const email = registerEmail.trim().toLowerCase()
       
       const userData: Omit<User, 'id'> = {
@@ -173,7 +207,6 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
         lastName: registerLastName.trim(),
         email: email,
         finCode: registerFin.toUpperCase(),
-        password: '',
         isAdmin: false
       }
 
@@ -187,11 +220,16 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
       onRegister(newUser)
       onLogin(newUser)
       toast.success(txt.registerSuccess[language])
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error)
-      if (error.code === 'auth/email-already-in-use') {
+      const code = errorCode(error)
+      if (code === FIN_CODE_TAKEN) {
         setError(txt.finAlreadyRegistered[language])
-      } else if (error.code === 'auth/weak-password') {
+      } else if (code === 'auth/email-already-in-use') {
+        // Раньше здесь показывалось сообщение про FIN — две разные причины
+        // отказа выглядели одинаково.
+        setError(txt.emailAlreadyInUse[language])
+      } else if (code === 'auth/weak-password') {
         setError(txt.weakPassword[language])
       } else {
         setError(txt.registrationFailed[language])
@@ -232,7 +270,7 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AuthTab)}>
             <TabsList className="grid w-full grid-cols-2 mb-5 h-9 bg-gray-100">
               <TabsTrigger value="login" className="text-sm data-[state=active]:bg-white data-[state=active]:text-blue-600">{txt.login[language]}</TabsTrigger>
               <TabsTrigger value="register" className="text-sm data-[state=active]:bg-white data-[state=active]:text-blue-600">{txt.register[language]}</TabsTrigger>
@@ -277,6 +315,31 @@ export function Auth({ onLogin, users, onRegister, onAdminLogin, defaultTab = 'l
                 <Button type="submit" className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white" disabled={loading}>
                   {loading ? txt.loggingIn[language] : txt.login[language]}
                 </Button>
+
+                {/* Сброса пароля не было вовсе: забывший пароль клиент терял доступ навсегда. */}
+                {resetOpen ? (
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-2">
+                    <p className="text-xs font-medium text-gray-700">{txt.resetTitle[language]}</p>
+                    <p className="text-xs text-gray-500">{txt.resetHint[language]}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full h-9 text-sm"
+                      onClick={handleResetPassword}
+                      disabled={resetSending}
+                    >
+                      {resetSending ? txt.resetSending[language] : txt.resetSend[language]}
+                    </Button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setResetOpen(true)}
+                    className="w-full text-center text-xs text-gray-500 hover:text-blue-600 underline-offset-2 hover:underline"
+                  >
+                    {txt.forgotPassword[language]}
+                  </button>
+                )}
               </form>
             </TabsContent>
 

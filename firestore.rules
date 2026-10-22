@@ -1,45 +1,80 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // get()/exists() внутри правил не подчиняются самим правилам, поэтому эта
+    // проверка продолжает работать даже после того, как чтение /users закрыли.
     function isAdmin() {
-      return request.auth != null && 
+      return isSignedIn() &&
              exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
-    
+
     function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
-    
+
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow update: if isOwner(userId) || isAdmin();
+      // Профиль содержит FIN-код, серию документа и дату рождения. Раньше здесь
+      // было `isSignedIn()`, то есть любой зарегистрированный читал персональные
+      // данные всех остальных клиентов.
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Регистрация: документ создаёт только сам пользователь и только обычным.
+      // Без проверки isAdmin == false любой мог сразу завести себе админский профиль.
+      allow create: if isOwner(userId) &&
+                       request.resource.data.isAdmin == false;
+
+      // Клиент правит только свои личные данные. Whitelist полей здесь —
+      // единственное, что мешает выдать себе isAdmin: true одним updateDoc
+      // из консоли браузера и получить доступ ко всей базе.
+      allow update: if isAdmin() ||
+                       (isOwner(userId) &&
+                        request.resource.data.diff(resource.data)
+                          .affectedKeys()
+                          .hasOnly(['firstName', 'lastName', 'documentSerial', 'birthDate']));
+
       allow delete: if isAdmin();
     }
-    
+
+    // Уникальность FIN-кодов. Проверить занятость чтением нельзя: на момент
+    // регистрации пользователь ещё не аутентифицирован. Поэтому уникальность
+    // обеспечивает сам Firestore — правило `create` применяется только когда
+    // документа ещё нет, значит занятый FIN отклоняется атомарно и без гонок.
+    match /fin_index/{finCode} {
+      // Знать, занят ли конкретный FIN, обычному пользователю не нужно:
+      // это персональный идентификатор, и чтение дало бы оракул на перебор.
+      allow read: if isAdmin();
+
+      allow create: if isSignedIn() &&
+                       request.resource.data.keys().hasOnly(['userId']) &&
+                       request.resource.data.userId == request.auth.uid;
+
+      // Освободить запись можно только свою — нужно для откатa, если создание
+      // профиля упало уже после того, как FIN был занят.
+      allow delete: if isAdmin() ||
+                       (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      allow update: if isAdmin();
+    }
+
     match /orders/{orderId} {
-      allow read: if request.auth != null && 
+      allow read: if isSignedIn() &&
                      (resource.data.userId == request.auth.uid || isAdmin());
       allow create: if isAdmin();
       allow update: if isAdmin();
       allow delete: if isAdmin();
     }
-    
-    match /support_messages/{messageId} {
-      allow read: if request.auth != null && 
-                     (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if request.auth != null && 
-                       (request.resource.data.userId == request.auth.uid || isAdmin());
-      allow update, delete: if isAdmin();
-    }
-    
+
     match /notifications/{notificationId} {
-      allow read: if request.auth != null && 
+      allow read: if isSignedIn() &&
                      (resource.data.userId == request.auth.uid || isAdmin());
       allow create: if isAdmin();
-      allow update: if request.auth != null && 
+      allow update: if isSignedIn() &&
                        resource.data.userId == request.auth.uid &&
                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
       allow delete: if isAdmin();

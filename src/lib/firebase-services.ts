@@ -1,48 +1,139 @@
-import { 
-  createUserWithEmailAndPassword, 
+import {
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
+  deleteUser,
   User as FirebaseUser
 } from 'firebase/auth'
-import { 
-  collection, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  getDocs, 
-  query, 
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
   where,
   orderBy,
   Timestamp,
   setDoc,
   getDoc,
   onSnapshot,
-  Unsubscribe
+  Unsubscribe,
+  DocumentData,
+  QueryDocumentSnapshot
 } from 'firebase/firestore'
 import { auth, db } from './firebase'
-import { User, Order, SupportMessage, Notification } from './types'
+import { User, Order, Notification } from './types'
 
-const convertTimestamp = (timestamp: any): number => {
-  if (timestamp?.toMillis) {
-    return timestamp.toMillis()
+/** Бросается, когда FIN-код уже занят другим аккаунтом. */
+export const FIN_CODE_TAKEN = 'app/fin-code-taken'
+
+/**
+ * Приводит значение из Firestore к миллисекундам.
+ *
+ * Раньше при отсутствующем значении возвращался Date.now(), из-за чего заказ
+ * без createdAt тихо становился «сегодняшним» и уезжал в начало сортировки.
+ * Теперь такой случай виден: 0 означает «даты нет», UI рисует прочерк.
+ */
+const convertTimestamp = (value: unknown): number => {
+  if (value instanceof Timestamp) return value.toMillis()
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string') {
+    const parsed = Date.parse(value)
+    if (!Number.isNaN(parsed)) return parsed
   }
-  if (typeof timestamp === 'number') {
-    return timestamp
+  if (value != null) {
+    console.warn('Unrecognised timestamp value from Firestore:', value)
   }
-  return Date.now()
+  return 0
+}
+
+const toUser = (snapshot: QueryDocumentSnapshot<DocumentData> | { id: string; data: () => DocumentData }): User => {
+  const data = snapshot.data()
+  return {
+    id: snapshot.id,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email || '',
+    finCode: data.finCode,
+    isAdmin: data.isAdmin || false,
+    documentSerial: data.documentSerial || '',
+    birthDate: data.birthDate || ''
+  }
+}
+
+const toOrder = (snapshot: QueryDocumentSnapshot<DocumentData>): Order => {
+  const data = snapshot.data()
+  return {
+    id: snapshot.id,
+    userId: data.userId,
+    trackingNumber: data.trackingNumber,
+    description: data.description,
+    status: data.status,
+    createdAt: convertTimestamp(data.createdAt),
+    updatedAt: convertTimestamp(data.updatedAt),
+    origin: data.origin,
+    destination: data.destination,
+    weight: data.weight,
+    trackingHistory: data.trackingHistory || []
+  }
+}
+
+const toNotification = (snapshot: QueryDocumentSnapshot<DocumentData>): Notification => {
+  const data = snapshot.data()
+  return {
+    id: snapshot.id,
+    userId: data.userId,
+    message: data.message,
+    timestamp: convertTimestamp(data.timestamp),
+    read: data.read ?? false,
+    orderId: data.orderId
+  }
 }
 
 export const authService = {
+  /**
+   * Регистрация. FIN-код занимается через отдельный документ fin_index/{FIN}:
+   * правило `create` в Firestore срабатывает только когда документа ещё нет,
+   * поэтому занятый код отклоняется атомарно.
+   *
+   * Проверить занятость заранее нельзя — до createUserWithEmailAndPassword
+   * запрос неаутентифицирован, и правила его отклонят. Именно поэтому прежняя
+   * предварительная проверка всегда «разрешала» любой дубликат.
+   */
   async register(email: string, password: string, userData: Omit<User, 'id'>) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    const userId = userCredential.user.uid
-    
-    await setDoc(doc(db, 'users', userId), {
-      ...userData,
-      createdAt: Timestamp.now()
-    })
-    
+    const firebaseUser = userCredential.user
+    const userId = firebaseUser.uid
+    const finRef = doc(db, 'fin_index', userData.finCode)
+
+    try {
+      await setDoc(finRef, { userId })
+    } catch {
+      // FIN занят. Удаляем только что созданный аккаунт, иначе у человека
+      // останется auth-пользователь без профиля: войти он не сможет, а email
+      // окажется навсегда занятым.
+      await deleteUser(firebaseUser).catch(() => undefined)
+      const error = new Error('FIN code already registered') as Error & { code: string }
+      error.code = FIN_CODE_TAKEN
+      throw error
+    }
+
+    try {
+      await setDoc(doc(db, 'users', userId), {
+        ...userData,
+        createdAt: Timestamp.now()
+      })
+    } catch (error) {
+      // Профиль не создался — освобождаем FIN и аккаунт, чтобы регистрацию
+      // можно было повторить.
+      await deleteDoc(finRef).catch(() => undefined)
+      await deleteUser(firebaseUser).catch(() => undefined)
+      throw error
+    }
+
     return userId
   },
 
@@ -51,56 +142,21 @@ export const authService = {
     return userCredential.user
   },
 
+  async resetPassword(email: string) {
+    await sendPasswordResetEmail(auth, email)
+  },
+
   async logout() {
     await signOut(auth)
   },
 
   async getUserData(userId: string): Promise<User | null> {
     try {
-      const userDocRef = doc(db, 'users', userId)
-      const userDoc = await getDoc(userDocRef)
-      
+      const userDoc = await getDoc(doc(db, 'users', userId))
       if (!userDoc.exists()) return null
-      
-      const data = userDoc.data()
-      return {
-        id: userDoc.id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email || '',
-        finCode: data.finCode,
-        password: '',
-        isAdmin: data.isAdmin || false,
-        documentSerial: data.documentSerial || '',
-        birthDate: data.birthDate || ''
-      }
+      return toUser(userDoc)
     } catch (error) {
       console.error('Error getting user data:', error)
-      return null
-    }
-  },
-
-  async getUserByFinCode(finCode: string): Promise<User | null> {
-    try {
-      const usersQuery = query(collection(db, 'users'), where('finCode', '==', finCode.toUpperCase()))
-      const usersSnapshot = await getDocs(usersQuery)
-      
-      if (usersSnapshot.empty) return null
-      
-      const data = usersSnapshot.docs[0].data()
-      return {
-        id: usersSnapshot.docs[0].id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email || '',
-        finCode: data.finCode,
-        password: '',
-        isAdmin: data.isAdmin || false,
-        documentSerial: data.documentSerial || '',
-        birthDate: data.birthDate || ''
-      }
-    } catch (error) {
-      console.error('Error getting user by FIN:', error)
       return null
     }
   },
@@ -121,8 +177,10 @@ export const ordersService = {
   },
 
   async updateOrder(orderId: string, updates: Partial<Order>) {
+    // id — это идентификатор документа, в полях ему делать нечего.
+    const { id: _id, ...fields } = updates
     await updateDoc(doc(db, 'orders', orderId), {
-      ...updates,
+      ...fields,
       updatedAt: Date.now()
     })
   },
@@ -134,175 +192,35 @@ export const ordersService = {
   async getUserOrders(userId: string): Promise<Order[]> {
     try {
       const ordersQuery = query(
-        collection(db, 'orders'), 
+        collection(db, 'orders'),
         where('userId', '==', userId),
         orderBy('createdAt', 'desc')
       )
       const ordersSnapshot = await getDocs(ordersQuery)
-      
-      return ordersSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          trackingNumber: data.trackingNumber,
-          description: data.description,
-          status: data.status,
-          createdAt: convertTimestamp(data.createdAt),
-          updatedAt: convertTimestamp(data.updatedAt),
-          origin: data.origin,
-          destination: data.destination,
-          weight: data.weight,
-          trackingHistory: data.trackingHistory || []
-        } as Order
-      })
+      return ordersSnapshot.docs.map(toOrder)
     } catch (error) {
       console.error('Error getting user orders:', error)
       return []
     }
   },
 
-  async getAllOrders(): Promise<Order[]> {
-    try {
-      const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'))
-      const ordersSnapshot = await getDocs(ordersQuery)
-      
-      return ordersSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          trackingNumber: data.trackingNumber,
-          description: data.description,
-          status: data.status,
-          createdAt: convertTimestamp(data.createdAt),
-          updatedAt: convertTimestamp(data.updatedAt),
-          origin: data.origin,
-          destination: data.destination,
-          weight: data.weight,
-          trackingHistory: data.trackingHistory || []
-        } as Order
-      })
-    } catch (error) {
-      console.error('Error getting all orders:', error)
-      return []
-    }
-  }
-}
-
-export const supportService = {
-  async sendMessage(message: Omit<SupportMessage, 'id'>): Promise<string> {
-    const docRef = await addDoc(collection(db, 'support_messages'), {
-      ...message,
-      timestamp: message.timestamp || Date.now()
-    })
-    return docRef.id
-  },
-
-  async getUserMessages(userId: string): Promise<SupportMessage[]> {
-    try {
-      const messagesQuery = query(
-        collection(db, 'support_messages'),
-        where('userId', '==', userId),
-        orderBy('timestamp', 'asc')
-      )
-      const messagesSnapshot = await getDocs(messagesQuery)
-      
-      return messagesSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          userName: data.userName,
-          message: data.message,
-          timestamp: convertTimestamp(data.timestamp),
-          isAdmin: data.isAdmin,
-          conversationId: data.conversationId
-        } as SupportMessage
-      })
-    } catch (error) {
-      console.error('Error getting user messages:', error)
-      return []
-    }
-  },
-
-  async getAllMessages(): Promise<SupportMessage[]> {
-    try {
-      const messagesQuery = query(
-        collection(db, 'support_messages'),
-        orderBy('timestamp', 'desc')
-      )
-      const messagesSnapshot = await getDocs(messagesQuery)
-      
-      return messagesSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          userName: data.userName,
-          message: data.message,
-          timestamp: convertTimestamp(data.timestamp),
-          isAdmin: data.isAdmin,
-          conversationId: data.conversationId
-        } as SupportMessage
-      })
-    } catch (error) {
-      console.error('Error getting all messages:', error)
-      return []
-    }
-  },
-
-  // Real-time subscription for user messages
-  subscribeToUserMessages(userId: string, callback: (messages: SupportMessage[]) => void): Unsubscribe {
-    const messagesQuery = query(
-      collection(db, 'support_messages'),
-      where('conversationId', '==', userId),
-      orderBy('timestamp', 'asc')
+  /**
+   * Живая подписка на все заказы (админка). Без неё панель показывала срез на
+   * момент входа: новые заказы и регистрации появлялись только после перезагрузки.
+   */
+  subscribeToAllOrders(
+    callback: (orders: Order[]) => void,
+    onError: (error: Error) => void
+  ): Unsubscribe {
+    const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'))
+    return onSnapshot(
+      ordersQuery,
+      (snapshot) => callback(snapshot.docs.map(toOrder)),
+      (error) => {
+        console.error('Error subscribing to orders:', error)
+        onError(error)
+      }
     )
-    
-    return onSnapshot(messagesQuery, (snapshot) => {
-      const messages = snapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          userName: data.userName,
-          message: data.message,
-          timestamp: convertTimestamp(data.timestamp),
-          isAdmin: data.isAdmin,
-          conversationId: data.conversationId
-        } as SupportMessage
-      })
-      callback(messages)
-    }, (error) => {
-      console.error('Error subscribing to messages:', error)
-    })
-  },
-
-  // Real-time subscription for all messages (admin)
-  subscribeToAllMessages(callback: (messages: SupportMessage[]) => void): Unsubscribe {
-    const messagesQuery = query(
-      collection(db, 'support_messages'),
-      orderBy('timestamp', 'desc')
-    )
-    
-    return onSnapshot(messagesQuery, (snapshot) => {
-      const messages = snapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          userName: data.userName,
-          message: data.message,
-          timestamp: convertTimestamp(data.timestamp),
-          isAdmin: data.isAdmin,
-          conversationId: data.conversationId
-        } as SupportMessage
-      })
-      callback(messages)
-    }, (error) => {
-      console.error('Error subscribing to all messages:', error)
-    })
   }
 }
 
@@ -323,18 +241,7 @@ export const notificationsService = {
         orderBy('timestamp', 'desc')
       )
       const notificationsSnapshot = await getDocs(notificationsQuery)
-      
-      return notificationsSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          userId: data.userId,
-          message: data.message,
-          timestamp: convertTimestamp(data.timestamp),
-          read: data.read,
-          orderId: data.orderId
-        } as Notification
-      })
+      return notificationsSnapshot.docs.map(toNotification)
     } catch (error) {
       console.error('Error getting user notifications:', error)
       return []
@@ -352,63 +259,30 @@ export const usersService = {
   async getAllUsers(): Promise<User[]> {
     try {
       const usersSnapshot = await getDocs(collection(db, 'users'))
-      
-      return usersSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email || '',
-          finCode: data.finCode,
-          password: '',
-          isAdmin: data.isAdmin || false,
-          documentSerial: data.documentSerial || '',
-          birthDate: data.birthDate || ''
-        } as User
-      })
+      return usersSnapshot.docs.map(toUser)
     } catch (error) {
       console.error('Error getting all users:', error)
       return []
     }
   },
 
-  async searchUsers(searchTerm: string): Promise<User[]> {
-    try {
-      const usersSnapshot = await getDocs(collection(db, 'users'))
-      
-      const allUsers = usersSnapshot.docs.map(doc => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email || '',
-          finCode: data.finCode,
-          password: '',
-          isAdmin: data.isAdmin || false,
-          documentSerial: data.documentSerial || '',
-          birthDate: data.birthDate || ''
-        } as User
-      })
-
-      const term = searchTerm.toLowerCase()
-      return allUsers.filter(user => 
-        user.firstName.toLowerCase().includes(term) ||
-        user.lastName.toLowerCase().includes(term) ||
-        user.finCode.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term)
-      )
-    } catch (error) {
-      console.error('Error searching users:', error)
-      return []
-    }
+  subscribeToAllUsers(
+    callback: (users: User[]) => void,
+    onError: (error: Error) => void
+  ): Unsubscribe {
+    return onSnapshot(
+      collection(db, 'users'),
+      (snapshot) => callback(snapshot.docs.map(toUser)),
+      (error) => {
+        console.error('Error subscribing to users:', error)
+        onError(error)
+      }
+    )
   },
 
   async updateUser(userId: string, data: Partial<User>): Promise<void> {
     try {
-      const userRef = doc(db, 'users', userId)
-      await updateDoc(userRef, data)
+      await updateDoc(doc(db, 'users', userId), data)
     } catch (error) {
       console.error('Error updating user:', error)
       throw error

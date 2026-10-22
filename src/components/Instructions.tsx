@@ -13,10 +13,9 @@ import {
   CreditCard,
   ChatCircle 
 } from '@phosphor-icons/react'
-import { useTranslation, translations } from '@/lib/i18n'
+import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 
-const commonTxt = translations.common
 
 export function Instructions() {
   const { language } = useTranslation()
@@ -26,8 +25,7 @@ export function Instructions() {
     name: 'NextCargo Logistics',
     address: 'Michała Bałuckiego 34/19, 02-557 Warszawa, Poland',
     phone1: '+48 787 372 555',
-    phone2: '+48 783 456 789',
-    email: 'warehouse@nextcargo.com',
+    email: 'warehouse@nextcargo.eu',
     workHours: '08:00 - 18:00 (Pon - Pt)',
     openingHours: 'Monday - Friday: 08:00 - 18:00 (GMT+1)'
   }
@@ -156,23 +154,6 @@ export function Instructions() {
                   size="sm"
                   className="h-7 px-2"
                   onClick={() => copyToClipboard(warehouseData.phone1)}
-                >
-                  <Copy size={14} />
-                </Button>
-              </div>
-
-              {/* Phone 2 */}
-              <div className="flex items-center gap-3 bg-white rounded-lg p-3 border border-blue-100">
-                <Phone size={18} className="text-blue-600 flex-shrink-0" weight="fill" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-600">{language === 'ru' ? 'Дополнительный телефон' : 'Alternative Phone'}</p>
-                  <p className="font-semibold text-gray-900">{warehouseData.phone2}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2"
-                  onClick={() => copyToClipboard(warehouseData.phone2)}
                 >
                   <Copy size={14} />
                 </Button>

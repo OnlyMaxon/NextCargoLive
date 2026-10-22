@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { STATUS_TRANSLATION_KEY } from './constants'
+import { OrderStatus } from './types'
 
 export type Language = 'ru' | 'en' | 'az'
 
@@ -187,9 +189,9 @@ export const translations = {
       az: 'Dəyər necə hesablanır?'
     },
     faqAnswer3: {
-      ru: 'Стоимость рассчитывается по весу посылки. Базовый тариф - $7 за килограмм с минимальным весом 0.5 кг.',
-      en: 'The cost is calculated by the weight of the package. Base rate is $7 per kilogram with a minimum weight of 0.5 kg.',
-      az: 'Dəyər bağlamanın çəkisinə görə hesablanır. Əsas tarif minimum 0.5 kq çəki ilə kq üçün $7-dir.'
+      ru: 'Стоимость зависит только от веса посылки и фиксирована: документы до 500 г — 23€, 0-5 кг — 47€, 5-10 кг — 70€, 10-23 кг — 140€. Доплат по весу внутри тарифа нет.',
+      en: 'The cost depends only on the weight of the package and is fixed: documents up to 500 g — 23€, 0-5 kg — 47€, 5-10 kg — 70€, 10-23 kg — 140€. There are no per-kilogram surcharges within a tier.',
+      az: 'Dəyər yalnız bağlamanın çəkisindən asılıdır və sabitdir: 500 q-a qədər sənədlər — 23€, 0-5 kq — 47€, 5-10 kq — 70€, 10-23 kq — 140€. Tarif daxilində kiloqrama görə əlavə ödəniş yoxdur.'
     },
     faqQuestion4: {
       ru: 'Есть ли страховка?',
@@ -726,7 +728,70 @@ export const translations = {
       ru: 'Магазины',
       en: 'Shops',
       az: 'Mağazalar'
+    },
+    instructions: {
+      ru: 'Инструкция',
+      en: 'Instructions',
+      az: 'Təlimat'
     }
+  },
+
+  // Строки оболочки приложения. Раньше они были инлайн-тернарниками в App.tsx,
+  // а тосты вообще не переводились.
+  app: {
+    welcome: { ru: 'Добро пожаловать', en: 'Welcome', az: 'Xoş gəlmisiniz' },
+    loggedOut: {
+      ru: 'Вы вышли из аккаунта',
+      en: 'Logged out successfully',
+      az: 'Hesabdan çıxdınız'
+    },
+    logoutFailed: {
+      ru: 'Не удалось выйти',
+      en: 'Failed to log out',
+      az: 'Çıxış alınmadı'
+    },
+    loadFailed: {
+      ru: 'Не удалось загрузить данные',
+      en: 'Failed to load data',
+      az: 'Məlumatlar yüklənmədi'
+    },
+    profileMissing: {
+      ru: 'Профиль не найден. Обратитесь в поддержку.',
+      en: 'Profile not found. Please contact support.',
+      az: 'Profil tapılmadı. Dəstəyə müraciət edin.'
+    },
+    orderUpdated: {
+      ru: 'Заказ обновлён',
+      en: 'Order updated',
+      az: 'Sifariş yeniləndi'
+    },
+    orderUpdateFailed: {
+      ru: 'Не удалось обновить заказ',
+      en: 'Failed to update order',
+      az: 'Sifariş yenilənmədi'
+    },
+    orderDeleteFailed: {
+      ru: 'Не удалось удалить заказ',
+      en: 'Failed to delete order',
+      az: 'Sifariş silinmədi'
+    },
+    notificationFailed: {
+      ru: 'Не удалось отправить уведомление',
+      en: 'Failed to send notification',
+      az: 'Bildiriş göndərilmədi'
+    },
+    completeProfileTitle: {
+      ru: 'Заполните данные',
+      en: 'Complete Your Profile',
+      az: 'Məlumatları doldurun'
+    },
+    completeProfileBody: {
+      ru: 'Для получения посылок необходимо заполнить серийный номер документа и дату рождения в разделе Профиль.',
+      en: 'To receive packages, please fill in your document serial number and date of birth in the Profile section.',
+      az: 'Bağlamaları almaq üçün Profil bölməsində sənəd seriya nömrəsini və doğum tarixini doldurmalısınız.'
+    },
+    later: { ru: 'Позже', en: 'Later', az: 'Sonra' },
+    fillNow: { ru: 'Заполнить', en: 'Fill Now', az: 'Doldur' }
   },
   
   // Marketplaces
@@ -790,7 +855,44 @@ export const translations = {
       en: 'Cancelled',
       az: 'Ləğv edildi'
     }
+  },
+
+  notifications: {
+    title: { ru: 'Уведомления', en: 'Notifications', az: 'Bildirişlər' },
+    empty: {
+      ru: 'Уведомлений пока нет',
+      en: 'No notifications yet',
+      az: 'Hələ bildiriş yoxdur'
+    },
+    markAllRead: {
+      ru: 'Отметить все прочитанными',
+      en: 'Mark all as read',
+      az: 'Hamısını oxunmuş kimi işarələ'
+    }
+  },
+
+  // Тексты событий трекинга. Раньше описание события писалось админкой в базу
+  // по-английски и так же показывалось клиенту при любом выбранном языке.
+  tracking: {
+    orderCreated: {
+      ru: 'Заказ создан, статус: {status}',
+      en: 'Order created with status: {status}',
+      az: 'Sifariş yaradıldı, status: {status}'
+    },
+    statusChanged: {
+      ru: 'Статус изменён на: {status}',
+      en: 'Status changed to: {status}',
+      az: 'Status dəyişdirildi: {status}'
+    }
   }
+}
+
+/**
+ * Подпись статуса заказа. Единая точка на всё приложение — ключи берутся из
+ * STATUS_TRANSLATION_KEY, поэтому расхождение со OrderStatus невозможно.
+ */
+export function getStatusLabel(status: OrderStatus, language: Language): string {
+  return translations.statuses[STATUS_TRANSLATION_KEY[status]][language]
 }
 
 // Language names for selector
@@ -911,7 +1013,10 @@ export function LanguageSelector({ className = '' }: { className?: string }) {
       {(['ru', 'en', 'az'] as Language[]).map((lang) => (
         <button
           key={lang}
+          type="button"
           onClick={() => setLanguage(lang)}
+          aria-label={languageNames[lang]}
+          aria-pressed={language === lang}
           className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
             language === lang 
               ? 'bg-primary text-primary-foreground' 

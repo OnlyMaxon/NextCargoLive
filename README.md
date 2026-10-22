@@ -6,7 +6,7 @@ A modern cargo tracking and management application built with React, TypeScript,
 
 - **User Authentication**: Secure registration and login with Firebase Auth
 - **Order Tracking**: Real-time tracking of cargo shipments with status updates
-- **Support Chat**: Direct communication between users and support team
+- **Notifications**: In-app notifications about order status changes
 - **Admin Panel**: Comprehensive management interface for administrators
 - **Marketplace Links**: Quick access to popular Polish marketplaces
 - **Mobile-First Design**: Optimized for all devices with responsive UI
@@ -40,6 +40,14 @@ npm run dev
 
 The application will open at `http://localhost:5173`
 
+### Checks
+
+```bash
+npm run typecheck   # tsc -b, strict mode
+npm run lint        # eslint
+npm run build       # typecheck + production build
+```
+
 ## 🔥 Firebase Setup
 
 Required Firebase services:
@@ -62,7 +70,7 @@ VITE_FIREBASE_APP_ID=your_app_id
 
 - Track your cargo shipments
 - View order details and status updates
-- Chat with support team
+- See notifications about status changes
 - Access Polish marketplace links
 - Manage your profile
 
@@ -71,9 +79,8 @@ VITE_FIREBASE_APP_ID=your_app_id
 - View all orders from all users
 - Create, update, and delete orders
 - Change order statuses
-- Respond to support messages
 - Send notifications to users
-- Search users by name or FIN code
+- Search orders by customer FIN code
 
 ## 🏗️ Tech Stack
 
@@ -92,7 +99,7 @@ src/
 │   ├── Auth.tsx        # Authentication component
 │   ├── AdminPanel.tsx  # Admin interface
 │   ├── OrderList.tsx   # User order list
-│   ├── Support.tsx     # Support chat
+│   ├── Instructions.tsx # Warehouse address and how-to
 │   └── ...
 ├── lib/                # Utilities and services
 │   ├── firebase.ts     # Firebase configuration
@@ -105,38 +112,40 @@ src/
 
 ## 🔐 Security
 
-- Firebase Security Rules are configured for data protection
-- User data is isolated and only accessible by the owner
-- Admin operations require admin privileges
-- Environment variables protect sensitive credentials
+See `firestore.rules`. Key invariants:
+
+- A user profile (`users/{uid}`) is readable only by its owner and by admins —
+  it contains the FIN code, document serial number and date of birth.
+- Clients may update only `firstName`, `lastName`, `documentSerial`, `birthDate`
+  on their own profile. `isAdmin` is not writable from the client, and `create`
+  requires `isAdmin == false`.
+- Orders are readable by their owner and admins; writable by admins only.
+- FIN uniqueness is enforced by `fin_index/{FIN}`: the `create` rule only
+  applies when the document does not exist yet, so a duplicate is rejected
+  atomically.
+- The Firebase web config is public by design; access is restricted by rules.
+  Restrict the API key by HTTP referrer in Google Cloud Console.
+
+### Making a user an admin
+
+Set `isAdmin: true` on `users/{uid}` from the Firebase Console — the Console
+bypasses security rules, and the client cannot do it.
 
 ## 🚀 Deployment
 
-1. Set up Firebase project
-2. Add environment variables to your hosting platform
-3. Build the application: `npm run build`
-4. Deploy the `dist` folder to your hosting service
+Hosting is Cloudflare Workers via `index.js` + `wrangler.jsonc` (static assets
+from `dist`, the worker only handles not-found paths). Firebase project:
+`CargoRealTime`. Domain: nextcargo.eu.
 
-Recommended platforms:
-- Vercel
-- Netlify
-- Firebase Hosting
+`VITE_*` variables are inlined by Vite **at build time**, so they must exist in
+the Cloudflare build environment — not only in a local `.env`.
 
 ## 🆘 Support
 
 For issues or questions:
-1. Review browser console for errors
-2. Verify Firebase configuration
-
-
-
-
-
-
-Все работает через cloudFlare с Файлами Index.js wrangler.jsonc
-База и регистрация работает через Firebase Console (CargoRealTime)
-Domain будет куплен через GoDaddy
-3. Check Firestore security rules
+1. Review the browser console for errors
+2. Verify the Firebase configuration
+3. Check the Firestore security rules
 
 ## 📄 License
 
