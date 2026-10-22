@@ -5,28 +5,14 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Package, MapPin, Barcode, Calendar, ClockClockwise, CheckCircle, Copy, Scales } from '@phosphor-icons/react'
+import { Package, MapPin, Barcode, Calendar, ClockClockwise, Scales } from '@phosphor-icons/react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TrackingTimeline } from '@/components/TrackingTimeline'
 import { Separator } from '@/components/ui/separator'
-import { toast } from 'sonner'
-import { useTranslation, translations } from '@/lib/i18n'
+import { useTranslation, translations, getStatusLabel } from '@/lib/i18n'
+import { STATUS_BADGE_CLASSES } from '@/lib/constants'
 
 const txt = translations.orders
-const statusTxt = translations.statuses
-
-// Status colors
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  processing: 'bg-blue-100 text-blue-800 border-blue-200',
-  shipped: 'bg-purple-100 text-purple-800 border-purple-200',
-  in_transit: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  in_warehouse: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-  out_for_delivery: 'bg-orange-100 text-orange-800 border-orange-200',
-  delivered: 'bg-green-100 text-green-800 border-green-200',
-  cancelled: 'bg-red-100 text-red-800 border-red-200'
-}
 
 // Pricing table data with original prices
 const PRICING = [
@@ -61,22 +47,6 @@ export function OrderList({ orders, user }: OrderListProps) {
   const isFirstOrder = completedOrdersCount === 0
   const discountPercent = isFirstOrder ? 50 : 0
 
-  // Get translated status label
-  const getStatusLabel = (status: string) => {
-    const statusMap: Record<string, keyof typeof statusTxt> = {
-      'pending': 'pending',
-      'processing': 'processing',
-      'shipped': 'shipped',
-      'in_transit': 'inTransit',
-      'in_warehouse': 'inWarehouse',
-      'out_for_delivery': 'outForDelivery',
-      'delivered': 'delivered',
-      'cancelled': 'cancelled'
-    }
-    const key = statusMap[status]
-    return key ? statusTxt[key][language] : status
-  }
-
   // Get weight label translation
   const getWeightLabel = (weight: string) => {
     if (weight === 'documents') {
@@ -86,6 +56,8 @@ export function OrderList({ orders, user }: OrderListProps) {
   }
 
   const formatDate = (timestamp: number) => {
+    // 0 приходит из convertTimestamp, когда в документе нет даты.
+    if (!timestamp) return '—'
     return new Date(timestamp).toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'short',
@@ -229,8 +201,8 @@ export function OrderList({ orders, user }: OrderListProps) {
                           )}
                         </div>
                       </div>
-                      <Badge className={`${STATUS_COLORS[order.status]} text-[10px] flex-shrink-0 font-semibold`}>
-                        {getStatusLabel(order.status)}
+                      <Badge className={`${STATUS_BADGE_CLASSES[order.status]} text-[10px] flex-shrink-0 font-semibold`}>
+                        {getStatusLabel(order.status, language)}
                       </Badge>
                     </div>
                   </CardContent>
@@ -265,8 +237,8 @@ export function OrderList({ orders, user }: OrderListProps) {
                 <TabsContent value="details" className="mt-0 space-y-5 pr-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm sm:text-base text-muted-foreground">{txt.status[language]}</span>
-                    <Badge className={`${STATUS_COLORS[selectedOrder.status]} text-sm font-semibold`}>
-                      {getStatusLabel(selectedOrder.status)}
+                    <Badge className={`${STATUS_BADGE_CLASSES[selectedOrder.status]} text-sm font-semibold`}>
+                      {getStatusLabel(selectedOrder.status, language)}
                     </Badge>
                   </div>
 

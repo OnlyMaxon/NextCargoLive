@@ -1,4 +1,4 @@
-import { Marketplace } from './types'
+import { Marketplace, OrderStatus } from './types'
 
 export const MARKETPLACES: Marketplace[] = [
   {
@@ -31,14 +31,38 @@ export const MARKETPLACES: Marketplace[] = [
   }
 ]
 
-export const STATUS_LABELS = {
-  in_transit: 'In Transit',
-  at_warehouse: 'At Warehouse',
-  delivered: 'Delivered'
+/**
+ * Единственный источник правды по статусам заказа.
+ *
+ * Record<OrderStatus, ...> важен: раньше OrderList держал свою копию карты со
+ * ключом 'in_warehouse', которого в OrderStatus нет. Реальный 'at_warehouse'
+ * не находился ни в цветах (бейдж получал класс "undefined"), ни в переводах
+ * (клиент видел сырую строку at_warehouse). Теперь любой новый статус, не
+ * добавленный во все три карты, ломает сборку, а не продакшен.
+ */
+export const STATUS_TRANSLATION_KEY: Record<OrderStatus, 'inTransit' | 'inWarehouse' | 'delivered'> = {
+  in_transit: 'inTransit',
+  at_warehouse: 'inWarehouse',
+  delivered: 'delivered'
 }
 
-export const STATUS_COLORS = {
-  in_transit: 'bg-[oklch(0.70_0.15_85)] text-[oklch(0.25_0.02_85)]',
-  at_warehouse: 'bg-[oklch(0.55_0.15_250)] text-white',
-  delivered: 'bg-[oklch(0.60_0.15_145)] text-white'
+/** Классы бейджа статуса (списки заказов, карточки). */
+export const STATUS_BADGE_CLASSES: Record<OrderStatus, string> = {
+  in_transit: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+  at_warehouse: 'bg-amber-100 text-amber-800 border-amber-200',
+  delivered: 'bg-green-100 text-green-800 border-green-200'
+}
+
+/** Насыщенный фон для точки таймлайна и активной кнопки статуса. */
+export const STATUS_ACCENT_CLASSES: Record<OrderStatus, string> = {
+  in_transit: 'bg-blue-600',
+  at_warehouse: 'bg-amber-600',
+  delivered: 'bg-green-600'
+}
+
+/** Локация по умолчанию, подставляемая в событие трекинга. */
+export const STATUS_DEFAULT_LOCATION: Record<OrderStatus, string> = {
+  in_transit: 'Poland - In Transit',
+  at_warehouse: 'Azerbaijan Warehouse',
+  delivered: 'Delivered to Customer'
 }

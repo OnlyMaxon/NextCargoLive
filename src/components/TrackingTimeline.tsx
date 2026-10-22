@@ -1,24 +1,20 @@
 import { TrackingEvent } from '@/lib/types'
-import { STATUS_COLORS } from '@/lib/constants'
+import { STATUS_ACCENT_CLASSES } from '@/lib/constants'
 import { MapPin, Package, CheckCircle, Clock } from '@phosphor-icons/react'
-import { useTranslation, Language, translations } from '@/lib/i18n'
+import { useTranslation, Language, translations, getStatusLabel } from '@/lib/i18n'
 
-const statusTxt = translations.statuses
-
-// Get translated status label
-const getStatusLabel = (status: string, language: Language) => {
-  const statusMap: Record<string, keyof typeof statusTxt> = {
-    'in_transit': 'inTransit',
-    'at_warehouse': 'inWarehouse',
-    'delivered': 'delivered',
-    'pending': 'pending',
-    'processing': 'processing',
-    'shipped': 'shipped',
-    'out_for_delivery': 'outForDelivery',
-    'cancelled': 'cancelled'
-  }
-  const key = statusMap[status]
-  return key ? statusTxt[key][language] : status
+/**
+ * Текст события собирается на клиенте из event.status, а не берётся из
+ * event.description: описание пишет админка по-английски, и клиент видел
+ * английскую строку при любом выбранном языке. description остаётся в базе как
+ * аудит-лог и используется только для старых записей с неизвестным статусом.
+ */
+const getEventText = (event: TrackingEvent, language: Language, isOldest: boolean): string => {
+  if (!(event.status in STATUS_ACCENT_CLASSES)) return event.description
+  const template = isOldest
+    ? translations.tracking.orderCreated[language]
+    : translations.tracking.statusChanged[language]
+  return template.replace('{status}', getStatusLabel(event.status, language))
 }
 
 interface TrackingTimelineProps {
@@ -42,18 +38,8 @@ export function TrackingTimeline({ events }: TrackingTimelineProps) {
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return 'bg-green-600'
-      case 'at_warehouse':
-        return 'bg-amber-600'
-      case 'in_transit':
-        return 'bg-blue-600'
-      default:
-        return 'bg-gray-400'
-    }
-  }
+  const getStatusColor = (status: string) =>
+    STATUS_ACCENT_CLASSES[status as keyof typeof STATUS_ACCENT_CLASSES] ?? 'bg-gray-400'
 
   const formatDateTime = (timestamp: number) => {
     const date = new Date(timestamp)
@@ -94,6 +80,7 @@ export function TrackingTimeline({ events }: TrackingTimelineProps) {
         const Icon = getStatusIcon(event.status)
         const { date, time } = formatDateTime(event.timestamp)
         const isLatest = index === 0
+        const isOldest = index === sortedEvents.length - 1
         const statusColor = getStatusColor(event.status)
 
         return (
@@ -140,7 +127,7 @@ export function TrackingTimeline({ events }: TrackingTimelineProps) {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm sm:text-base font-medium text-foreground">{event.description}</p>
+                    <p className="text-sm sm:text-base font-medium text-foreground">{getEventText(event, language, isOldest)}</p>
                   </div>
                 </div>
 

@@ -10,7 +10,6 @@ export interface User {
   lastName: string
   email: string
   finCode: string
-  password: string
   isAdmin: boolean
   documentSerial?: string  // Max 10 characters
   birthDate?: string       // Format: YYYY-MM-DD
@@ -37,16 +36,6 @@ export interface Order {
   destination?: string
   weight?: string
   trackingHistory?: TrackingEvent[]
-}
-
-export interface SupportMessage {
-  id: string
-  userId: string
-  userName: string
-  message: string
-  timestamp: number
-  isAdmin: boolean
-  conversationId: string
 }
 
 export interface Notification {
